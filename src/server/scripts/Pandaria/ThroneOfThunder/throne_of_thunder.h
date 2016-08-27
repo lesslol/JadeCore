@@ -59,6 +59,7 @@ enum eActions
 enum eCreatures
 {
     BOSS_JINROKH = 69465,
+    NPC_JINROKH_STATUE = 69467,
     BOSS_HORRIDON = 68476,
 
     BOSS_MALAK = 69131,

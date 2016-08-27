@@ -317,7 +317,7 @@ class spell_dk_wild_mushroom_plague : public SpellScriptLoader
                     for (std::list<Creature*>::iterator i = tempList.begin(); i != tempList.end(); ++i)
                     {
                         Unit* owner = (*i)->GetOwner();
-                        if (owner && owner == _player && (*i)->isSummon())
+                        if (owner && owner == _player && (*i)->IsSummon())
                             continue;
 
                         mushroomlist.remove((*i));

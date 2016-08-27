@@ -23416,7 +23416,7 @@ void Player::VehicleSpellInitialize()
         data << uint32(0);
 
     data.WriteByteSeq(guid[6]);
-    data << uint32(vehicle->isSummon() ? vehicle->ToTempSummon()->GetTimer() : 0);
+    data << uint32(vehicle->IsSummon() ? vehicle->ToTempSummon()->GetTimer() : 0);
     data.WriteByteSeq(guid[7]);
     data << uint16(0);
 

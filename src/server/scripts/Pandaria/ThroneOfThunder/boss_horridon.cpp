@@ -69,6 +69,8 @@ enum Heroic
     CREATURE_DIRE_HORN_SPIRIT = 70688,
 };
 
+// This spell is crashing worldserver
+/*
 class spell_double_swipe : public SpellScriptLoader
 {
 public:
@@ -106,6 +108,7 @@ public:
         return new spell_double_swipe_front_SpellScript();
     }
 };
+*/
 
 class spell_horridon_chain_lightning : public SpellScriptLoader
 {
@@ -2022,7 +2025,7 @@ public:
 };
 void AddSC_boss_horridon()
 {
-    new spell_double_swipe();
+//    new spell_double_swipe();
     new boss_horridon();
     new npc_stonegazer();
     new npc_wastewalker();

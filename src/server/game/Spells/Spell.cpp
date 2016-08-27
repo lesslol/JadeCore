@@ -1765,7 +1765,7 @@ void Spell::SelectImplicitCasterObjectTargets(SpellEffIndex effIndex, SpellImpli
             target = m_caster->GetGuardianPet();
             break;
         case TARGET_UNIT_SUMMONER:
-            if (m_caster->isSummon())
+            if (m_caster->IsSummon())
                 target = m_caster->ToTempSummon()->GetSummoner();
             break;
         case TARGET_UNIT_VEHICLE:
@@ -4277,7 +4277,7 @@ void Spell::finish(bool ok)
     if (!ok)
         return;
 
-    if (m_caster->GetTypeId() == TYPEID_UNIT && m_caster->ToCreature()->isSummon())
+    if (m_caster->GetTypeId() == TYPEID_UNIT && m_caster->ToCreature()->IsSummon())
     {
         // Unsummon statue
         uint32 spell = m_caster->GetUInt32Value(UNIT_CREATED_BY_SPELL);

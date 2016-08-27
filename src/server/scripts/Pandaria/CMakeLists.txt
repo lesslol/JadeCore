@@ -76,11 +76,11 @@ Pandaria/HeartOfFear/heart_of_fear.cpp
   Pandaria/SiegeNiuzaoTemple/boss_wing_leader.cpp
   
   Pandaria/TerraceOfEndlessSpring/instance_terrace_of_endless_spring.cpp
-Pandaria/TerraceOfEndlessSpring/terrace_of_endless_spring.cpp
-Pandaria/TerraceOfEndlessSpring/terrace_of_endless_spring.h
-Pandaria/TerraceOfEndlessSpring/boss_protectors_of_the_endless.cpp
-Pandaria/TerraceOfEndlessSpring/boss_lei_shi.cpp
-Pandaria/TerraceOfEndlessSpring/boss_tsulong.cpp
+  Pandaria/TerraceOfEndlessSpring/terrace_of_endless_spring.cpp
+  Pandaria/TerraceOfEndlessSpring/terrace_of_endless_spring.h
+  Pandaria/TerraceOfEndlessSpring/boss_protectors_of_the_endless.cpp
+  Pandaria/TerraceOfEndlessSpring/boss_lei_shi.cpp
+  Pandaria/TerraceOfEndlessSpring/boss_tsulong.cpp
 
   Pandaria/TerraceOfEndlessSpring/boss_sha_of_fear.cpp
 

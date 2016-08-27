@@ -238,7 +238,7 @@ public:
                 me->SetMaxHealth(250000000);
                 break;
             case MAN10_DIFFICULTY:
-                me->SetMaxHealth(62000000);
+                me->SetMaxHealth(6200000);
                 break;
             }
         }

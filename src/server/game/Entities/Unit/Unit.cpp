@@ -848,7 +848,7 @@ uint32 Unit::DealDamage(Unit* victim, uint32 damage, CleanDamage const* cleanDam
         for (std::list<Creature*>::iterator i = tempList.begin(); i != tempList.end(); ++i)
         {
             Unit* owner = (*i)->GetOwner();
-            if (owner && owner == ToPlayer() && (*i)->isSummon())
+            if (owner && owner == ToPlayer() && (*i)->IsSummon())
                 continue;
 
             statueList.remove((*i));
@@ -12238,7 +12238,7 @@ void Unit::GetAllMinionsByEntry(std::list<Creature*>& Minions, uint32 entry)
         Unit* unit = *itr;
         ++itr;
         if (unit->GetEntry() == entry && unit->GetTypeId() == TYPEID_UNIT
-            && unit->ToCreature()->isSummon()) // minion, actually
+            && unit->ToCreature()->IsSummon()) // minion, actually
             Minions.push_back(unit->ToCreature());
     }
 }
@@ -12250,7 +12250,7 @@ void Unit::RemoveAllMinionsByEntry(uint32 entry)
         Unit* unit = *itr;
         ++itr;
         if (unit->GetEntry() == entry && unit->GetTypeId() == TYPEID_UNIT
-            && unit->ToCreature()->isSummon()) // minion, actually
+            && unit->ToCreature()->IsSummon()) // minion, actually
             unit->ToTempSummon()->UnSummon();
         // i think this is safe because i have never heard that a despawned minion will trigger a same minion
     }
@@ -12492,7 +12492,7 @@ void Unit::RemoveAllControlled()
         m_Controlled.erase(m_Controlled.begin());
         if (target->GetCharmerGUID() == GetGUID())
             target->RemoveCharmAuras();
-        else if (target->GetOwnerGUID() == GetGUID() && target->isSummon())
+        else if (target->GetOwnerGUID() == GetGUID() && target->IsSummon())
             target->ToTempSummon()->UnSummon();
     }
 }
@@ -12591,7 +12591,7 @@ void Unit::UnsummonAllTotems()
             continue;
 
         if (Creature* OldTotem = GetMap()->GetCreature(m_SummonSlot[i]))
-            if (OldTotem->isSummon())
+            if (OldTotem->IsSummon())
                 OldTotem->ToTempSummon()->UnSummon();
     }
 }
@@ -16159,7 +16159,7 @@ Unit* Creature::SelectVictim()
     {
         // We have player pet probably
         target = getAttackerForHelper();
-        if (!target && isSummon())
+        if (!target && IsSummon())
         {
             if (Unit* owner = ToTempSummon()->GetOwner())
             {

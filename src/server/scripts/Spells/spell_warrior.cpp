@@ -733,7 +733,7 @@ class spell_warr_mocking_banner : public SpellScriptLoader
                     for (auto itr : tempList)
                     {
                         Unit* owner = itr->GetOwner();
-                        if (owner && owner == player && itr->isSummon())
+                        if (owner && owner == player && itr->IsSummon())
                             continue;
 
                         bannerList.remove(itr);
@@ -808,6 +808,14 @@ class spell_warr_raging_blow : public SpellScriptLoader
                             else
                                 ragingBlow->SetStackAmount(stacks - 1);
                          }
+            }
+            
+            void HandleDamage(SpellEffIndex /*effIndex*/)
+            {                
+                Unit* caster = GetCaster();
+
+				int32 damage = caster->GetTotalAttackPowerValue(BASE_ATTACK) * 1.9f;
+				SetHitDamage(damage);
             }
 
             void Register()
@@ -1245,6 +1253,7 @@ class spell_warr_thunder_clap : public SpellScriptLoader
                     if (Unit* target = GetHitUnit())
                     {
                         _player->CastSpell(target, WARRIOR_SPELL_WEAKENED_BLOWS, true);
+                        _player->CastSpell(target, WARRIOR_SPELL_DEEP_WOUNDS, true);
                         // Glyph of Resonating Power - 58356, increases damage the damage and cooldown by 50%
                         if (_player->HasAura(58356))
                         {

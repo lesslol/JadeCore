@@ -469,8 +469,8 @@ public:
             pInstance = creature->GetInstanceScript();
         }
         Player* target = NULL;
-        int32 orbtick;
-        int32 speedstack;
+        size_t orbtick;
+        size_t speedstack;
 
         void Reset()
         {
@@ -591,7 +591,7 @@ public:
         InstanceScript* pInstance;
         Creature* target = NULL;
         Player* playerwho = NULL;
-        int32 throwingexplosion;
+        size_t throwingexplosion;
         int32 watersprout;
 
 
@@ -659,7 +659,7 @@ public:
             creature->setFaction(16);
         }
 
-        int tick;
+        size_t tick;
         void Reset()
         {
             tick = 500;
@@ -703,7 +703,7 @@ public:
             creature->CastSpell(creature, SPELL_CONDUCTIVE_WATER_VISUAL);
             creature->setFaction(16);
         }
-        int32 sizetimer;
+        size_t sizetimer;
         int32 maxsize;
 
         void Reset()
@@ -887,7 +887,7 @@ public:
         {
             pInstance = creature->GetInstanceScript();
         }
-        int32 orbtick;
+        size_t orbtick;
         bool activated;
 
         void Reset()
@@ -957,8 +957,8 @@ public:
         {
             pInstance = creature->GetInstanceScript();
         }
-        int32 orbtick;
-        int32 moverandom;
+        size_t orbtick;
+        size_t moverandom;
 
         void Reset()
         {
