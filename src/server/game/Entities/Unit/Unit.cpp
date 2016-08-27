@@ -1918,6 +1918,50 @@ void Unit::DealMeleeDamage(CalcDamageInfo* damageInfo, bool durabilityLoss)
     }
 }
 
+void Unit::HandleEmote(uint32 emote_id)
+{
+	if (!emote_id)
+		HandleEmoteState(EMOTE_ONESHOT_NONE);
+	else
+	{
+		if (EmotesEntry const* emoteEntry = sEmotesStore.LookupEntry(emote_id))
+		{
+			if (emoteEntry->EmoteType) // 1, 2 Emote States, 0 ONESHOT animations play.
+			{
+				// If the creature already has this state return.
+				if (GetEmoteState() == emote_id && GetTypeId() == TYPEID_UNIT)
+					return;
+
+				if (GetTypeId() == TYPEID_PLAYER)
+				{
+					// When a player types in the same /read emote again, he cancels it. Acts like a toggle.
+					//	if (GetStoredEmoteState() && GetStoredEmoteState() == emote_id && emote_id == EMOTE_STATE_READ)
+					{
+						HandleEmoteState(EMOTE_ONESHOT_NONE);
+						SetStoredEmoteState(EMOTE_ONESHOT_NONE);
+					}
+					//else
+					{
+						HandleEmoteState(emote_id);
+						//	if (emote_id == EMOTE_STATE_READ || emote_id == EMOTE_STATE_DANCE)
+						SetStoredEmoteState(emote_id);
+					}
+				}
+				else
+					HandleEmoteState(emote_id);
+			}
+			else
+				HandleEmoteCommand(emote_id);
+		}
+	}
+}
+
+// The UNIT_NPC_EMOTESTATE field is used for Emote States now.
+void Unit::HandleEmoteState(uint32 emote_id)
+{
+	SetUInt32Value(UNIT_NPC_EMOTESTATE, emote_id);
+}
+
 void Unit::HandleEmoteCommand(uint32 anim_id)
 {
     if (GetUInt32Value(UNIT_NPC_EMOTESTATE) == 483)

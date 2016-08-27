@@ -1484,7 +1484,14 @@ class Unit : public WorldObject
         void TriggerAurasProcOnEvent(std::list<AuraApplication*>* myProcAuras, std::list<AuraApplication*>* targetProcAuras, Unit* actionTarget, uint32 typeMaskActor, uint32 typeMaskActionTarget, uint32 spellTypeMask, uint32 spellPhaseMask, uint32 hitMask, Spell* spell, DamageInfo* damageInfo, HealInfo* healInfo);
         void TriggerAurasProcOnEvent(ProcEventInfo& eventInfo, std::list<AuraApplication*>& procAuras);
 
-        void HandleEmoteCommand(uint32 anim_id);
+		void HandleEmoteCommand(uint32 anim_id);
+		void HandleEmote(uint32 emote_id);
+		void HandleEmoteState(uint32 emote_id);
+		uint32 GetEmoteState() { return GetUInt32Value(UNIT_NPC_EMOTESTATE); }
+		void SetStoredEmoteState(uint32 emoteState) { m_oldEmoteState = emoteState; }
+		uint32 GetStoredEmoteState() { return m_oldEmoteState; }
+		void ClearEmotes();
+
         void AttackerStateUpdate (Unit* victim, WeaponAttackType attType = BASE_ATTACK, bool extra = false);
 
         void CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* damageInfo, WeaponAttackType attackType = BASE_ATTACK);
@@ -2432,6 +2439,8 @@ class Unit : public WorldObject
         void DisableSpline();
 
         uint32 m_SendTransportMoveTimer;
+
+		uint32 m_oldEmoteState; // Used to store and restore old emote states for creatures.
 
         uint32 m_lastRegenTime[MAX_POWERS];
         uint32 m_powers[MAX_POWERS];
