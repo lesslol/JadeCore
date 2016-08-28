@@ -810,14 +810,6 @@ class spell_warr_raging_blow : public SpellScriptLoader
                          }
             }
             
-            void HandleDamage(SpellEffIndex /*effIndex*/)
-            {                
-                Unit* caster = GetCaster();
-
-				int32 damage = caster->GetTotalAttackPowerValue(BASE_ATTACK) * 1.9f;
-				SetHitDamage(damage);
-            }
-
             void Register()
             {
                 OnHit += SpellHitFn(spell_warr_raging_blow_SpellScript::HandleOnHit);
