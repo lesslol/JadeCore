@@ -1748,6 +1748,57 @@ class spell_warr_intervene : public SpellScriptLoader
         }
 };
 
+// Single - Minded Furry 81099
+class spell_warr_single_minded_furry : public SpellScriptLoader
+{
+    public:
+        spell_warr_single_minded_furry() : SpellScriptLoader("spell_warr_single_minded_furry") { }
+
+        class spell_warr_single_minded_furry_AuraScript : public AuraScript
+        {
+            PrepareAuraScript(spell_warr_single_minded_furry_AuraScript);
+
+            void OnUpdate(uint32 diff, AuraEffectPtr aurEff)
+            {
+                if (!GetCaster())
+                    return;
+
+                int32 amount = aurEff->GetAmount();
+                bool Check = false;
+
+                if (Player* owner = GetCaster()->ToPlayer()) // if owner is player
+                    if (Item *mainhand = owner->GetWeaponForAttack(BASE_ATTACK, true)) // if have mainhand
+                        if (Item *offhand = owner->GetWeaponForAttack(OFF_ATTACK, true)) // if have offhand
+                            if (mainhand->GetTemplate() && mainhand->GetTemplate()->SubClass != ITEM_SUBCLASS_WEAPON_AXE2 && mainhand->GetTemplate()->SubClass != ITEM_SUBCLASS_WEAPON_MACE2 
+                                && mainhand->GetTemplate()->SubClass != ITEM_SUBCLASS_WEAPON_SWORD2 && mainhand->GetTemplate()->SubClass != ITEM_SUBCLASS_WEAPON_EXOTIC2) // if mainhand is one hand weapon
+                                if (offhand->GetTemplate() && offhand->GetTemplate()->SubClass != ITEM_SUBCLASS_WEAPON_AXE2 && offhand->GetTemplate()->SubClass != ITEM_SUBCLASS_WEAPON_MACE2 
+                                    && offhand->GetTemplate()->SubClass != ITEM_SUBCLASS_WEAPON_SWORD2 && offhand->GetTemplate()->SubClass != ITEM_SUBCLASS_WEAPON_EXOTIC2)// if offhand is one hand weapon
+                                        Check = true;
+
+                if (!Check && amount != 0)
+                {
+                    aurEff->GetBase()->GetEffect(EFFECT_0)->ChangeAmount(0);
+                    aurEff->GetBase()->GetEffect(EFFECT_1)->ChangeAmount(0);
+                }
+                else if (Check && amount == 0)
+                {
+                    aurEff->GetBase()->GetEffect(EFFECT_0)->ChangeAmount(35);
+                    aurEff->GetBase()->GetEffect(EFFECT_1)->ChangeAmount(35);
+                }
+            }
+
+            void Register()
+            {
+                OnEffectUpdate += AuraEffectUpdateFn(spell_warr_single_minded_furry_AuraScript::OnUpdate, EFFECT_1, SPELL_AURA_MOD_OFFHAND_DAMAGE_PCT);
+            }
+        };
+
+        AuraScript* GetAuraScript() const
+        {
+            return new spell_warr_single_minded_furry_AuraScript();
+        }
+};
+
 void AddSC_warrior_spell_scripts()
 {
     new spell_warr_victorious_state();
@@ -1790,4 +1841,5 @@ void AddSC_warrior_spell_scripts()
     new spell_warr_checkway();
     new spell_warr_glyph_of_gag_order();
     new spell_warr_intervene();
+	new spell_warr_single_minded_furry();
 }
