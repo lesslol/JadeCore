@@ -888,6 +888,12 @@ class spell_warr_mortal_strike : public SpellScriptLoader
                             _player->StartReactiveTimer(REACTIVE_OVERPOWER);
                             _player->CastSpell(_player,WARRIOR_SPELL_ALLOW_OVERPOWER, true);
                         }
+
+						if (_player->HasAura(WARRIOR_SPELL_T16_DPS_4P_BONUS))
+						{
+							if (roll_chance_i(10))
+								_player->CastSpell(_player, WARRIOR_SPELL_T16_DPS_4P_BONUS_PROC, true);
+						}
                     }
                 }
             }
@@ -1132,9 +1138,17 @@ class spell_warr_bloodthirst : public SpellScriptLoader
                         if (GetHitDamage())
                         {
                             _player->CastSpell(_player, WARRIOR_SPELL_BLOODTHIRST_HEAL, true);
-                            if (_player->HasAura(WARRIOR_SPELL_BLOODSURGE))
-                                if(roll_chance_i(20))
+							if (_player->HasAura(WARRIOR_SPELL_BLOODSURGE))
+							{
+								if(roll_chance_i(20))
                                     _player->CastSpell(_player,WARRIOR_SPELL_BLOODSURGE_EFFECT, true);
+							}
+
+							if (_player->HasAura(WARRIOR_SPELL_T16_DPS_4P_BONUS))
+							{
+								if (roll_chance_i(10))
+									_player->CastSpell(_player, WARRIOR_SPELL_T16_DPS_4P_BONUS_PROC, true);
+							}
                         }
             }
 
@@ -1293,16 +1307,6 @@ class spell_warr_deep_wounds : public SpellScriptLoader
                                 _player->CastSpell(target, WARRIOR_SPELL_DEEP_WOUNDS, true);
                             else
                                 _player->CastSpell(target, WARRIOR_SPELL_DEEP_WOUNDS, true);
-                        }
-
-                        // Item - Warrior T16 DPS 4P Bonus - 144441
-                        if (GetSpellInfo()->Id == WARRIOR_SPELL_MORTAL_STRIKE_AURA || GetSpellInfo()->Id == WARRIOR_SPELL_BLOODTHIRST)
-                        {
-                            if (_player->HasAura(WARRIOR_SPELL_T16_DPS_4P_BONUS))
-                            {
-                                if (roll_chance_i(10))
-                                    _player->CastSpell(_player, WARRIOR_SPELL_T16_DPS_4P_BONUS_PROC, true);
-                            }
                         }
                     }
                 }
