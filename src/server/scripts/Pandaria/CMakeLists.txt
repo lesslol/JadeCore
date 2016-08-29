@@ -105,6 +105,7 @@ Pandaria/HeartOfFear/heart_of_fear.cpp
   Pandaria/ThroneOfThunder/boss_jinrokh.cpp
   Pandaria/ThroneOfThunder/boss_megaera.cpp
   Pandaria/ThroneOfThunder/boss_ji_kun.cpp
+  Pandaria/ThroneOfThunder/boss_durumu.cpp
   Pandaria/ThroneOfThunder/throne_of_thunder.cpp 
   
   Pandaria/SiegeOfOrgrimmar/siege_of_orgrimmar.h
