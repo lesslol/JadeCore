@@ -50,6 +50,9 @@ void AddSC_item_spell_scripts();
 void AddSC_example_spell_scripts();
 void AddSC_holiday_spell_scripts();
 
+// Pets
+void AddSC_deathknight_pet_scripts();
+
 void AddSC_SmartSCripts();
 
 //Commands
@@ -893,6 +896,12 @@ void AddSpellScripts()
 	AddSC_item_spell_scripts();
 	AddSC_example_spell_scripts();
 	AddSC_holiday_spell_scripts();
+}
+
+void AddPetScripts()
+{
+	AddSC_deathknight_pet_scripts();
+
 }
 
 void AddCommandScripts()

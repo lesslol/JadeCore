@@ -973,6 +973,28 @@ struct SpellPeriodicAuraLogInfo
 
 uint32 createProcExtendMask(SpellNonMeleeDamage* damageInfo, SpellMissInfo missCondition);
 
+struct RedirectThreatInfo
+{
+	RedirectThreatInfo() : _targetGUID(0), _threatPct(0) { }
+	uint64 _targetGUID;
+	uint32 _threatPct;
+
+	uint64 GetTargetGUID() const { return _targetGUID; }
+	uint32 GetThreatPct() const { return _threatPct; }
+
+	void Set(uint64 guid, uint32 pct)
+	{
+		_targetGUID = guid;
+		_threatPct = pct;
+	}
+
+	void ModifyThreatPct(int32 amount)
+	{
+		amount += _threatPct;
+		_threatPct = uint32(std::max(0, amount));
+	}
+};
+
 #define MAX_DECLINED_NAME_CASES 5
 
 struct DeclinedName
@@ -2235,6 +2257,13 @@ class Unit : public WorldObject
         uint32 GetModelForForm(ShapeshiftForm form);
         uint32 GetModelForTotem(PlayerTotemType totemType);
 
+		// Redirect Threat
+		void SetRedirectThreat(uint64 guid, uint32 pct) { _redirectThreadInfo.Set(guid, pct); }
+		void ResetRedirectThreat() { SetRedirectThreat(0, 0); }
+		void ModifyRedirectThreat(int32 amount) { _redirectThreadInfo.ModifyThreatPct(amount); }
+		uint32 GetRedirectThreatPercent() const { return _redirectThreadInfo.GetThreatPct(); }
+		Unit* GetRedirectThreatTarget();
+
         void SetReducedThreatPercent(uint32 pct, uint64 guid)
         {
             m_reducedThreatPercent = pct;
@@ -2499,6 +2528,8 @@ class Unit : public WorldObject
 
         uint32 m_reducedThreatPercent;
         uint64 m_misdirectionTargetGUID;
+
+		RedirectThreatInfo _redirectThreadInfo;
 
         bool m_cleanupDone; // lock made to not add stuff after cleanup before delete
         bool m_duringRemoveFromWorld; // lock made to not add stuff after beginning removing from world
