@@ -116,6 +116,10 @@ Pandaria/HeartOfFear/heart_of_fear.cpp
   Pandaria/SiegeOfOrgrimmar/boss_garrosh_hellscream.cpp
   Pandaria/SiegeOfOrgrimmar/boss_garrosh_hellscream.h	
   Pandaria/SiegeOfOrgrimmar/boss_norushen.cpp
+  
+  Pandaria/TimelessIsle/timeless_isle.cpp
+  Pandaria/TimelessIsle/timeless_isle.h
+  Pandaria/TimelessIsle/zone_timeless_isle.cpp
 
 
 )
