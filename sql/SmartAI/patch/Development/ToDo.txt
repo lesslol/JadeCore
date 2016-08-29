@@ -1,0 +1,12 @@
+-- Deepholm
+-- Northern Stranglethorn
+-- Shimmering Expanse
+-- The Cape of Stranglethorn
+-- Tol Barad
+-- Tol Barad Peninsula
+-- Twilight Highlands
+Raids:
+-- Blackwing Lair
+-- Molten Core
+-- Ruins of Ahn'Qiraj
+-- Temple of Ahn'Qiraj
