@@ -1,6 +1,5 @@
 -- Deepholm
 -- Northern Stranglethorn
--- Shimmering Expanse
 -- The Cape of Stranglethorn
 -- Tol Barad
 -- Tol Barad Peninsula
