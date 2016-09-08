@@ -1,6 +1,4 @@
 -- Deepholm
--- Tol Barad
--- Tol Barad Peninsula
 -- Twilight Highlands
 Raids:
 -- Blackwing Lair
