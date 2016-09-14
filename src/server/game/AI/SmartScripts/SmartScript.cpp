@@ -532,7 +532,7 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
 
 						bool _allowMove = false;
 						SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(e.action.cast.spell);
-						int32 mana = me->GetPower(POWER_MANA);
+						uint32 mana = me->GetPower(POWER_MANA);
 
 						if (me->GetDistance((*itr)->ToUnit()) > spellInfo->GetMaxRange(true) ||
 							me->GetDistance((*itr)->ToUnit()) < spellInfo->GetMinRange(true) ||
