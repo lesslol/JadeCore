@@ -764,6 +764,7 @@ class npc_toxic_storm : public CreatureScript
 			{
 				me->GetMotionMaster()->MoveRandom();
 				me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
+				me->SetVisible(false);
 				events.Reset();
 				me->CastSpell(me, SPELL_TOXIC_STORM_VISUAL);
 				events.ScheduleEvent(EVENT_MOVE_RANDOM, 6000);
@@ -809,7 +810,8 @@ class npc_toxic_tornado : public CreatureScript
 
 			void Reset() override
 			{
-				me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+				me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
+				me->SetVisible(false);
 				events.Reset();
 				me->CastSpell(me, SPELL_TOXIC_TORNADO_VISUAL);
 				events.ScheduleEvent(EVENT_MOVE_RANDOM, 6000);
@@ -859,6 +861,7 @@ class npc_falling_ash : public CreatureScript
 					me->GetMotionMaster()->MoveFall();
 
 				me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
+				me->SetVisible(false);
 				DoCast(me, SPELL_FALLING_ASH_VISUAL);
 				events.ScheduleEvent(EVENT_FALLING_ASH_DAMAGE, 14000);
 				events.ScheduleEvent(EVENT_FALLING_CHECK, 1000);
