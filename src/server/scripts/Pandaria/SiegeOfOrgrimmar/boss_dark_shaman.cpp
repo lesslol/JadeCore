@@ -214,7 +214,7 @@ class boss_earthbreaker_haromm : public CreatureScript
 
 		struct boss_earthbreaker_harommAI : public BossAI
 		{
-			boss_earthbreaker_harommAI(Creature* creature) : BossAI(creature, DATA_DARK_SHAMAN)
+			boss_earthbreaker_harommAI(Creature* creature) : BossAI(creature, DATA_DARK_SHAMANS)
 			{
 				m_Instance = creature->GetInstanceScript();
 			}
@@ -258,6 +258,16 @@ class boss_earthbreaker_haromm : public CreatureScript
 						me->SetMaxHealth(1900000000);
 						break;
 				}
+
+				me->SetHealth(me->GetMaxHealth());
+				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, me->GetMaxHealth());
+
+				me->setFaction(16);
+			}
+
+			void DamageTaken(Unit* /*attacker*/, uint32& damage)
+			{
+				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, me->GetHealth() > damage ? me->GetHealth() - damage : 0);
 			}
 
 			void JustReachedHome()
@@ -266,7 +276,7 @@ class boss_earthbreaker_haromm : public CreatureScript
 
 				if (m_Instance)
 				{
-					m_Instance->SetBossState(DATA_DARK_SHAMAN, FAIL);
+					m_Instance->SetBossState(DATA_DARK_SHAMANS, FAIL);
 				}
 
 				int32 Creatures[9] =
@@ -294,6 +304,9 @@ class boss_earthbreaker_haromm : public CreatureScript
 
 			void EnterCombat()
 			{
+				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, me->GetMaxHealth());
+				m_Instance->SetBossState(DATA_DARK_SHAMANS, IN_PROGRESS);
+
 				Talk(TALK_INTRO_HAROMM_ONE);
 				events.ScheduleEvent(EVENT_FROSTSTORM_STRIKE, 7000);
 				events.ScheduleEvent(EVENT_TALK_HAROMM_TWO, 4000);
@@ -301,13 +314,15 @@ class boss_earthbreaker_haromm : public CreatureScript
 
 			void JustDied(Unit* killer)
 			{
+				_JustDied();
+
 				Talk(TALK_DEATH_HAROMM);
 				if (m_Instance)
 				{
-					m_Instance->SetBossState(DATA_DARK_SHAMAN, DONE);
+					m_Instance->SetBossState(DATA_DARK_SHAMANS, DONE);
 				}
 
-				_JustDied();
+				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, 0);
 
 				int32 Creatures[9] =
 				{
@@ -333,6 +348,9 @@ class boss_earthbreaker_haromm : public CreatureScript
 
 				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
+
+				if (instance->GetData(DATA_DARK_SHAMANS_HEALTH) != 0)
+					me->SetHealth(instance->GetData(DATA_DARK_SHAMANS_HEALTH));
 
 				if (me->GetMap()->IsHeroic() && HealthBelowPct(95))
 				{
@@ -477,7 +495,7 @@ class boss_wavebinder_kardris : public CreatureScript
 
 		struct boss_wavebinder_kardrisAI : public BossAI
 		{
-			boss_wavebinder_kardrisAI(Creature* creature) : BossAI(creature, DATA_DARK_SHAMAN)
+			boss_wavebinder_kardrisAI(Creature* creature) : BossAI(creature, DATA_DARK_SHAMANS)
 			{
 				m_Instance = creature->GetInstanceScript();
 			}
@@ -521,6 +539,16 @@ class boss_wavebinder_kardris : public CreatureScript
 						me->SetMaxHealth(1900000000);
 						break;
 				}
+
+				me->SetHealth(me->GetMaxHealth());
+				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, me->GetMaxHealth());
+
+				me->setFaction(16);
+			}
+
+			void DamageTaken(Unit* /*attacker*/, uint32& damage)
+			{
+				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, me->GetHealth() > damage ? me->GetHealth() - damage : 0);
 			}
 
 			void JustReachedHome()
@@ -529,7 +557,7 @@ class boss_wavebinder_kardris : public CreatureScript
 
 				if (m_Instance)
 				{
-					m_Instance->SetBossState(DATA_DARK_SHAMAN, FAIL);
+					m_Instance->SetBossState(DATA_DARK_SHAMANS, FAIL);
 				}
 
 				int32 Creatures[9] =
@@ -557,19 +585,24 @@ class boss_wavebinder_kardris : public CreatureScript
 
 			void EnterCombat()
 			{
+				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, me->GetMaxHealth());
+				m_Instance->SetBossState(DATA_DARK_SHAMANS, IN_PROGRESS);
+
 				events.ScheduleEvent(EVENT_FROSTSTORM_BOLT, 7000);
 				events.ScheduleEvent(EVENT_TALK_KARDRIS_ONE, 2000);
 			}
 
 			void JustDied(Unit* killer)
 			{
+				_JustDied();
+
 				Talk(TALK_DEATH_KARDRIS);
 				if (m_Instance)
 				{
-					m_Instance->SetBossState(DATA_DARK_SHAMAN, DONE);
+					m_Instance->SetBossState(DATA_DARK_SHAMANS, DONE);
 				}
 
-				_JustDied();
+				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, 0);
 
 				int32 Creatures[9] =
 				{
@@ -595,6 +628,9 @@ class boss_wavebinder_kardris : public CreatureScript
 
 				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
+
+				if (instance->GetData(DATA_DARK_SHAMANS_HEALTH) != 0)
+					me->SetHealth(instance->GetData(DATA_DARK_SHAMANS_HEALTH));
 
 				if (me->GetMap()->IsHeroic() && HealthBelowPct(95))
 				{
@@ -980,8 +1016,12 @@ class npc_darkfang_and_bloodclaw : public CreatureScript
 						me->SetMaxHealth(189000000);
 						break;
 				}
+				me->setFaction(16);
 				events.Reset();
+			}
 
+			void EnterCombat()
+			{
 				events.ScheduleEvent(EVENT_SWIPE, urand(5000, 10000));
 				events.ScheduleEvent(EVENT_REND, urand(5000, 10000));
 			}
