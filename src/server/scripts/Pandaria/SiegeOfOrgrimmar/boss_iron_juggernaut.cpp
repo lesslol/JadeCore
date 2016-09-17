@@ -224,9 +224,10 @@ class boss_iron_juggernaut : public CreatureScript
 			{
 				if (!UpdateVictim())
 					return;
-
-				if (me->HasUnitState(UNIT_STATE_CASTING))
+				
+				if (me->HasUnitState(UNIT_STATE_CASTING) && phase != 2)
 					return;
+				
 
 				switch (events.ExecuteEvent())
 				{
@@ -242,7 +243,7 @@ class boss_iron_juggernaut : public CreatureScript
 
 							events.ScheduleEvent(EVENT_FLAME_VENTS, 10000); // TODO: Timer and Spell
 							events.ScheduleEvent(EVENT_BORER_DRILL, urand(18000, 20000));
-							events.ScheduleEvent(EVENT_CRAWLER_MINES, urand(19000, 21000)); // TODO: Spell/Creature/Whatever
+							events.ScheduleEvent(EVENT_CRAWLER_MINES, urand(19000, 21000)); // TODO: Spell
 							events.ScheduleEvent(EVENT_LASER_BURN, 10000); // TODO: Timer
 							// events.ScheduleEvent(EVENT_MORTAR_CANNON, 12000); TODO
 
@@ -720,6 +721,7 @@ void AddSC_boss_iron_juggernaut()
 
 	// Creatures
 	new npc_crawler_mine();
+	new npc_borer_drill();
 
 	// Spells
 	new spell_borer_drill_dot();

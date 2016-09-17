@@ -56,6 +56,8 @@ enum eData
 	// Iron Juggernaut
 	DATA_IRON_JUGGERNAUT,
 
+	DATA_DARK_SHAMAN,
+
     DATA_GARROSH_HELLSCREAM,
     DATA_THRALL,
 

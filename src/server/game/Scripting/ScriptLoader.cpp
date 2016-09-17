@@ -626,6 +626,8 @@ void AddSC_immersus();
 void AddSC_fallen_protectors();
 void AddSC_garrosh_hellscream();
 void AddSC_sha_of_pride();
+void AddSC_boss_iron_juggernaut();
+void AddSC_boss_dark_shaman();
 
 
 // Cataclysm
@@ -840,6 +842,7 @@ void AddSC_outdoorpvp_zm();
 void AddSC_boss_horridon();
 void AddSC_boss_jinrokh();
 void AddSC_boss_ji_kun();
+void AddSC_boss_durumu();
 void AddSC_megaera();
 void AddSC_tortos();
 void AddSC_council();
@@ -1448,6 +1451,8 @@ void AddOutlandScripts()
 	AddSC_fallen_protectors();
 	AddSC_garrosh_hellscream();
 	AddSC_sha_of_pride();
+	AddSC_boss_iron_juggernaut();
+	AddSC_boss_dark_shaman();
 
 #endif
 }
@@ -1668,6 +1673,7 @@ void AddPandarieScripts()
 	AddSC_boss_horridon();
 	AddSC_boss_jinrokh();
 	AddSC_boss_ji_kun();
+	AddSC_boss_durumu();
 	AddSC_megaera();
 	AddSC_tortos();
 	AddSC_council();
