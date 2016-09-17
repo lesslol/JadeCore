@@ -1,7 +1,0 @@
--- Deepholm
--- Twilight Highlands
-Raids:
--- Blackwing Lair
--- Molten Core
--- Ruins of Ahn'Qiraj
--- Temple of Ahn'Qiraj
