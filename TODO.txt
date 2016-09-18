@@ -1,70 +1,34 @@
-Opcodes TODO(все есть в опкодах для 540):
+﻿Mists of Pandaria Instance Scripts TODO:
 
-Spell system:
+1) Mogu'shan Vaults:
+    - Need to rewrite instance script
 
-CMSG_CANCEL_AUTO_REPEAT_SPELL
+2) Heart of Fear:
+    - Need to rewrite instance script
+    - Need to rewrite Imperial Vizier Zor'lok
+    - Need to rewire Blade Lord Ta'yak
+    - Need to rewrite Garalon
+    - Need to rewrite Wind Lord Mel'jarak
+    - Need to add script for Amber-Shaper Un'sok
+    - Need to rewrite Grand Empress Shek'zeer
 
-PvP/BG/Arena:
+3) Terrace of Endless Spring:
+    - Need to rewrite instance script
+    - Need to fix some achievements
+    - Need to fix Sha of Fear heroic mode
 
-CMSG_MESSAGECHAT_BATTLEGROUND
+4) Throne of Thunder:
+    - Need to rewrite instance script
+    - Need to rewrite Jin'rokh the Breaker
+    - Need to rewrite Horridon
+    - Need to rewrite Megaera
+    - Need to rewrite Durumu the Forgotten
+    - Need to rewrite Primordius
+    - Need to rewrite Dark Animus
+    - Need to add script for Iron Qon
+    - Need to add script for Twin Consorts
+    - Need to add script for Lei Shen the Thunder King
+    - Need to add script for Ra-den
 
-LFG:
-
-CMSG_LFG_SET_BOOT_VOTE
-CMSG_LFG_SET_ROLES
-
-Chat:
-
-CMSG_MESSAGECHAT_ADDON_BATTLEGROUND
-CMSG_MESSAGECHAT_ADDON_GUILD
-CMSG_MESSAGECHAT_ADDON_OFFICER
-CMSG_MESSAGECHAT_ADDON_PARTY
-CMSG_MESSAGECHAT_ADDON_RAID
-CMSG_MESSAGECHAT_ADDON_WHISPER
-
-Item:
-
-CMSG_CANCEL_TEMP_ENCHANTMENT
-SMSG_ENCHANTMENT_LOG
-SMSG_ITEM_COOLDOWN
-SMSG_READ_ITEM_FAILED
-
-Loot:
-
-SMSG_LOOT_LIST
-CMSG_LOOT_MASTER_GIVE
-CMSG_OPT_OUT_OF_LOOT
-
-Inspect:
-
-CMSG_REQUEST_INSPECT_RATED_BG_STATS
-
-Group/Raid/Instance:
-
-SMSG_GROUP_UNINVITE
-
-Guild:
-
-SMSG_GUILD_CHALLENGE_COMPLETED // 6672 не найден в снифах, нужно проверить структуру
-
-
-Achievement:
-
-CMSG_SHOW_ACCOUNT_ACHIEVEMENT
-SMSG_CRITERIA_DELETED
-
-Currency:
-
-SMSG_UPDATE_CURRENCY_WEEK_LIMIT
-CMSG_SET_CURRENCY_FLAGS
-
-Misc:
-
-SMSG_CHAR_FACTION_OR_RACE_CHANGE
-SMSG_TOGGLE_XP_GAIN
-
-
---
-После создания персонажа не видно только что созданного персонажа. Почему-то он сохраняется в базу дольше, чем должен. Такая же проблема может быть с ренеймом и т.д.
-Какие-то проблемы с достижениями за завершенные квесты
-если сесть на трофейный чоппер из ульдуара и использовать заклинание "мазут", то будет краш клиента. Фейлит spell_go для ауры(!) от триггера. Без чоппера спелл работает верно.
+5) Mists of Pandaria dungeons:
+    - Need to rewrite all of them
