@@ -11,4 +11,4 @@ If you want to join our team you can just open issue requesting an invite and we
 
 This is GPL-based source so do whatever you want with it.
 
-![world-of-warcraft-mists-of-pandaria-pc-pc-box](https://cloud.githubusercontent.com/assets/812439/18618998/69b57402-7dfa-11e6-8f51-b59aafeadd16.png)
+![mistsofpandarialogo](https://cloud.githubusercontent.com/assets/812439/18619016/c10a0e20-7dfa-11e6-92c3-0f0dc1f1be75.png)
