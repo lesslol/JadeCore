@@ -126,10 +126,10 @@ enum TalksKardris
 	TALK_INTRO_KARDRIS_ONE		= 0, // Earth! - Second (39016)
 	TALK_INTRO_KARDRIS_TWO		= 1, // Bend to our will! - Fourth - No Sound
 	TALK_INTRO_KARDRIS_THREE	= 2, // We do not ask elements for aid! (39014)
-	TALK_SPELL_KARDRIS_ONE		= 3, // Tortured wind, stale and toxic (39018)
-	TALK_SPELL_KARDRIS_TWO		= 4, // Long dead fire, black and smouldering (39019)
+	TALK_SPELL_KARDRIS_ONE		= 3, // Tortured wind, stale and toxic! (39018)
+	TALK_SPELL_KARDRIS_TWO		= 4, // Long dead fire, black and smouldering! (39019)
 	TALK_DEATH_KARDRIS			= 5, // I can hear them... No longer... (39015)
-	TALK_KILL_KARDRIS			= 6, // Ha Ha Ha, my wolf will feast on your blood (39017)
+	TALK_KILL_KARDRIS			= 6, // Ha Ha Ha, my wolfs will feast on your blood! (39017)
 };
 
 enum Events
