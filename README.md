@@ -1,3 +1,9 @@
+
+
+![mistsofpandarialogo](https://cloud.githubusercontent.com/assets/812439/18619016/c10a0e20-7dfa-11e6-92c3-0f0dc1f1be75.png)
+
+
+
  INSTRUCTIONS:
  
 1) Client for this source can be fount here: https://mega.nz/#!cZc30S6T!6R9zAlXkKE2ekBf7ZdnN_pQBnOxK5pyG3LNPEXT-0mU
@@ -11,4 +17,3 @@ If you want to join our team you can just open issue requesting an invite and we
 
 This is GPL-based source so do whatever you want with it.
 
-![mistsofpandarialogo](https://cloud.githubusercontent.com/assets/812439/18619016/c10a0e20-7dfa-11e6-92c3-0f0dc1f1be75.png)
