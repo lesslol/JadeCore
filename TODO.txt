@@ -30,5 +30,18 @@
     - Need to add script for Lei Shen the Thunder King
     - Need to add script for Ra-den
 
-5) Mists of Pandaria dungeons:
+5) Siege of Orgrimmar:
+    - Need to rewrite Immerseus
+    - Need to rewrite Norushen
+    - Need to add script for Galakras
+    - Need to finish Iron Juggernaut script
+    - Need to add heroic mode for Kor'kron Dark Shamans
+    - Need to add script for General Nazgrim
+    - Need to add script for Malkorok
+    - Need to add script for Spoils of Pandaria
+    - Need to add script for Thok the Bloodthirsty
+    - Need to add script for Siegecrafter Blakcfuse
+    - Need to add script for Paragons of the Klaxxi 
+
+6) Mists of Pandaria dungeons:
     - Need to rewrite all of them
