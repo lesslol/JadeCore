@@ -56,8 +56,11 @@ The ability is cast roughly every 30 seconds.
 */
 
 /*
-	NM mode == 100%
-	HC mode == 80% Iron Tomb and Iron Prison are not coded
+	10 NM mode == 100%
+	10 HC mode == 100%
+
+	25 NM mode - not tested
+	25 HC mode - not tested
 */
 
 #include "siege_of_orgrimmar.h"
@@ -273,6 +276,7 @@ class boss_earthbreaker_haromm : public CreatureScript
 						break;
 				}
 
+				me->SetReactState(ReactStates::REACT_DEFENSIVE);
 				me->SetHealth(me->GetMaxHealth());
 				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, me->GetMaxHealth());
 
@@ -558,6 +562,7 @@ class boss_wavebinder_kardris : public CreatureScript
 						break;
 				}
 
+				me->SetReactState(ReactStates::REACT_DEFENSIVE);
 				me->SetHealth(me->GetMaxHealth());
 				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, me->GetMaxHealth());
 
@@ -994,6 +999,8 @@ class npc_foul_slime : public CreatureScript
 						break;
 				}
 
+				me->SetReactState(ReactStates::REACT_AGGRESSIVE);
+
 				DoCast(me, SPELL_FOULNESS);
 			}
 
@@ -1042,6 +1049,7 @@ class npc_darkfang_and_bloodclaw : public CreatureScript
 						break;
 				}
 				me->setFaction(16);
+				me->SetReactState(ReactStates::REACT_DEFENSIVE);
 				events.Reset();
 			}
 
