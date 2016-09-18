@@ -10,3 +10,5 @@
 If you want to join our team you can just open issue requesting an invite and we will add you.
 
 This is GPL-based source so do whatever you want with it.
+
+# ![logo](http://radikal.ru][img]http://s014.radikal.ru/i328/1609/0d/fb65cd7faace.png)
