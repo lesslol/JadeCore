@@ -45,3 +45,52 @@
 
 6) Mists of Pandaria dungeons:
     - Need to rewrite all of them
+
+	
+Mists of Pandaria SmartAI Scripts TODO:
+
+Pandaria Zones:
+
+-- Dread Wastes
+-- Isle of Giants
+-- Isle of Thunder
+-- Krasarang Wilds
+-- Kun-Lai Summit
+-- The Jade Forest
+-- The Veiled Stair
+-- Timeless Isle
+-- Townlong Steppes
+-- Vale of Eternal Blossoms
+-- Valley of the Four Winds
+
+Pandaria Dungeons:
+
+-- Gate of the Setting Sun
+-- Mogu'shan Palace
+-- Scarlet Halls
+-- Scarlet Monastery
+-- Scholomance
+-- Shado-Pan Monastery
+-- Siege of Niuzao Temple
+-- Stormstout Brewery
+-- Temple of the Jade Serpent
+
+Pandaria Raids:
+
+-- Heart of Fear
+-- Mogu'shan Vaults
+-- Siege of Orgrimmar
+-- Terrace of Endless Spring
+-- Throne of Thunder
+
+Classic Raids:
+
+-- Blackwing Lair
+-- Ruins of Ahn'Qiraj
+-- Temple of Ahn'Qiraj
+
+The Maelstrom Zones:
+
+-- Deepholm
+-- The Lost Isles
+-- The Wandering Isle
