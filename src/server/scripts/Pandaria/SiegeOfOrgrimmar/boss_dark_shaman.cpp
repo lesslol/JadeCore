@@ -97,6 +97,11 @@ enum Spells
 	SPELL_FALLING_ASH_VISUAL	= 143986, // Visual falling
 	SPELL_FALLING_ASH_EXPLOSION	= 143987, // Damage
 
+	// Heroic mode spells
+	SPELL_IRON_TOMB				= 144334,
+	SPELL_IRON_PRISON			= 144330,
+	SPELL_IRON_PRISON_DAMAGE	= 144331,
+
 	// Darkfang and Bloodclaw spells
 	SPELL_SWIPE					= 144303,
 	SPELL_REND					= 144304,
@@ -195,6 +200,11 @@ enum Creatures
 	CREATURE_ASHFLARE_TOTEM		= 71917,
 	CREATURE_POISONMIST_TOTEM	= 71915,
 	CREATURE_RUSTED_IRON_TOTEM	= 71918,
+};
+
+enum Gameobjects
+{
+	GOBJECT_IRON_TOMB	= 220864,
 };
 
 #define FLOOR_Z 21.0f
@@ -415,11 +425,11 @@ class boss_earthbreaker_haromm : public CreatureScript
 
 					case EVENT_TOXIC_MIST:
 					{
-						if (Unit* target_one = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 100.0f, true))
+						if (Unit* target_one = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 40.0f, true))
 						{
 							me->CastSpell(target_one, SPELL_TOXIC_MIST);
 						}
-						if (Unit* target_two = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 100.0f, true))
+						if (Unit* target_two = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 40.0f, true))
 						{
 							me->CastSpell(target_two, SPELL_TOXIC_MIST);
 						}
@@ -429,7 +439,7 @@ class boss_earthbreaker_haromm : public CreatureScript
 
 					case EVENT_FOUL_STREAM:
 					{
-						if (Unit* target = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 100.0f, true))
+						if (Unit* target = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 40.0f, true))
 						{
 							me->CastSpell(target, SPELL_TOXIC_MIST);
 						}
@@ -474,6 +484,10 @@ class boss_earthbreaker_haromm : public CreatureScript
 
 					case EVENT_IRON_TOMB:
 					{
+						if (Unit* target = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 40.0f, true))
+						{
+							me->CastSpell(target, SPELL_IRON_TOMB);
+						}
 						events.ScheduleEvent(EVENT_IRON_TOMB, 30000);
 						break;
 					}
@@ -695,7 +709,7 @@ class boss_wavebinder_kardris : public CreatureScript
 
 					case EVENT_TOXIC_STORM:
 					{
-						if (Unit* target = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 100.0f, true))
+						if (Unit* target = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 40.0f, true))
 						{
 							me->CastSpell(target, SPELL_TOXIC_STORM);
 						}
@@ -732,6 +746,10 @@ class boss_wavebinder_kardris : public CreatureScript
 
 					case EVENT_IRON_PRISON:
 					{
+						if (Unit* target = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 40.0f, true))
+						{
+							me->CastSpell(target, SPELL_IRON_PRISON);
+						}
 						events.ScheduleEvent(EVENT_IRON_PRISON, 30000);
 						break;
 					}
@@ -1270,6 +1288,75 @@ class spell_toxic_storm : public SpellScriptLoader
 		};
 };
 
+// 144331 - Iron Prison
+class spell_iron_prison : public SpellScriptLoader
+{
+	public:
+		spell_iron_prison() : SpellScriptLoader("spell_iron_prison") { }
+
+		class spell_iron_prison_SpellScript : public SpellScript
+		{
+			PrepareSpellScript(spell_iron_prison_SpellScript);
+
+			void HandleOnHit()
+			{
+
+				if (Unit* target = GetHitUnit())
+				{
+					uint32 damage = target->GetHealth();
+
+					if (target->GetTypeId() == TYPEID_PLAYER)
+						SetHitDamage(damage);
+				}
+			}
+
+			void Register()
+			{
+				OnHit += SpellHitFn(spell_iron_prison_SpellScript::HandleOnHit);
+			}
+		};
+
+		SpellScript* GetSpellScript() const
+		{
+			return new spell_iron_prison_SpellScript();
+		}
+};
+
+// 144334 - Iron Tomb
+class spell_iron_tomb : public SpellScriptLoader
+{
+	public:
+		spell_iron_tomb() : SpellScriptLoader("spell_iron_tomb") { }
+
+		class spell_iron_tomb_SpellScript : public SpellScript
+		{
+			PrepareSpellScript(spell_iron_tomb_SpellScript);
+
+			void HandleOnCast()
+			{
+				if (Unit* caster = GetCaster())
+					if (Unit* target = GetHitUnit())
+					{
+						float posX = target->GetPositionX();
+						float posY = target->GetPositionY();
+						float posZ = target->GetPositionZ();
+						float angl = target->GetOrientation();
+
+						caster->SummonGameObject(GOBJECT_IRON_TOMB, posX, posY, posZ, angl, 0, 0, 0, 0, TEMPSUMMON_MANUAL_DESPAWN);
+					}
+			}
+
+			void Register()
+			{
+				OnCast += SpellCastFn(spell_iron_tomb_SpellScript::HandleOnCast);
+			}
+
+			SpellScript* GetSpellScript() const
+			{
+				return new spell_iron_tomb_SpellScript();
+			}
+		};
+};
 
 void AddSC_boss_dark_shaman()
 {
@@ -1293,4 +1380,6 @@ void AddSC_boss_dark_shaman()
 	new spell_foul_stream();
 	new spell_foulness();
 	new spell_toxic_storm();
+	new spell_iron_prison();
+	new spell_iron_tomb();
 }
