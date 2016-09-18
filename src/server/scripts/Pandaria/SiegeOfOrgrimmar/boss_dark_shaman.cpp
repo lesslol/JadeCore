@@ -108,24 +108,28 @@ enum Spells
 	SPELL_RUSTED_IRON_TOTEM		= 144291,
 };
 
-enum Talks
+enum TalksHaromm
 {
 	// Earthbreaker Haromm
-	TALK_INTRO_HAROMM_ONE		= 1, // Storm! - First (39022)
-	TALK_INTRO_HAROMM_TWO		= 2, // And fire! - Third (39023)
-	TALK_INTRO_HAROMM_THREE		= 3, // Bend to our will! - Fourth - No Sound
-	TALK_INTRO_HAROMM_FOUR		= 4, // The True Horde takes what it wants! (39020)
-	TALK_SPELL_HAROMM_ONE		= 5, // Anguished water, stagnant and poisonous (39025)
-	TALK_DEATH_HAROMM			= 6, // The elements... What have we done... (39021)
-	TALK_KILL_HAROMM			= 7, // Your skull will endore my necklace! (39024)
+	TALK_INTRO_HAROMM_ONE		= 0, // Storm! - First (39022)
+	TALK_INTRO_HAROMM_TWO		= 1, // And fire! - Third (39023)
+	TALK_INTRO_HAROMM_THREE		= 2, // Bend to our will! - Fourth - No Sound
+	TALK_INTRO_HAROMM_FOUR		= 3, // The True Horde takes what it wants! (39020)
+	TALK_SPELL_HAROMM_ONE		= 4, // Anguished water, stagnant and poisonous! (39025)
+	TALK_DEATH_HAROMM			= 5, // The elements... What have we done... (39021)
+	TALK_KILL_HAROMM			= 6, // Your skull will endore my necklace! (39024)
+};
+
+enum TalksKardris
+{
 	// Wavebinder Kardris
-	TALK_INTRO_KARDRIS_ONE		= 8, // Earth! - Second (39016)
-	TALK_INTRO_KARDRIS_TWO		= 9, // Bend to our will! - Fourth - No Sound
-	TALK_INTRO_KARDRIS_THREE	= 10, // We do not ask elements for aid! (39014)
-	TALK_SPELL_KARDRIS_ONE		= 11, // Tortured wind, stale and toxic (39018)
-	TALK_SPELL_KARDRIS_TWO		= 12, // Long dead fire, black and smouldering (39019)
-	TALK_DEATH_KARDRIS			= 13, // I can hear them... No longer... (39015)
-	TALK_KILL_KARDRIS			= 14, // Ha Ha Ha, my wolf will feast on your blood (39017)
+	TALK_INTRO_KARDRIS_ONE		= 0, // Earth! - Second (39016)
+	TALK_INTRO_KARDRIS_TWO		= 1, // Bend to our will! - Fourth - No Sound
+	TALK_INTRO_KARDRIS_THREE	= 2, // We do not ask elements for aid! (39014)
+	TALK_SPELL_KARDRIS_ONE		= 3, // Tortured wind, stale and toxic (39018)
+	TALK_SPELL_KARDRIS_TWO		= 4, // Long dead fire, black and smouldering (39019)
+	TALK_DEATH_KARDRIS			= 5, // I can hear them... No longer... (39015)
+	TALK_KILL_KARDRIS			= 6, // Ha Ha Ha, my wolf will feast on your blood (39017)
 };
 
 enum Events
