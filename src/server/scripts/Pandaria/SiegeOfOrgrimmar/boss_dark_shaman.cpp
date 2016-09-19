@@ -234,6 +234,17 @@ class boss_earthbreaker_haromm : public CreatureScript
 			boss_earthbreaker_harommAI(Creature* creature) : BossAI(creature, DATA_DARK_SHAMANS)
 			{
 				m_Instance = creature->GetInstanceScript();
+				me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_KNOCK_BACK, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_GRIP, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_STUN, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_FEAR, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_ROOT, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_FREEZE, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_POLYMORPH, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_HORROR, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_SAPPED, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_CHARM, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_DISORIENTED, true);
 			}
 
 			InstanceScript* m_Instance;
@@ -520,6 +531,17 @@ class boss_wavebinder_kardris : public CreatureScript
 			boss_wavebinder_kardrisAI(Creature* creature) : BossAI(creature, DATA_DARK_SHAMANS)
 			{
 				m_Instance = creature->GetInstanceScript();
+				me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_KNOCK_BACK, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_GRIP, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_STUN, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_FEAR, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_ROOT, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_FREEZE, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_POLYMORPH, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_HORROR, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_SAPPED, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_CHARM, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_DISORIENTED, true);
 			}
 
 			InstanceScript* m_Instance;
@@ -737,7 +759,7 @@ class boss_wavebinder_kardris : public CreatureScript
 						float O = me->GetOrientation();
 
 						Position pos = { urand(posX-30.0f, posX+30.0f), urand(posY-30.0f, posY+30.0f), posZ+15.0f, O };
-						me->SummonCreature(123, pos, TEMPSUMMON_MANUAL_DESPAWN);
+						// me->SummonCreature(CREATURE_FALLING_ASH, pos, TEMPSUMMON_MANUAL_DESPAWN);
 
 						events.ScheduleEvent(EVENT_FALLING_ASH, 30000);
 						break;
