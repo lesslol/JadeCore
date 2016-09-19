@@ -19,6 +19,8 @@
 
 4) Throne of Thunder:
     - Need to rewrite instance script
+    - Need to rewrite Council of Elders
+    - Need to rewrite Tortos
     - Need to rewrite Megaera
     - Need to rewrite Durumu the Forgotten
     - Need to rewrite Primordius
