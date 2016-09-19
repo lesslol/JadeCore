@@ -1034,7 +1034,7 @@ void AddSC_boss_sha_of_fear();
 
 // MoP raids - Throne of Thunder
 void AddSC_boss_horridon();
-void AddSC_boss_jinrokh();
+void AddSC_boss_jin_rokh_breaker();
 void AddSC_boss_ji_kun();
 void AddSC_boss_durumu();
 void AddSC_megaera();
@@ -2058,7 +2058,7 @@ void AddPandarieScripts()
 
 	// Pandaria Raids - Throne of Thunder
 	AddSC_boss_horridon();
-	AddSC_boss_jinrokh();
+	AddSC_boss_jin_rokh_breaker();
 	AddSC_boss_ji_kun();
 	AddSC_boss_durumu();
 	AddSC_megaera();

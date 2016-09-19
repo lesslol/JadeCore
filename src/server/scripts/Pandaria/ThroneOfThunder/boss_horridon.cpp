@@ -175,54 +175,54 @@ enum Events
     // Boss
 
     EVENT_TRIPLE_PUNCTURE        = 1, // 10 secs from combat start, 11 seconds after that.
-    EVENT_DOUBLE_SWIPE,               // 16 - 17 secs from combat start, 17 seconds after that
-    EVENT_HORRIDON_CHARGE,            // 31 - 35 secs from combat start, 50 - 60 seconds after that.
-    EVENT_DOUBLE_SWIPE_CHARGE,
-    EVENT_DIRE_CALL,                  // HEROIC only. Every 62 - 70 seconds.
+    EVENT_DOUBLE_SWIPE           = 2, // 16 - 17 secs from combat start, 17 seconds after that
+    EVENT_HORRIDON_CHARGE        = 3, // 31 - 35 secs from combat start, 50 - 60 seconds after that.
+    EVENT_DOUBLE_SWIPE_CHARGE    = 4,
+    EVENT_DIRE_CALL              = 5, // HEROIC only. Every 62 - 70 seconds.
 
     // Taken from lua: "So it goes, door, 18.91 seconds later, 1 add jumps down. 18.91 seconds later, next 2 drop down. 18.91 seconds later, dinomancer drops down, then 56.75 seconds later, next door starts.".
     // "When the Zandalari Dinomancer transforms (at 50%), it drops its Orb of Control. A player can interact with the orb to temporarily dominate Horridon's mind, forcing the beast to charge into a tribal door."
 
-    EVENT_CALL_ADDS,                  // 18.9 secs from combat start, and afterwards. Open add door.
-    EVENT_CALL_NEW_ADDS,              // Mostly 2.4 seconds after new door opens, so 113.5 seconds after that.
-    EVENT_CALL_JALAK,                 // Jalak jumps in arena and engages, 143 seconds after all 4 add doors opened and closed.
+    EVENT_CALL_ADDS              = 6, // 18.9 secs from combat start, and afterwards. Open add door.
+    EVENT_CALL_NEW_ADDS          = 7, // Mostly 2.4 seconds after new door opens, so 113.5 seconds after that.
+    EVENT_CALL_JALAK             = 8, // Jalak jumps in arena and engages, 143 seconds after all 4 add doors opened and closed.
 
-    EVENT_BROKE_DOOR,                 // Charged door.
+    EVENT_BROKE_DOOR             = 9, // Charged door.
 
-    EVENT_BERSERK,                    // 12 minutes into the fight.
+    EVENT_BERSERK                = 10, // 12 minutes into the fight.
 
     // Adds
 
-    EVENT_STONE_GAZE,
-    EVENT_BLAZING_SUNLIGHT,
-    EVENT_SAND_TRAP,
+    EVENT_STONE_GAZE             = 11,
+    EVENT_BLAZING_SUNLIGHT       = 12,
+    EVENT_SAND_TRAP              = 13,
 
-    EVENT_RENDING_CHARGE,
-    EVENT_VENOM_BOLT_VOLLEY,
-    EVENT_EFFUSION_AND_POISON,
+    EVENT_RENDING_CHARGE         = 14,
+    EVENT_VENOM_BOLT_VOLLEY      = 15,
+    EVENT_EFFUSION_AND_POISON    = 16,
 
-    EVENT_MORTAL_STRIKE_W,
-    EVENT_FROZEN_ORB,
+    EVENT_MORTAL_STRIKE_W        = 17,
+    EVENT_FROZEN_ORB             = 18,
 
-    EVENT_FIREBALL,
-    EVENT_SWIPE,
-    EVENT_CHAIN_LIGHTNING,
-    EVENT_HEX_OF_CONFUSION,
-    EVENT_LIGHTNING_NOVA_TOTEM,
+    EVENT_FIREBALL               = 19,
+    EVENT_SWIPE                  = 20,
+    EVENT_CHAIN_LIGHTNING        = 21,
+    EVENT_HEX_OF_CONFUSION       = 22,
+    EVENT_LIGHTNING_NOVA_TOTEM   = 23,
 
-    EVENT_DINO_MENDING,
+    EVENT_DINO_MENDING           = 24,
 
-    EVENT_INTRO_1,
-    EVENT_INTRO_2,
-    EVENT_INTRO_3,
+    EVENT_INTRO_1                = 25,
+    EVENT_INTRO_2                = 26,
+    EVENT_INTRO_3                = 27,
 
-    EVENT_HORRIDON_MOVE,
-    EVENT_HORRIDON_ENGAGE,
+    EVENT_HORRIDON_MOVE          = 28,
+    EVENT_HORRIDON_ENGAGE        = 29,
 
-    EVENT_JALAK_JUMP,
-    EVENT_ENGAGE,
-    EVENT_BESTIAL_CRY,
-    EVENT_RAMPAGE
+    EVENT_JALAK_JUMP             = 30,
+    EVENT_ENGAGE                 = 31,
+    EVENT_BESTIAL_CRY            = 32,
+    EVENT_RAMPAGE                = 33,
 };
 
 enum Timers
@@ -332,11 +332,11 @@ enum Phases
 {
     PHASE_NONE                  = 0,
 
-    PHASE_FARRAKI,
-    PHASE_GURUBASHI,
-    PHASE_DRAKKARI,
-    PHASE_AMANI,
-    PHASE_JALAK
+    PHASE_FARRAKI               = 1,
+    PHASE_GURUBASHI             = 2,
+    PHASE_DRAKKARI              = 3,
+    PHASE_AMANI                 = 4,
+    PHASE_JALAK                 = 5,
 };
 
 enum Npcs
@@ -2148,8 +2148,6 @@ class npc_war_god_jalak : public CreatureScript
 
 /*** Spells ***/
 
-// Adds
-
 // Rending Charge - 136653
 class spell_rending_charge_horridon : public SpellScriptLoader
 {
@@ -2276,6 +2274,7 @@ class spell_dino_mending_horridon : public SpellScriptLoader
 void AddSC_boss_horridon()
 {
     new boss_horridon();
+
     new npc_direhorn_spirit_horridon();
     new npc_farraki_skirmisher_amani_protector();
     new npc_sul_lithuz_stonegazer();
@@ -2294,6 +2293,7 @@ void AddSC_boss_horridon()
     new npc_lightning_nova_totem();
     new npc_zandalari_dinomancer_horridon();
     new npc_war_god_jalak();
+
     new spell_rending_charge_horridon();
     new spell_venom_bolt_volley_horridon();
     new spell_dino_mending_horridon();
