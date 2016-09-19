@@ -3,56 +3,56 @@
 */
 
 /*
-Earthbreaker Haromm - Spells
-
-Earthbreaker Haromm's basic ability is Froststorm Strike Froststorm Strike. 
-This deals high Frost damage to Haromm's tank, and affects them with a stacking debuff 
-that causes them to take 25% increased damage from Froststorm Strike for 30 seconds. 
-This debuff stacks. This ability requires a tank switch.
-
-When reaching 85% health, Haromm gains Toxic Mist Toxic Mist. 
-This is an undispellable 30-second DoT, cast on random raid members, that deals Nature damage 
-every 3 seconds. With each tick, the player also gains a stack of a debuff that increases their 
-Nature damage taken by 10%. This debuff wears off at the same time as the DoT. 
-The damage of Toxic Mist goes through all immunities.
-
-When reaching 65% health, Haromm gains Foul Stream Foul Stream. 
-This ability targets an area on the ground, in the shape of a long, wide line. 
-The area is marked with a green effect, and a few seconds later, any players standing 
-there take high Nature damage. Haromm casts Foul Stream roughly every 30 seconds.
-
-When reaching 50% health, Haromm gains Ashen Wall Ashen Wall. 
-This summons a wall of stationary Ash Elementals that attack players who are in 
-their melee range for very high amounts of damage. The Elementals cannot be 
-tanked or killed, and they last for a very long time (possibly indefinitely). 
-The ability is cast roughly every 30 seconds.
+	Earthbreaker Haromm - Spells
+	
+	Earthbreaker Haromm's basic ability is Froststorm Strike Froststorm Strike. 
+	This deals high Frost damage to Haromm's tank, and affects them with a stacking debuff 
+	that causes them to take 25% increased damage from Froststorm Strike for 30 seconds. 
+	This debuff stacks. This ability requires a tank switch.
+	
+	When reaching 85% health, Haromm gains Toxic Mist Toxic Mist. 
+	This is an undispellable 30-second DoT, cast on random raid members, that deals Nature damage 
+	every 3 seconds. With each tick, the player also gains a stack of a debuff that increases their 
+	Nature damage taken by 10%. This debuff wears off at the same time as the DoT. 
+	The damage of Toxic Mist goes through all immunities.
+	
+	When reaching 65% health, Haromm gains Foul Stream Foul Stream. 
+	This ability targets an area on the ground, in the shape of a long, wide line. 
+	The area is marked with a green effect, and a few seconds later, any players standing 
+	there take high Nature damage. Haromm casts Foul Stream roughly every 30 seconds.
+	
+	When reaching 50% health, Haromm gains Ashen Wall Ashen Wall. 
+	This summons a wall of stationary Ash Elementals that attack players who are in 
+	their melee range for very high amounts of damage. The Elementals cannot be 
+	tanked or killed, and they last for a very long time (possibly indefinitely). 
+	The ability is cast roughly every 30 seconds.
 */
 
 /*
-Wavebinder Kardris - Spells
-
-Wavebinder Kardris' basic ability is Froststorm Bolt Froststorm Bolt. 
-This is an uninterruptible nuke that Kardris regularly casts on his tank. 
-It deals a very high amount of Frost damage.
-
-When reaching 85% health, Kardris gains Toxic Storm Toxic Storm. 
-This ability summons a cloud that moves slowly around the arena, 
-dealing damage to any players who are under it. Moreover, the cloud regularly 
-creates Toxic Tornadoes, which also move around the arena, dealing damage to any 
-players they touch, and knocking them up slightly. The ability is cast roughly every 30 seconds, 
-and each cloud lasts for about 90 seconds, meaning that it eventually leads to spacial constraints.
-
-When reaching 65% health, Kardris gains Foul Geyser Foul Geyser. 
-Kardris channels Foul Geyser for 8 seconds, dealing damage to any players 
-around him and summoning many adds called Foul Slimes. The Foul Slime adds 
-can be tanked, and they have an aura that constantly deals Nature damage to 
-any players within 3 yards of them. Foul Geyser is cast roughly every 30 seconds.
-
-When reaching 50% health, Kardris gains Falling Ash Falling Ash. 
-This ability targets a large area on the ground, marking it with a 
-red effect. About 15 seconds later, a fiery projectile will land in this area, 
-dealing lethal damage to anyone inside it, as well as a moderate amount of raid-wide Fire damage. 
-The ability is cast roughly every 30 seconds.
+	Wavebinder Kardris - Spells
+	
+	Wavebinder Kardris' basic ability is Froststorm Bolt Froststorm Bolt. 
+	This is an uninterruptible nuke that Kardris regularly casts on his tank. 
+	It deals a very high amount of Frost damage.
+	
+	When reaching 85% health, Kardris gains Toxic Storm Toxic Storm. 
+	This ability summons a cloud that moves slowly around the arena, 
+	dealing damage to any players who are under it. Moreover, the cloud regularly 
+	creates Toxic Tornadoes, which also move around the arena, dealing damage to any 
+	players they touch, and knocking them up slightly. The ability is cast roughly every 30 seconds, 
+	and each cloud lasts for about 90 seconds, meaning that it eventually leads to spacial constraints.
+	
+	When reaching 65% health, Kardris gains Foul Geyser Foul Geyser. 
+	Kardris channels Foul Geyser for 8 seconds, dealing damage to any players 
+	around him and summoning many adds called Foul Slimes. The Foul Slime adds 
+	can be tanked, and they have an aura that constantly deals Nature damage to 
+	any players within 3 yards of them. Foul Geyser is cast roughly every 30 seconds.
+	
+	When reaching 50% health, Kardris gains Falling Ash Falling Ash. 
+	This ability targets a large area on the ground, marking it with a 
+	red effect. About 15 seconds later, a fiery projectile will land in this area, 
+	dealing lethal damage to anyone inside it, as well as a moderate amount of raid-wide Fire damage. 
+	The ability is cast roughly every 30 seconds.
 */
 
 /*
