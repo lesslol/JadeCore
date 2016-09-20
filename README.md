@@ -18,5 +18,5 @@ If you want to join our team you can just open issue requesting an invite and we
 This is GPL-based source so do whatever you want with it.
 
 
-           ![135586](https://cloud.githubusercontent.com/assets/812439/18683371/a4ef8858-7f78-11e6-83a7-0fb3302f1314.jpg)
+![135586](https://cloud.githubusercontent.com/assets/812439/18683371/a4ef8858-7f78-11e6-83a7-0fb3302f1314.jpg)
 
