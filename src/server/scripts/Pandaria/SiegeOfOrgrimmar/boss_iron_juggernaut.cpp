@@ -165,6 +165,7 @@ class boss_iron_juggernaut : public CreatureScript
 				_Reset();
 				events.Reset();
 				summons.DespawnAll();
+				me->setFaction(16);
 
 				switch (me->GetMap()->GetDifficulty())
 				{
@@ -195,8 +196,12 @@ class boss_iron_juggernaut : public CreatureScript
 				}
 			}
 
-			void EnterCombat()
+			void EnterCombat(Unit* /*who*/)
 			{
+				_EnterCombat();
+
+				m_Instance->SendEncounterUnit(ENCOUNTER_FRAME_ENGAGE, me);
+
 				events.ScheduleEvent(EVENT_FLAME_VENTS, 10000); // TODO: Timer and Spell
 				events.ScheduleEvent(EVENT_BORER_DRILL, urand(18000, 20000));
 				events.ScheduleEvent(EVENT_CRAWLER_MINES, urand(19000, 21000)); // TODO: Spell/Creature/Whatever
@@ -217,6 +222,8 @@ class boss_iron_juggernaut : public CreatureScript
 					m_Instance->SetBossState(DATA_IRON_JUGGERNAUT, DONE);
 				}
 
+				m_Instance->SendEncounterUnit(ENCOUNTER_FRAME_DISENGAGE, me);
+
 				_JustDied();
 			}
 
@@ -225,9 +232,10 @@ class boss_iron_juggernaut : public CreatureScript
 				if (!UpdateVictim())
 					return;
 				
-				if (me->HasUnitState(UNIT_STATE_CASTING) && phase != 2)
+				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
 				
+				events.Update(diff);
 
 				switch (events.ExecuteEvent())
 				{
@@ -266,7 +274,6 @@ class boss_iron_juggernaut : public CreatureScript
 							if (Unit* target = me->getVictim())
 							{
 								me->CastSpell(target, SPELL_FLAME_VENTS);
-								me->CastSpell(target, SPELL_IGNITE_ARMOR);
 							}
 
 							events.ScheduleEvent(EVENT_FLAME_VENTS, 10000); // TODO: Timer and Spell
@@ -280,14 +287,15 @@ class boss_iron_juggernaut : public CreatureScript
 					{
 						if (phase == 1)
 						{
-							float posX = me->GetPositionX();
-							float posY = me->GetPositionY();
-							float ang = me->GetOrientation();
-							float posZ = me->GetPositionZ();
-							float pX = urand(posX-30.0f, posX+30.0f);
-							float pY = urand(posY-30.0f, posY+30.0f);
+							//float posX = me->GetPositionX();
+							//float posY = me->GetPositionY();
+							//float ang = me->GetOrientation();
+							//float posZ = me->GetPositionZ();
+							//float pX = urand(posX-30.0f, posX+30.0f);
+							//float pY = urand(posY-30.0f, posY+30.0f);
 
-							me->SummonCreature(71906, pX, pY, posZ, ang, TEMPSUMMON_MANUAL_DESPAWN);							
+							//me->SummonCreature(71906, pX, pY, posZ, ang, TEMPSUMMON_MANUAL_DESPAWN);
+							DoCast(SPELL_BORER_DRILL);
 
 							events.ScheduleEvent(EVENT_BORER_DRILL, urand(18000, 20000));
 							break;
@@ -327,20 +335,20 @@ class boss_iron_juggernaut : public CreatureScript
 
 							if (positiveX)
 							{
-								newX = urand(positionX-10.0f, positionX-30.0f);
+								newX = urand(positionX-10.0f, positionX-20.0f);
 							}
 							else if (!positiveX)
 							{
-								newX = urand(positionX+10.0f, positionX+30.0f);
+								newX = urand(positionX+10.0f, positionX+20.0f);
 							}
 
 							if (positiveY)
 							{
-								newY = urand(positionY-10.0f, positionY-30.0f);
+								newY = urand(positionY-10.0f, positionY-20.0f);
 							}
 							else if (!positiveY)
 							{
-								newY = urand(positionY+10.0f, positionY+30.0f);
+								newY = urand(positionY+10.0f, positionY+20.0f);
 							}
 
 							Position crawlers = { newX, newY, positionZ, orientation };
@@ -348,8 +356,9 @@ class boss_iron_juggernaut : public CreatureScript
 							for (int i = 0; i <= 3; i++)
 								me->SummonCreature(CREATURE_CRAWLER_MINE, crawlers, TEMPSUMMON_MANUAL_DESPAWN);
 						}
-						else
-							break;
+
+						events.ScheduleEvent(EVENT_CRAWLER_MINES, urand(19000, 21000));
+						break;
 					}
 
 					/*case EVENT_MORTAR_CANNON:
@@ -440,11 +449,11 @@ class boss_iron_juggernaut : public CreatureScript
 							me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_DISABLE_MOVE);
 							me->AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
 
-							events.ScheduleEvent(EVENT_SEISMIC_ACTIVITY, 1);
-							events.ScheduleEvent(EVENT_SHOCK_PULSE, 1);
-							events.ScheduleEvent(EVENT_DEMOLISHER_CANNONS, 1);
-							events.ScheduleEvent(EVENT_CUTTER_LASER, 1);
-							events.ScheduleEvent(EVENT_EXPLOSIVE_TAR, 1);
+							events.ScheduleEvent(EVENT_SEISMIC_ACTIVITY, 0);
+							events.ScheduleEvent(EVENT_SHOCK_PULSE, 0);
+							events.ScheduleEvent(EVENT_DEMOLISHER_CANNONS, urand(10000, 15000));
+							events.ScheduleEvent(EVENT_CUTTER_LASER, urand(5000, 10000));
+							events.ScheduleEvent(EVENT_EXPLOSIVE_TAR, 30000);
 							events.ScheduleEvent(EVENT_CRAWLER_MINES, urand(19000, 21000));
 
 							events.ScheduleEvent(EVENT_PHASE_ONE, 60000);
@@ -458,23 +467,8 @@ class boss_iron_juggernaut : public CreatureScript
 					{
 						if (phase == 2)
 						{
-							me->CastSpell(me, SPELL_SEISMIC_ACTIVITY_TRIGGER);
-							me->CastSpell(me, SPELL_SEISMIC_ACTIVITY_DAMAGE);
+							DoCast(SPELL_SEISMIC_ACTIVITY_TRIGGER);
 
-							events.ScheduleEvent(EVENT_SEISMIC_ACTIVITY_DAMAGE, 1000);
-							break;
-						}
-						else
-							break;
-					}
-
-					case EVENT_SEISMIC_ACTIVITY_DAMAGE:
-					{
-						if (phase == 2)
-						{
-							me->CastSpell(me, SPELL_SEISMIC_ACTIVITY_DAMAGE);
-
-							events.ScheduleEvent(EVENT_SEISMIC_ACTIVITY_DAMAGE, 1000);
 							break;
 						}
 						else
@@ -485,9 +479,9 @@ class boss_iron_juggernaut : public CreatureScript
 					{
 						if (phase == 2)
 						{
-							me->CastSpell(me, SPELL_SHOCK_PULSE);
+							DoCast(SPELL_SHOCK_PULSE);
 
-							events.ScheduleEvent(EVENT_SHOCK_PULSE, 1);
+							events.ScheduleEvent(EVENT_SHOCK_PULSE, 5000);
 							break;
 						}
 						else
@@ -503,7 +497,7 @@ class boss_iron_juggernaut : public CreatureScript
 								me->CastSpell(target, SPELL_DEMOLISHER_CANNON);
 							}
 
-							events.ScheduleEvent(EVENT_DEMOLISHER_CANNONS, 1);
+							events.ScheduleEvent(EVENT_DEMOLISHER_CANNONS, urand(10000, 15000));
 							break;
 						}
 						else
@@ -519,7 +513,7 @@ class boss_iron_juggernaut : public CreatureScript
 								me->CastSpell(target, SPELL_CUTTER_LASER);
 							}
 
-							events.ScheduleEvent(EVENT_CUTTER_LASER, 1);
+							events.ScheduleEvent(EVENT_CUTTER_LASER, urand(5000, 10000));
 							break;
 						}
 						else
@@ -535,7 +529,7 @@ class boss_iron_juggernaut : public CreatureScript
 								me->CastSpell(target, SPELL_EXPLOSIVE_TAR);
 							}
 
-							events.ScheduleEvent(EVENT_EXPLOSIVE_TAR, 1);
+							events.ScheduleEvent(EVENT_EXPLOSIVE_TAR, 30000);
 							break;
 						}
 						else
@@ -614,7 +608,7 @@ class npc_crawler_mine : public CreatureScript
 				{
 					case EVENT_CRAWLER_MINE_DETONATING:
 					{
-						me->CastSpell(me, SPELL_CRAWLER_MINE_BLAST, true);
+						DoCast(SPELL_CRAWLER_MINE_BLAST);
 						me->DespawnOrUnsummon(0);
 						break;
 					}
@@ -627,7 +621,7 @@ class npc_crawler_mine : public CreatureScript
 			return new npc_crawler_mineAI(creature);
 		}
 };
-
+/*
 // 71906 - Borer Drill target
 class npc_borer_drill : public CreatureScript
 {
@@ -645,7 +639,7 @@ class npc_borer_drill : public CreatureScript
 
 			void Reset() override
 			{
-				me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_IMMUNE_TO_PC);
+				me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
 
 				me->setFaction(16);
 				events.ScheduleEvent(EVENT_BORER_DRILL_DOT, 1);
@@ -656,6 +650,8 @@ class npc_borer_drill : public CreatureScript
 				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
 
+				events.Update(diff);
+
 				switch (events.ExecuteEvent())
 				{
 					case EVENT_BORER_DRILL_DOT:
@@ -663,11 +659,8 @@ class npc_borer_drill : public CreatureScript
 						std::list<Player*> pl_list;
 						me->GetPlayerListInGrid(pl_list, 9.0f);
 
-						if (!pl_list.empty())
-						{
-							Unit* target;
-							me->CastSpell(target, SPELL_BORER_DRILL_DOT);
-						}
+						for (std::list<Player*>::iterator iter = pl_list.begin(); iter != pl_list.end(); ++iter)
+							DoCast(*iter, SPELL_BORER_DRILL_DOT);
 
 						me->CastSpell(me, SPELL_BORER_DRILL);
 
@@ -682,38 +675,7 @@ class npc_borer_drill : public CreatureScript
 			return new npc_borer_drillAI(creature);
 		}
 };
-
-// 144218
-class spell_borer_drill_dot : public SpellScriptLoader
-{
-	public:
-		spell_borer_drill_dot() : SpellScriptLoader("spell_borer_drill_dot") { }
-
-		class spell_borer_drill_dot_SpellScript : public SpellScript
-		{
-			PrepareSpellScript(spell_borer_drill_dot_SpellScript);
-
-			void HandleDamage(SpellEffIndex /*effIndex*/)
-			{
-				if (Unit* caster = GetCaster())
-				{
-					int32 damage = 75000;
-					SetHitDamage(damage);
-				}
-			}
-
-			void Register()
-			{
-				OnEffectHitTarget += SpellEffectFn(spell_borer_drill_dot_SpellScript::HandleDamage, EFFECT_0, SPELL_EFFECT_SCHOOL_DAMAGE);
-			}
-		};
-
-		SpellScript* GetSpellScript() const
-		{
-			return new spell_borer_drill_dot_SpellScript();
-		}
-};
-
+*/
 void AddSC_boss_iron_juggernaut()
 {
 	// Boss
@@ -721,8 +683,7 @@ void AddSC_boss_iron_juggernaut()
 
 	// Creatures
 	new npc_crawler_mine();
-	new npc_borer_drill();
+	// new npc_borer_drill();
 
 	// Spells
-	new spell_borer_drill_dot();
 }

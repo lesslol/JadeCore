@@ -24,11 +24,9 @@ void AddSC_example_escort();
 void AddSC_example_gossip_codebox();
 void AddSC_example_misc();
 void AddSC_example_commandscript();
-void AddSC_DuelReset();
-void AddSC_fast_arena_start();
 
 // Customs
-void AddSC_event_april();
+
 
 // spells
 void AddSC_deathknight_spell_scripts();
@@ -1071,8 +1069,6 @@ void AddScripts()
 	AddBattlegroundScripts();
 	AddOutdoorPvPScripts();
 	AddCustomScripts();
-	AddSC_DuelReset();
-	AddSC_fast_arena_start();
 #endif
 }
 
@@ -2105,6 +2101,6 @@ void AddBattlegroundScripts()
 void AddCustomScripts()
 {
 #ifdef SCRIPTS
-	AddSC_event_april();
+	
 #endif
 }

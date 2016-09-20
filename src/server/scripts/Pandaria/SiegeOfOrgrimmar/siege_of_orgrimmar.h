@@ -64,6 +64,8 @@ enum eData
     DATA_EAST02								= 28,
     DATA_EAST03								= 29,
 
+	// Galakras
+
 	// Iron Juggernaut
 	DATA_IRON_JUGGERNAUT					= 30,
 
@@ -72,6 +74,10 @@ enum eData
 	DATA_DARK_SHAMANS_HEALTH				= 32,
 	DATA_EARTHBREAKER_HAROMM				= 33,
 	DATA_WAVEBINDER_KARDRIS					= 34,
+
+	// General Nazgrim
+
+	// 
 
 	// Garrosh Hellscream
     DATA_GARROSH_HELLSCREAM					= 35,
