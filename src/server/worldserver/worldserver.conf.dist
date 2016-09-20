@@ -1639,7 +1639,7 @@ ChatLevelReq.Say = 1
 #        Default:     1 - (Enabled)
 #                     0 - (Disabled)
 
-AllowPlayerCommands = 0
+AllowPlayerCommands = 1
 
 #
 #    PreserveCustomChannels
