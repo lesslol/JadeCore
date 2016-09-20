@@ -17,3 +17,5 @@ If you want to join our team you can just open issue requesting an invite and we
 
 This is GPL-based source so do whatever you want with it.
 
+Our Team: cybrann, Mysterium, cooler-SAI, Joslyn-Maddie
+
