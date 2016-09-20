@@ -203,6 +203,9 @@ enum Creatures
 	CREATURE_ASHFLARE_TOTEM		= 71917,
 	CREATURE_POISONMIST_TOTEM	= 71915,
 	CREATURE_RUSTED_IRON_TOTEM	= 71918,
+
+	CREATURE_DARKFANG			= 71921,
+	CREATURE_BLOODCLAW			= 71923,
 };
 
 enum Phases
@@ -220,6 +223,15 @@ enum Gameobjects
 };
 
 #define FLOOR_Z 21.0f
+
+/*
+void FallingAshPosition()
+{
+	InstanceScript* instance;
+
+	if (Creature* kardris = instance->instance->GetCreature(instance->GetData64(DATA_WAVEBINDER_KARDRIS))
+
+}*/
 
 static void DespawnCreaturesInArea(uint32 entry, WorldObject* object)
 {
@@ -240,7 +252,7 @@ class boss_earthbreaker_haromm : public CreatureScript
 
 		struct boss_earthbreaker_harommAI : public BossAI
 		{
-			boss_earthbreaker_harommAI(Creature* creature) : BossAI(creature, DATA_DARK_SHAMANS)
+			boss_earthbreaker_harommAI(Creature* creature) : BossAI(creature, DATA_EARTHBREAKER_HAROMM)
 			{
 				m_Instance = creature->GetInstanceScript();
 				me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_KNOCK_BACK, true);
@@ -297,15 +309,14 @@ class boss_earthbreaker_haromm : public CreatureScript
 				}
 
 				me->SetReactState(ReactStates::REACT_AGGRESSIVE);
-				me->SetHealth(me->GetMaxHealth());
-				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, me->GetMaxHealth());
+				
 
 				me->setFaction(16);
 			}
 
 			void DamageTaken(Unit* /*attacker*/, uint32& damage)
 			{
-				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, me->GetHealth() > damage ? me->GetHealth() - damage : 0);
+				
 			}
 
 			void JustReachedHome()
@@ -314,7 +325,7 @@ class boss_earthbreaker_haromm : public CreatureScript
 
 				if (m_Instance)
 				{
-					m_Instance->SetBossState(DATA_DARK_SHAMANS, FAIL);
+					m_Instance->SetBossState(DATA_EARTHBREAKER_HAROMM, FAIL);
 				}
 
 				int32 Creatures[9] =
@@ -332,6 +343,23 @@ class boss_earthbreaker_haromm : public CreatureScript
 
 				for (int i = 0; i <= 8; i++)
 					DespawnCreaturesInArea(Creatures[i], me);
+
+				int32 gobjects[1] =
+				{
+					GOBJECT_IRON_TOMB
+				};
+
+				if (Creature* Darkfang = me->FindNearestCreature(CREATURE_DARKFANG, 500.0f, true))
+					if (Creature* Bloodclaw = me->FindNearestCreature(CREATURE_BLOODCLAW, 500.0f, true))
+					{
+						Darkfang->AI()->Reset();
+						Darkfang->Respawn();
+						Darkfang->GetMotionMaster()->MovePoint(0, Darkfang->GetHomePosition().GetPositionX(), Darkfang->GetHomePosition().GetPositionY(), Darkfang->GetHomePosition().GetPositionZ());
+
+						Bloodclaw->AI()->Reset();
+						Bloodclaw->Respawn();
+						Bloodclaw->GetMotionMaster()->MovePoint(0, Bloodclaw->GetHomePosition().GetPositionX(), Bloodclaw->GetHomePosition().GetPositionY(), Bloodclaw->GetHomePosition().GetPositionZ());
+					}
 			}
 
 			void KilledUnit(Unit* who)
@@ -343,13 +371,19 @@ class boss_earthbreaker_haromm : public CreatureScript
 			void EnterCombat(Unit* /*who*/)
 			{
 				_EnterCombat();
-				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, me->GetMaxHealth());
-				m_Instance->SetBossState(DATA_DARK_SHAMANS, IN_PROGRESS);
+				
+				m_Instance->SendEncounterUnit(ENCOUNTER_FRAME_ENGAGE, me);
 
 				events.SetPhase(PHASE_ONE);
 				Talk(TALK_INTRO_HAROMM_ONE);
 				events.ScheduleEvent(EVENT_FROSTSTORM_STRIKE, 7000, 0, PHASE_ONE);
 				events.ScheduleEvent(EVENT_TALK_HAROMM_TWO, 4000, 0, PHASE_ONE);
+
+				if (me->GetMap()->IsHeroic())
+				{ 
+					DoCast(SPELL_RUSTED_IRON_TOTEM);
+					events.ScheduleEvent(EVENT_IRON_TOMB, 30000, 0, PHASE_ONE);
+				}
 			}
 
 			void JustDied(Unit* killer)
@@ -359,10 +393,8 @@ class boss_earthbreaker_haromm : public CreatureScript
 				Talk(TALK_DEATH_HAROMM);
 				if (m_Instance)
 				{
-					m_Instance->SetBossState(DATA_DARK_SHAMANS, DONE);
-				}
-
-				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, 0);
+					m_Instance->SetBossState(DATA_EARTHBREAKER_HAROMM, DONE);
+				}			
 
 				int32 Creatures[9] =
 				{
@@ -391,15 +423,6 @@ class boss_earthbreaker_haromm : public CreatureScript
 
 				events.Update(diff);
 
-				if (instance->GetData(DATA_DARK_SHAMANS_HEALTH) != 0)
-					me->SetHealth(instance->GetData(DATA_DARK_SHAMANS_HEALTH));
-
-				if (me->GetMap()->IsHeroic() && HealthBelowPct(95))
-				{
-					DoCast(SPELL_RUSTED_IRON_TOTEM);
-					events.ScheduleEvent(EVENT_IRON_TOMB, 1);
-				}
-
 				if (HealthBelowPct(85) && events.IsInPhase(PHASE_ONE))
 				{
 					events.Reset();
@@ -407,6 +430,9 @@ class boss_earthbreaker_haromm : public CreatureScript
 					events.SetPhase(PHASE_TWO);
 					events.RescheduleEvent(EVENT_FROSTSTORM_STRIKE, 7000, 0, PHASE_TWO);
 					events.ScheduleEvent(EVENT_TOXIC_MIST, 1000, 0, PHASE_TWO);
+
+					if (me->GetMap()->IsHeroic())
+						events.ScheduleEvent(EVENT_IRON_TOMB, 0, 30000, PHASE_TWO);
 				}
 
 				if (HealthBelowPct(65) && events.IsInPhase(PHASE_TWO))
@@ -417,6 +443,9 @@ class boss_earthbreaker_haromm : public CreatureScript
 					events.RescheduleEvent(EVENT_FROSTSTORM_STRIKE, 7000, 0, PHASE_THREE);
 					events.RescheduleEvent(EVENT_TOXIC_MIST, 30000, 0, PHASE_THREE);
 					events.ScheduleEvent(EVENT_FOUL_STREAM, 1000, 0, PHASE_THREE);
+
+					if (me->GetMap()->IsHeroic())
+						events.ScheduleEvent(EVENT_IRON_TOMB, 0, 30000, PHASE_THREE);
 				}
 
 				if (HealthBelowPct(50) && events.IsInPhase(PHASE_THREE))
@@ -425,19 +454,25 @@ class boss_earthbreaker_haromm : public CreatureScript
 					DoCast(SPELL_ASHFLARE_TOTEM);
 					events.SetPhase(PHASE_FOUR);
 					events.RescheduleEvent(EVENT_FROSTSTORM_STRIKE, 7000, 0, PHASE_FOUR);
-					events.RescheduleEvent(EVENT_TOXIC_MIST, 30000, 0, PHASE_FOUR);
+					events.RescheduleEvent(EVENT_TOXIC_MIST, 25000, 0, PHASE_FOUR);
 					events.RescheduleEvent(EVENT_FOUL_STREAM, 30000, 0, PHASE_FOUR);
 					events.ScheduleEvent(EVENT_ASHEN_WALL, 1000, 0, PHASE_FOUR);
+
+					if (me->GetMap()->IsHeroic())
+						events.ScheduleEvent(EVENT_IRON_TOMB, 0, 30000, PHASE_FOUR);
 				}
 
 				if (HealthBelowPct(25) && events.IsInPhase(PHASE_FOUR))
 				{
 					events.SetPhase(PHASE_FIVE);
 					events.RescheduleEvent(EVENT_FROSTSTORM_STRIKE, 7000, 0, PHASE_FIVE);
-					events.RescheduleEvent(EVENT_TOXIC_MIST, 30000, 0, PHASE_FIVE);
-					events.RescheduleEvent(EVENT_FOUL_STREAM, 30000, 0, PHASE_FIVE);
+					events.RescheduleEvent(EVENT_TOXIC_MIST, 20000, 0, PHASE_FIVE);
+					events.RescheduleEvent(EVENT_FOUL_STREAM, 25000, 0, PHASE_FIVE);
 					events.RescheduleEvent(EVENT_ASHEN_WALL, 30000, 0, PHASE_FIVE);
 					events.ScheduleEvent(EVENT_BLOODLUST, 1000, 0, PHASE_FIVE);
+
+					if (me->GetMap()->IsHeroic())
+						events.ScheduleEvent(EVENT_IRON_TOMB, 0, 35000, PHASE_FIVE);
 				}
 
 				switch (events.ExecuteEvent())
@@ -561,7 +596,17 @@ class boss_earthbreaker_haromm : public CreatureScript
 						{
 							me->CastSpell(target, SPELL_IRON_TOMB);
 						}
-						events.ScheduleEvent(EVENT_IRON_TOMB, 30000);
+
+						if (events.IsInPhase(PHASE_ONE))
+							events.ScheduleEvent(EVENT_IRON_TOMB, 30000, 0, PHASE_ONE);
+						else if (events.IsInPhase(PHASE_TWO))
+							events.ScheduleEvent(EVENT_IRON_TOMB, 30000, 0, PHASE_TWO);
+						else if (events.IsInPhase(PHASE_THREE))
+							events.ScheduleEvent(EVENT_IRON_TOMB, 30000, 0, PHASE_THREE);
+						else if (events.IsInPhase(PHASE_FOUR))
+							events.ScheduleEvent(EVENT_IRON_TOMB, 30000, 0, PHASE_FOUR);
+						else if (events.IsInPhase(PHASE_FIVE))
+							events.ScheduleEvent(EVENT_IRON_TOMB, 30000, 0, PHASE_FIVE);
 						break;
 					}
 					default:
@@ -586,7 +631,7 @@ class boss_wavebinder_kardris : public CreatureScript
 
 		struct boss_wavebinder_kardrisAI : public BossAI
 		{
-			boss_wavebinder_kardrisAI(Creature* creature) : BossAI(creature, DATA_DARK_SHAMANS)
+			boss_wavebinder_kardrisAI(Creature* creature) : BossAI(creature, DATA_WAVEBINDER_KARDRIS)
 			{
 				m_Instance = creature->GetInstanceScript();
 				me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_KNOCK_BACK, true);
@@ -643,15 +688,14 @@ class boss_wavebinder_kardris : public CreatureScript
 				}
 
 				me->SetReactState(ReactStates::REACT_AGGRESSIVE);
-				me->SetHealth(me->GetMaxHealth());
-				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, me->GetMaxHealth());
+				
 
 				me->setFaction(16);
 			}
 
 			void DamageTaken(Unit* /*attacker*/, uint32& damage)
 			{
-				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, me->GetHealth() > damage ? me->GetHealth() - damage : 0);
+				
 			}
 
 			void JustReachedHome()
@@ -660,7 +704,7 @@ class boss_wavebinder_kardris : public CreatureScript
 
 				if (m_Instance)
 				{
-					m_Instance->SetBossState(DATA_DARK_SHAMANS, FAIL);
+					m_Instance->SetBossState(DATA_WAVEBINDER_KARDRIS, FAIL);
 				}
 
 				int32 Creatures[9] =
@@ -678,6 +722,18 @@ class boss_wavebinder_kardris : public CreatureScript
 
 				for (int i = 0; i <= 8; i++)
 					DespawnCreaturesInArea(Creatures[i], me);
+
+				if (Creature* Darkfang = me->FindNearestCreature(CREATURE_DARKFANG, 500.0f, true))
+					if (Creature* Bloodclaw = me->FindNearestCreature(CREATURE_BLOODCLAW, 500.0f, true))
+					{
+						Darkfang->AI()->Reset();
+						Darkfang->Respawn();
+						Darkfang->GetMotionMaster()->MovePoint(0, Darkfang->GetHomePosition().GetPositionX(), Darkfang->GetHomePosition().GetPositionY(), Darkfang->GetHomePosition().GetPositionZ());
+
+						Bloodclaw->AI()->Reset();
+						Bloodclaw->Respawn();
+						Bloodclaw->GetMotionMaster()->MovePoint(0, Bloodclaw->GetHomePosition().GetPositionX(), Bloodclaw->GetHomePosition().GetPositionY(), Bloodclaw->GetHomePosition().GetPositionZ());
+					}
 			}
 
 			void KilledUnit(Unit* who)
@@ -689,12 +745,15 @@ class boss_wavebinder_kardris : public CreatureScript
 			void EnterCombat(Unit* /*who*/)
 			{
 				_EnterCombat();
-				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, me->GetMaxHealth());
-				m_Instance->SetBossState(DATA_DARK_SHAMANS, IN_PROGRESS);
+
+				m_Instance->SendEncounterUnit(ENCOUNTER_FRAME_ENGAGE, me);
 
 				events.SetPhase(PHASE_ONE);
 				events.ScheduleEvent(EVENT_FROSTSTORM_BOLT, 7000, 0, PHASE_ONE);
 				events.ScheduleEvent(EVENT_TALK_KARDRIS_ONE, 2000, 0, PHASE_ONE);
+				
+				if (me->GetMap()->IsHeroic())
+					events.ScheduleEvent(EVENT_IRON_PRISON, 30000, 0, PHASE_ONE);
 			}
 
 			void JustDied(Unit* killer)
@@ -704,10 +763,8 @@ class boss_wavebinder_kardris : public CreatureScript
 				Talk(TALK_DEATH_KARDRIS);
 				if (m_Instance)
 				{
-					m_Instance->SetBossState(DATA_DARK_SHAMANS, DONE);
+					m_Instance->SetBossState(DATA_WAVEBINDER_KARDRIS, DONE);
 				}
-
-				m_Instance->SetData(DATA_DARK_SHAMANS_HEALTH, 0);
 
 				int32 Creatures[9] =
 				{
@@ -736,15 +793,6 @@ class boss_wavebinder_kardris : public CreatureScript
 
 				events.Update(diff);
 
-				if (instance->GetData(DATA_DARK_SHAMANS_HEALTH) != 0)
-					me->SetHealth(instance->GetData(DATA_DARK_SHAMANS_HEALTH));
-
-				if (me->GetMap()->IsHeroic() && HealthBelowPct(95))
-				{
-					DoCast(SPELL_RUSTED_IRON_TOTEM);
-					events.ScheduleEvent(EVENT_IRON_PRISON, 1000);
-				}
-
 				if (HealthBelowPct(85) && events.IsInPhase(PHASE_ONE))
 				{
 					events.Reset();
@@ -752,6 +800,9 @@ class boss_wavebinder_kardris : public CreatureScript
 					events.SetPhase(PHASE_TWO);
 					events.RescheduleEvent(EVENT_FROSTSTORM_BOLT, 7000, 0, PHASE_TWO);
 					events.ScheduleEvent(EVENT_TOXIC_STORM, 1000, 0, PHASE_TWO);
+
+					if (me->GetMap()->IsHeroic())
+						events.ScheduleEvent(EVENT_IRON_PRISON, 30000, 0, PHASE_TWO);
 				}
 
 				if (HealthBelowPct(65) && events.IsInPhase(PHASE_TWO))
@@ -760,8 +811,11 @@ class boss_wavebinder_kardris : public CreatureScript
 					DoCast(SPELL_FOULSTREAM_TOTEM);
 					events.SetPhase(PHASE_THREE);
 					events.RescheduleEvent(EVENT_FROSTSTORM_BOLT, 7000, 0, PHASE_THREE);
-					events.RescheduleEvent(EVENT_TOXIC_STORM, 30000, 0, PHASE_THREE);
+					events.RescheduleEvent(EVENT_TOXIC_STORM, 25000, 0, PHASE_THREE);
 					events.ScheduleEvent(EVENT_FOUL_GEYSER, 1000, 0, PHASE_THREE);
+
+					if (me->GetMap()->IsHeroic())
+						events.ScheduleEvent(EVENT_IRON_PRISON, 30000, 0, PHASE_TWO);
 				}
 
 				if (HealthBelowPct(50) && events.IsInPhase(PHASE_THREE))
@@ -770,19 +824,25 @@ class boss_wavebinder_kardris : public CreatureScript
 					DoCast(SPELL_ASHFLARE_TOTEM);
 					events.SetPhase(PHASE_FOUR);
 					events.RescheduleEvent(EVENT_FROSTSTORM_BOLT, 7000, 0, PHASE_FOUR);
-					events.RescheduleEvent(EVENT_TOXIC_STORM, 30000, 0, PHASE_FOUR);
-					events.RescheduleEvent(EVENT_FOUL_GEYSER, 30000, 0, PHASE_FOUR);
-					events.ScheduleEvent(EVENT_FALLING_ASH, 1000, 0, PHASE_FOUR);
+					events.RescheduleEvent(EVENT_TOXIC_STORM, 20000, 0, PHASE_FOUR);
+					events.RescheduleEvent(EVENT_FOUL_GEYSER, 25000, 0, PHASE_FOUR);
+					// events.ScheduleEvent(EVENT_FALLING_ASH, 1000, 0, PHASE_FOUR);
+
+					if (me->GetMap()->IsHeroic())
+						events.ScheduleEvent(EVENT_IRON_PRISON, 30000, 0, PHASE_ONE);
 				}
 
 				if (HealthBelowPct(25) && events.IsInPhase(PHASE_FOUR))
 				{
 					events.SetPhase(PHASE_FIVE);
 					events.RescheduleEvent(EVENT_FROSTSTORM_BOLT, 7000, 0, PHASE_FIVE);
-					events.RescheduleEvent(EVENT_TOXIC_STORM, 30000, 0, PHASE_FIVE);
-					events.RescheduleEvent(EVENT_FOUL_GEYSER, 30000, 0, PHASE_FIVE);
-					events.RescheduleEvent(EVENT_FALLING_ASH, 30000, 0, PHASE_FIVE);
+					events.RescheduleEvent(EVENT_TOXIC_STORM, 20000, 0, PHASE_FIVE);
+					events.RescheduleEvent(EVENT_FOUL_GEYSER, 25000, 0, PHASE_FIVE);
+					// events.RescheduleEvent(EVENT_FALLING_ASH, 35000, 0, PHASE_FIVE);
 					events.ScheduleEvent(EVENT_BLOODLUST, 1000, 0, PHASE_FIVE);
+
+					if (me->GetMap()->IsHeroic())
+						events.ScheduleEvent(EVENT_IRON_PRISON, 30000, 0, PHASE_ONE);
 				}
 
 				switch (events.ExecuteEvent())
@@ -853,16 +913,10 @@ class boss_wavebinder_kardris : public CreatureScript
 							events.ScheduleEvent(EVENT_FOUL_GEYSER, 30000, 0, PHASE_FIVE);
 						break;
 					}
-
+					/*
 					case EVENT_FALLING_ASH:
 					{
-						float posX = me->GetPositionX();
-						float posY = me->GetPositionY();
-						float posZ = me->GetPositionZ();
-						float O = me->GetOrientation();
-
-						Position pos = { urand(posX - 30.0f, posX + 30.0f), urand(posY - 30.0f, posY + 30.0f), posZ + 15.0f, O };
-						// me->SummonCreature(CREATURE_FALLING_ASH, pos, TEMPSUMMON_MANUAL_DESPAWN);
+						DoCast(SPELL_FALLING_ASH);
 
 						if (events.IsInPhase(PHASE_FOUR))
 							events.ScheduleEvent(EVENT_FALLING_ASH, 30000, 0, PHASE_FOUR);
@@ -870,7 +924,7 @@ class boss_wavebinder_kardris : public CreatureScript
 							events.ScheduleEvent(EVENT_FALLING_ASH, 30000, 0, PHASE_FIVE);
 						break;
 					}
-
+					*/
 					case EVENT_BLOODLUST:
 					{
 						DoCast(me, SPELL_BLOODLUST);
@@ -883,7 +937,18 @@ class boss_wavebinder_kardris : public CreatureScript
 						{
 							me->CastSpell(target, SPELL_IRON_PRISON);
 						}
-						events.ScheduleEvent(EVENT_IRON_PRISON, 30000);
+						
+						if (events.IsInPhase(PHASE_ONE))
+							events.ScheduleEvent(EVENT_IRON_PRISON, 7000, 0, PHASE_ONE);
+						else if (events.IsInPhase(PHASE_TWO))
+							events.ScheduleEvent(EVENT_IRON_PRISON, 7000, 0, PHASE_TWO);
+						else if (events.IsInPhase(PHASE_THREE))
+							events.ScheduleEvent(EVENT_IRON_PRISON, 7000, 0, PHASE_THREE);
+						else if (events.IsInPhase(PHASE_FOUR))
+							events.ScheduleEvent(EVENT_IRON_PRISON, 7000, 0, PHASE_FOUR);
+						else if (events.IsInPhase(PHASE_FIVE))
+							events.ScheduleEvent(EVENT_IRON_PRISON, 7000, 0, PHASE_FIVE);
+
 						break;
 					}
 					default:
@@ -917,13 +982,13 @@ class npc_toxic_storm : public CreatureScript
 
 			void Reset() override
 			{
-				me->GetMotionMaster()->MoveRandom();
+				me->GetMotionMaster()->MoveRandom(50.0f);
 				me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
 				me->SetVisible(true);
 				me->setFaction(16);
+				me->SetInCombatWithZone();
 				events.Reset();
 				me->CastSpell(me, SPELL_TOXIC_STORM_VISUAL);
-				me->SetSpeed(MOVE_RUN, 2.0f, true);
 				events.ScheduleEvent(EVENT_MOVE_RANDOM, 3000);
 			}
 
@@ -969,11 +1034,14 @@ class npc_toxic_tornado : public CreatureScript
 
 			void Reset() override
 			{
+				me->GetMotionMaster()->MoveRandom(50.0f);
 				me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
 				me->SetVisible(true);
+				me->setFaction(16);
+				me->SetReactState(ReactStates::REACT_PASSIVE);
 				events.Reset();
 				me->CastSpell(me, SPELL_TOXIC_TORNADO_VISUAL);
-				events.ScheduleEvent(EVENT_MOVE_RANDOM, 6000);
+				events.ScheduleEvent(EVENT_MOVE_RANDOM, 3000);
 			}
 
 			void UpdateAI(const uint32 diff)
@@ -985,7 +1053,7 @@ class npc_toxic_tornado : public CreatureScript
 					case EVENT_MOVE_RANDOM:
 					{
 						me->GetMotionMaster()->MoveRandom(50.0f);
-						events.ScheduleEvent(EVENT_MOVE_RANDOM, 6000);
+						events.ScheduleEvent(EVENT_MOVE_RANDOM, 3000);
 						break;
 					}
 
@@ -1000,7 +1068,7 @@ class npc_toxic_tornado : public CreatureScript
 			return new npc_toxic_tornadoAI(creature);
 		}
 };
-
+/*
 // 71789 - Falling Ash
 class npc_falling_ash : public CreatureScript
 {
@@ -1018,13 +1086,25 @@ class npc_falling_ash : public CreatureScript
 
 			void Reset() override
 			{
-				if (me->GetPositionZ() > FLOOR_Z)
-					me->GetMotionMaster()->MoveFall();
+				if (Creature* kardris = me->FindNearestCreature(BOSS_WAVEBINDER_KARDRIS, 500.0f, true))
+				{
+					if (me->GetPositionZ() > kardris->GetPositionZ())
+					{
+						float posX = kardris->GetPositionX();
+						float posY = kardris->GetPositionY();
+						float O = kardris->GetOrientation();
+						float posZ = kardris->GetPositionZ();
+						
+						Position pos = { urand(posX-15, posX+15), urand(posY-15, posY+15), posZ, O };
+						me->GetMotionMaster()->MoveLand(1, pos);
+					}
+				}
 
 				me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
 				me->SetVisible(true);
+				me->SetSpeed(MOVE_FLIGHT, 0.5f, true);
 				DoCast(me, SPELL_FALLING_ASH_VISUAL);
-				events.ScheduleEvent(EVENT_FALLING_ASH_DAMAGE, 14000);
+				events.ScheduleEvent(EVENT_FALLING_ASH_DAMAGE, 10000);
 				events.ScheduleEvent(EVENT_FALLING_CHECK, 1000);
 			}
 
@@ -1036,20 +1116,33 @@ class npc_falling_ash : public CreatureScript
 
 					case EVENT_FALLING_ASH_DAMAGE:
 					{
-						if (me->GetPositionZ() <= FLOOR_Z)
+						if (Creature* kardris = me->FindNearestCreature(BOSS_WAVEBINDER_KARDRIS, 500.0f, true))
 						{
-							DoCast(me, SPELL_FALLING_ASH_EXPLOSION);
-							me->DespawnOrUnsummon(1);
-							break;
+							if (me->GetPositionZ() <= kardris->GetPositionZ())
+							{
+								DoCast(me, SPELL_FALLING_ASH_EXPLOSION);
+								me->DespawnOrUnsummon(1);
+							}
 						}
-						else
-							break;
+						
+						break;
 					}
 
 					case EVENT_FALLING_CHECK:
 					{
-						if (me->GetPositionZ() > FLOOR_Z)
-							me->GetMotionMaster()->MoveFall();
+						if (Creature* kardris = me->FindNearestCreature(BOSS_WAVEBINDER_KARDRIS, 500.0f, true))
+						{
+							if (me->GetPositionZ() > kardris->GetPositionZ())
+							{
+								float posX = kardris->GetPositionX();
+								float posY = kardris->GetPositionY();
+								float O = kardris->GetOrientation();
+								float posZ = kardris->GetPositionZ();
+
+								Position pos = { urand(posX - 15, posX + 15), urand(posY - 15, posY + 15), posZ, O };
+								me->GetMotionMaster()->MoveLand(1, pos);
+							}
+						}
 
 						events.ScheduleEvent(EVENT_FALLING_CHECK, 1000);
 						break;
@@ -1066,7 +1159,7 @@ class npc_falling_ash : public CreatureScript
 			return new npc_falling_ashAI(creature);
 		}
 };
-
+*/
 // 71827 - Ash Elemental
 class npc_ash_elemental : public CreatureScript
 {
@@ -1368,7 +1461,7 @@ void AddSC_boss_dark_shaman()
 	// Creatures
 	new npc_toxic_storm();
 	new npc_toxic_tornado();
-	new npc_falling_ash();
+	// new npc_falling_ash();
 	new npc_ash_elemental();
 	new npc_foul_slime();
 	new npc_darkfang_and_bloodclaw();
