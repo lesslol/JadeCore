@@ -33,9 +33,8 @@
 5) Siege of Orgrimmar:
     - Need to rewrite Immerseus
     - Need to rewrite Norushen
-    - Need to add script for Galakras
+    - Need to finish Galakras script
     - Need to finish Iron Juggernaut script
-    - Need to add heroic mode for Kor'kron Dark Shamans
     - Need to add script for General Nazgrim
     - Need to add script for Malkorok
     - Need to add script for Spoils of Pandaria
