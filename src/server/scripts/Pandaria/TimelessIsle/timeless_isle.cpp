@@ -141,7 +141,7 @@ public:
         	InCombat = true;
         }
 
-		void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
         {
         	if (!UpdateVictim())
         		return;
@@ -217,7 +217,7 @@ public:
         	InCombat = true;
         }
 
-        void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
         {
         	if (!UpdateVictim())
         		return;
@@ -281,7 +281,7 @@ public:
         	DoCast(me, SPELL_WINDFEATHER);
         }
 
-        void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
         {
         	if (!UpdateVictim())
         		return;
@@ -377,7 +377,7 @@ public:
 //            me->YellToZone(SAY_SPAWN, LANG_UNIVERSAL, 0);
         }
 
-        void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
         {
         	if (!UpdateVictim())
         		return;
@@ -482,7 +482,7 @@ public:
         	InCombat = true;
         }
 
-        void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
         {
         	if (!UpdateVictim())
         		return;
@@ -572,7 +572,7 @@ public:
         		StunTimer = 3000;
         }
 
-        void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
         {
         	if (!UpdateVictim())
         		return;
@@ -667,7 +667,7 @@ public:
         	InCombat = true;
         }
 
-        void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
         {
         	if (!UpdateVictim())
         		return;
@@ -739,7 +739,7 @@ public:
         	InCombat = true;
         }
 
-        void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
         {
         	if (!UpdateVictim())
         		return;
@@ -801,7 +801,7 @@ public:
         	InCombat = true;
         }
 
-        void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
         {
         	if (!UpdateVictim())
         		return;
@@ -893,7 +893,7 @@ public:
         	InCombat = true;
         }
 
-        void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
         {
         	if (!UpdateVictim())
         		return;
@@ -1394,7 +1394,7 @@ public:
             InCombat = true;
         }
 
-        void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
         {
             if (!UpdateVictim())
                 return;
@@ -1487,7 +1487,7 @@ public:
             InCombat = true;
         }
 
-        void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
         {
             if (!UpdateVictim())
                 return;
@@ -1582,7 +1582,7 @@ public:
             InCombat = true;
         }
 
-        void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
         {
             if (!UpdateVictim())
                 return;
@@ -1673,7 +1673,7 @@ public:
         	InCombat = true;
         }
 
-        void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
         {
         	if (!UpdateVictim())
         		return;
@@ -1759,7 +1759,7 @@ public:
         	InCombat = true;
         }
 
-        void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
         {
         	if (!UpdateVictim())
         		return;
@@ -1817,7 +1817,7 @@ public:
         	me->AddUnitState(UNIT_STATE_CANNOT_AUTOATTACK);
         }
 
-        void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
         {
         	if (DevourTimer <= diff)
         	{

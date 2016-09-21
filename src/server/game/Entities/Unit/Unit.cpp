@@ -18599,7 +18599,7 @@ bool Unit::IsStandState() const
     return !IsSitState() && s != UNIT_STAND_STATE_SLEEP && s != UNIT_STAND_STATE_KNEEL;
 }
 
-void Unit::SetStandState(uint8 state)
+void Unit::SetStandState(uint16 state)
 {
     SetByteValue(UNIT_FIELD_BYTES_1, 0, state);
 

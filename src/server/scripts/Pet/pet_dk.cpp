@@ -134,7 +134,7 @@ public:
 			_despawnTimer = 4 * IN_MILLISECONDS;
 		}
 
-		void UpdateAI(uint32 diff) override
+		void UpdateAI(const uint32 diff)
 		{
 			if (_despawnTimer > 0)
 			{

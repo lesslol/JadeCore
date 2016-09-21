@@ -114,6 +114,10 @@ enum Spells
 	SPELL_FOULSTREAM_TOTEM		= 144289,
 	SPELL_ASHFLARE_TOTEM		= 144290,
 	SPELL_RUSTED_IRON_TOTEM		= 144291,
+
+	// Spirit Link
+	SPELL_SPIRIT_LINK_HAROMM	= 144227,
+	SPELL_SPIRIT_LINK_KARDRIS	= 144226,
 };
 
 enum TalksHaromm
@@ -223,7 +227,6 @@ enum Gameobjects
 };
 
 #define FLOOR_Z 21.0f
-#define ERROR_INST_DATA           "SD2 ERROR: Instance Data for Siege of Orgrimmar not set properly; Kor'kron Dark Shamans event will not function properly."
 
 /*
 void FallingAshPosition()
@@ -245,77 +248,31 @@ static void DespawnCreaturesInArea(uint32 entry, WorldObject* object)
 		(*iter)->DespawnOrUnsummon();
 }
 
-struct boss_dark_shamans_AI : public BossAI
-{
-	boss_dark_shamans_AI(Creature* creature) : BossAI(creature, DATA_DARK_SHAMANS)
-	{
-		m_Instance = creature->GetInstanceScript();
-		me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_KNOCK_BACK, true);
-		me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_GRIP, true);
-		me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_STUN, true);
-		me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_FEAR, true);
-		me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_ROOT, true);
-		me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_FREEZE, true);
-		me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_POLYMORPH, true);
-		me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_HORROR, true);
-		me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_SAPPED, true);
-		me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_CHARM, true);
-		me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_DISORIENTED, true);
-		me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_INTERRUPT, true);
-
-		for (int i = 0; i < 2; ++i)
-			darkShaman[i] = 0;
-		LoadedGUIDs = false;
-	}
-
-	InstanceScript* m_Instance;
-	uint64 darkShaman[2];
-	bool LoadedGUIDs;
-
-	void DamageTaken(Unit* done_by, uint32 &damage)
-    {
-        if (done_by == me)
-            return;
-
-        damage /= 2;
-        for (uint8 i = 0; i < 2; ++i)
-        {
-            if (Creature* unit = Unit::GetCreature(*me, darkShaman[i]))
-                if (unit != me && damage < unit->GetHealth())
-                {
-                    unit->ModifyHealth(-int32(damage));
-                    unit->LowerPlayerDamageReq(damage);
-                }
-        }
-    }
-
-    void LoadGUIDs()
-    {
-        if (!instance)
-        {
-            sLog->outError(LOG_FILTER_TSCR, ERROR_INST_DATA);
-            return;
-        }
-
-        darkShaman[0] = instance->GetData64(DATA_EARTHBREAKER_HAROMM);
-        darkShaman[1] = instance->GetData64(DATA_WAVEBINDER_KARDRIS);
-
-        LoadedGUIDs = true;
-    }
-};
-
 // 71859 - Earthbreaker Haromm
 class boss_earthbreaker_haromm : public CreatureScript
 {
 	public:
 		boss_earthbreaker_haromm() : CreatureScript("boss_earthbreaker_haromm") { }
 
-		struct boss_earthbreaker_harommAI : public boss_dark_shamans_AI
+		struct boss_earthbreaker_harommAI : public BossAI
 		{
-			boss_earthbreaker_harommAI(Creature* creature) : boss_dark_shamans_AI(creature)
+			boss_earthbreaker_harommAI(Creature* creature) : BossAI(creature, DATA_EARTHBREAKER_HAROMM)
 			{
-				
+				m_Instance = creature->GetInstanceScript();
+				me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_KNOCK_BACK, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_GRIP, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_STUN, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_FEAR, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_ROOT, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_FREEZE, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_POLYMORPH, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_HORROR, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_SAPPED, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_CHARM, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_DISORIENTED, true);
 			}
+
+			InstanceScript* m_Instance;
 
 			void Reset() override
 			{
@@ -356,9 +313,14 @@ class boss_earthbreaker_haromm : public CreatureScript
 				}
 
 				me->SetReactState(ReactStates::REACT_AGGRESSIVE);
-				
 
 				me->setFaction(16);
+				DoCast(me, SPELL_SPIRIT_LINK_HAROMM);
+			}
+
+			void DamageTaken(Unit* attacker, uint32& damage)
+			{
+				
 			}
 
 			void JustReachedHome()
@@ -410,10 +372,9 @@ class boss_earthbreaker_haromm : public CreatureScript
 					Talk(TALK_KILL_HAROMM);
 			}
 
-			void EnterCombat(Unit* /*who*/)
+			void EnterCombat(Unit* who)
 			{
 				_EnterCombat();
-				
 				m_Instance->SendEncounterUnit(ENCOUNTER_FRAME_ENGAGE, me);
 
 				events.SetPhase(PHASE_ONE);
@@ -426,9 +387,6 @@ class boss_earthbreaker_haromm : public CreatureScript
 					DoCast(SPELL_RUSTED_IRON_TOTEM);
 					events.ScheduleEvent(EVENT_IRON_TOMB, 30000, 0, PHASE_ONE);
 				}
-
-				if (!LoadedGUIDs)
-					LoadGUIDs();
 			}
 
 			void JustDied(Unit* killer)
@@ -439,7 +397,7 @@ class boss_earthbreaker_haromm : public CreatureScript
 				if (m_Instance)
 				{
 					m_Instance->SetBossState(DATA_EARTHBREAKER_HAROMM, DONE);
-				}			
+				}
 
 				int32 Creatures[9] =
 				{
@@ -674,11 +632,22 @@ class boss_wavebinder_kardris : public CreatureScript
 	public:
 		boss_wavebinder_kardris() : CreatureScript("boss_wavebinder_kardris") { }
 
-		struct boss_wavebinder_kardrisAI : public boss_dark_shamans_AI
+		struct boss_wavebinder_kardrisAI : public BossAI
 		{
-			boss_wavebinder_kardrisAI(Creature* creature) : boss_dark_shamans_AI(creature) 
+			boss_wavebinder_kardrisAI(Creature* creature) : BossAI(creature, DATA_WAVEBINDER_KARDRIS)
 			{
-
+				m_Instance = creature->GetInstanceScript();
+				me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_KNOCK_BACK, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_GRIP, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_STUN, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_FEAR, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_ROOT, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_FREEZE, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_POLYMORPH, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_HORROR, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_SAPPED, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_CHARM, true);
+				me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_DISORIENTED, true);
 			}
 
 			InstanceScript* m_Instance;
@@ -722,9 +691,14 @@ class boss_wavebinder_kardris : public CreatureScript
 				}
 
 				me->SetReactState(ReactStates::REACT_AGGRESSIVE);
-				
 
 				me->setFaction(16);
+				DoCast(me, SPELL_SPIRIT_LINK_KARDRIS);
+			}
+
+			void DamageTaken(Unit* attacker, uint32& damage)
+			{
+				
 			}
 
 			void JustReachedHome()
@@ -774,7 +748,6 @@ class boss_wavebinder_kardris : public CreatureScript
 			void EnterCombat(Unit* /*who*/)
 			{
 				_EnterCombat();
-
 				m_Instance->SendEncounterUnit(ENCOUNTER_FRAME_ENGAGE, me);
 
 				events.SetPhase(PHASE_ONE);
@@ -783,9 +756,6 @@ class boss_wavebinder_kardris : public CreatureScript
 				
 				if (me->GetMap()->IsHeroic())
 					events.ScheduleEvent(EVENT_IRON_PRISON, 30000, 0, PHASE_ONE);
-
-				if (!LoadedGUIDs)
-					LoadGUIDs();
 			}
 
 			void JustDied(Unit* killer)

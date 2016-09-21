@@ -421,7 +421,7 @@ public:
         EventMap events;
 
         bool intro;
-        float damage;
+        uint32 damage;
         int32 hppcts;
         Unit* target;
 
@@ -829,7 +829,7 @@ public:
 
         bool intro;
         int32 hppcts;
-        float damage;
+        uint32 damage;
 
         void Reset()
         {
@@ -1201,7 +1201,7 @@ public:
         bool intro;
         int32 hppcts;
         bool explode;
-        float damage;
+		uint32 damage;
 
         void Reset()
         {
@@ -1565,7 +1565,7 @@ public:
 
         bool intro;
         bool explode;
-        float damage;
+        uint32 damage;
         uint32 timepertick;
         int32 hppcts;
         Unit* target = NULL;

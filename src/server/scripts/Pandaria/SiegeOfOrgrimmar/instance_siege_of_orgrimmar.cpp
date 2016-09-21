@@ -276,9 +276,9 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
                 if (!creature)
                     return;
 
-                switch (creature->GetEntry())
-                {
-                }
+                // switch (creature->GetEntry())
+                // {
+                // }
             }
             
             void OnGameObjectCreate(GameObject* go)

@@ -65,29 +65,52 @@ enum eData
     DATA_EAST03								= 29,
 
 	// Galakras
+	DATA_GALAKRAS							= 30,
 
 	// Iron Juggernaut
-	DATA_IRON_JUGGERNAUT					= 30,
+	DATA_IRON_JUGGERNAUT					= 31,
 
 	// Kor'kron Dark Shamans
-	DATA_DARK_SHAMANS						= 31,
-	DATA_DARK_SHAMANS_HEALTH				= 32,
+	DATA_DARK_SHAMANS						= 32,
 	DATA_EARTHBREAKER_HAROMM				= 33,
 	DATA_WAVEBINDER_KARDRIS					= 34,
 
 	// General Nazgrim
+	DATA_GENERAL_NAZGRIM					= 35,
 
-	// 
+	// Malkorok
+	DATA_MALKOROK							= 36,
+
+	// Spoils of Pandaria
+	DATA_SPOILS_OF_PANDARIA					= 37,
+
+	// Thok the Bloodthirsty
+	DATA_THOK_THE_BLOODTHIRSTY				= 38,
+
+	// Siegecrafter Blackfuse
+	DATA_SIEGECRAFTER_BLACKFUSE				= 39,
+
+	// Paragons of the Klaxxi
+	DATA_PARAGONS_OF_THE_KLAXXI				= 40,
+	DATA_SKEER_THE_BLOODSEEKER				= 41,
+	DATA_RIKKAL_THE_DISSECTOR				= 42,
+	DATA_HISEK_THE_SWARMKEEPER				= 43,
+	DATA_KAROZ_THE_LOCUST					= 44,
+	DATA_KORVET_THE_PRIME					= 45,
+	DATA_IYYOKUK_THE_LUCID					= 46,
+	DATA_XARIL_THE_POISONED_MIND			= 47,
+	DATA_KAZTIK_THE_MANIPULATOR				= 48,
+	DATA_KILRUK_THE_WIND_REAVER				= 49,
 
 	// Garrosh Hellscream
-    DATA_GARROSH_HELLSCREAM					= 35,
-    DATA_THRALL								= 36,
-    DATA_GARROSH_HEART_OF_YSHAARAJ			= 37,
-    DATA_RIGHT_DOOR_GARROSH					= 38,
-    DATA_LEFT_DOOR_GARROSH					= 39,
+    DATA_GARROSH_HELLSCREAM					= 50,
+    DATA_THRALL								= 51,
+    DATA_GARROSH_HEART_OF_YSHAARAJ			= 52,
+    DATA_RIGHT_DOOR_GARROSH					= 53,
+    DATA_LEFT_DOOR_GARROSH					= 54,
 
 	// Lorewalker Cho
-    DATA_LORE_WALKER_CHO_01					= 40,
+    DATA_LORE_WALKER_CHO_01					= 55,
 };
 
 enum eActionsLocal
