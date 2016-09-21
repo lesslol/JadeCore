@@ -1,5 +1,19 @@
 /*
-*	Copyright (C) 2016 - 20XX dule1322 <http://www.ac-web.org/forums/member.php?281853-dule1322>
+* Copyright (C) 2015-2016 JadeCore <https://github.com/cooler-SAI/JadeCore548-patched>
+* Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
+*
+* This program is free software; you can redistribute it and/or modify it
+* under the terms of the GNU General Public License as published by the
+* Free Software Foundation; either version 2 of the License, or (at your
+* option) any later version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+* FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+* more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 /*
@@ -520,11 +534,11 @@ class boss_earthbreaker_haromm : public CreatureScript
 					{
 						if (Unit* target_one = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 40.0f, true))
 						{
-							me->CastSpell(target_one, SPELL_TOXIC_MIST);
+							DoCast(target_one, SPELL_TOXIC_MIST);
 						}
 						if (Unit* target_two = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 40.0f, true))
 						{
-							me->CastSpell(target_two, SPELL_TOXIC_MIST);
+							DoCast(target_two, SPELL_TOXIC_MIST);
 						}
 
 						if (events.IsInPhase(PHASE_TWO))
@@ -984,32 +998,14 @@ class npc_toxic_storm : public CreatureScript
 
 			void Reset() override
 			{
-				me->GetMotionMaster()->MoveRandom(50.0f);
 				me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
 				me->SetVisible(true);
 				me->setFaction(16);
 				me->SetInCombatWithZone();
+				me->SetSpeed(MOVE_RUN, 0.05f, true);
+				me->ForcedDespawn(60000000);
 				events.Reset();
 				me->CastSpell(me, SPELL_TOXIC_STORM_VISUAL);
-				events.ScheduleEvent(EVENT_MOVE_RANDOM, 3000);
-			}
-
-			void UpdateAI(const uint32 diff)
-			{
-				events.Update(diff);
-
-				switch (events.ExecuteEvent())
-				{
-					case EVENT_MOVE_RANDOM:
-					{
-						me->GetMotionMaster()->MoveRandom(50.0f);
-						events.ScheduleEvent(EVENT_MOVE_RANDOM, 3000);
-						break;
-					}
-
-					default:
-						break;
-				}
 			}
 		};
 
@@ -1036,32 +1032,14 @@ class npc_toxic_tornado : public CreatureScript
 
 			void Reset() override
 			{
-				me->GetMotionMaster()->MoveRandom(50.0f);
 				me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
 				me->SetVisible(true);
 				me->setFaction(16);
-				me->SetReactState(ReactStates::REACT_PASSIVE);
+				me->SetInCombatWithZone();
+				me->SetSpeed(MOVE_RUN, 0.05f, true);
+				me->ForcedDespawn(60000000);
 				events.Reset();
 				me->CastSpell(me, SPELL_TOXIC_TORNADO_VISUAL);
-				events.ScheduleEvent(EVENT_MOVE_RANDOM, 3000);
-			}
-
-			void UpdateAI(const uint32 diff)
-			{
-				events.Update(diff);
-
-				switch (events.ExecuteEvent())
-				{
-					case EVENT_MOVE_RANDOM:
-					{
-						me->GetMotionMaster()->MoveRandom(50.0f);
-						events.ScheduleEvent(EVENT_MOVE_RANDOM, 3000);
-						break;
-					}
-
-					default:
-						break;
-				}
 			}
 		};
 
