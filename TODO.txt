@@ -85,7 +85,6 @@ Pandaria Raids:
 
 Classic Raids:
 
--- Blackwing Lair
 -- Ruins of Ahn'Qiraj
 -- Temple of Ahn'Qiraj
 
