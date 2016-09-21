@@ -112,13 +112,20 @@ Pandaria/HeartOfFear/heart_of_fear.cpp
   Pandaria/SiegeOfOrgrimmar/siege_of_orgrimmar.cpp
   Pandaria/SiegeOfOrgrimmar/instance_siege_of_orgrimmar.cpp
   Pandaria/SiegeOfOrgrimmar/boss_immersius.cpp
-  Pandaria/SiegeOfOrgrimmar/boss_fallen_protectors.cpp
+  Pandaria/SiegeOfOrgrimmar/boss_fallen_protectors.cpp	
+  Pandaria/SiegeOfOrgrimmar/boss_norushen.cpp
   Pandaria/SiegeOfOrgrimmar/boss_sha_of_pride.cpp
+  Pandaria/SiegeOfOrgrimmar/boss_galakras.cpp
+  Pandaria/SiegeOfOrgrimmar/boss_iron_juggernaut.cpp
+  Pandaria/SiegeOfOrgrimmar/boss_dark_shaman.cpp
+  Pandaria/SiegeOfOrgrimmar/boss_general_nazgrim.cpp
+  Pandaria/SiegeOfOrgrimmar/boss_malkorok.cpp
+  Pandaria/SiegeOfOrgrimmar/boss_spoils_of_pandaria.cpp
+  Pandaria/SiegeOfOrgrimmar/boss_thok_the_bloodthirsty.cpp
+  Pandaria/SiegeOfOrgrimmar/boss_siegecrafter_blackfuse.cpp
+  Pandaria/SiegeOfOrgrimmar/boss_paragons_of_the_klaxxi.cpp
   Pandaria/SiegeOfOrgrimmar/boss_garrosh_hellscream.cpp
   Pandaria/SiegeOfOrgrimmar/boss_garrosh_hellscream.h	
-  Pandaria/SiegeOfOrgrimmar/boss_norushen.cpp
-  Pandaria/SiegeOfOrgrimmar/boss_dark_shaman.cpp
-  Pandaria/SiegeOfOrgrimmar/boss_iron_juggernaut.cpp
   
   Pandaria/TimelessIsle/timeless_isle.cpp
   Pandaria/TimelessIsle/timeless_isle.h
