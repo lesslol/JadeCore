@@ -267,6 +267,12 @@ class boss_general_nazgrim : public CreatureScript
 							events.ScheduleEvent(EVENT_BATTLE_STANCE_RAGE, 1000);
 						}
 
+						if (me->HasAura(SPELL_BERSERKER_STANCE))
+							return;
+
+						if (me->HasAura(SPELL_DEFENSIVE_STANCE))
+							return;
+
 						break;
 					}
 
