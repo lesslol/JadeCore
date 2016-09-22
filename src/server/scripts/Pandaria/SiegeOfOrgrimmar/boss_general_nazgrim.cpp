@@ -45,22 +45,24 @@ enum eSpells
 
 enum eEvents
 {
-	EVENT_BATTLE_STANCE		= 1,
-	EVENT_BERSERKER_STANCE	= 2,
-	EVENT_DEFFENSIVE_STANCE	= 3,
-	EVENT_DAMAGE_TAKEN		= 4,
+	EVENT_BATTLE_STANCE		 = 1,
+	EVENT_BERSERKER_STANCE	 = 2,
+	EVENT_DEFFENSIVE_STANCE	 = 3,
+	EVENT_DAMAGE_TAKEN		 = 4,
 
 	// Rage Abilities
-	EVENT_HEROIC_SHOCKWAVE	= 5,
-	EVENT_KORKRON_BANNER	= 6,
-	EVENT_WAR_SONG			= 7,
-	EVENT_RAVAGER			= 8,
-	EVENT_AFTERSHOCK		= 9,
+	EVENT_HEROIC_SHOCKWAVE	 = 5,
+	EVENT_KORKRON_BANNER	 = 6,
+	EVENT_WAR_SONG			 = 7,
+	EVENT_RAVAGER			 = 8,
+	EVENT_AFTERSHOCK		 = 9,
 
-	EVENT_SUMMON_ADDS_ONE	= 10,
-	EVENT_SUMMON_ADDS_TWO	= 11,
-	EVENT_SUNDERING_BLOW	= 12,
-	EVENT_BONECRACKER		= 13,
+	EVENT_SUMMON_ADDS_ONE	 = 10,
+	EVENT_SUMMON_ADDS_TWO	 = 11,
+	EVENT_SUNDERING_BLOW	 = 12,
+	EVENT_BONECRACKER		 = 13,
+
+	EVENT_BATTLE_STANCE_RAGE = 14,
 };
 
 enum eCreatures
@@ -252,7 +254,19 @@ class boss_general_nazgrim : public CreatureScript
 							me->RemoveAura(SPELL_DEFENSIVE_STANCE);
 
 						DoCast(me, SPELL_BATTLE_STANCE);
+						events.ScheduleEvent(EVENT_BATTLE_STANCE_RAGE, 1000);
 						events.ScheduleEvent(EVENT_BERSERKER_STANCE, 60000);
+						break;
+					}
+
+					case EVENT_BATTLE_STANCE_RAGE:
+					{
+						if (me->HasAura(SPELL_BATTLE_STANCE))
+						{
+							ModifyRage(me, 1, me->GetGUID());
+							events.ScheduleEvent(EVENT_BATTLE_STANCE_RAGE, 1000);
+						}
+
 						break;
 					}
 
