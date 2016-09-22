@@ -1049,6 +1049,7 @@ void AddSC_norushen();
 void AddSC_sha_of_pride();
 void AddSC_boss_iron_juggernaut();
 void AddSC_boss_dark_shaman();
+void AddSC_boss_general_nazgrim();
 void AddSC_garrosh_hellscream();
 #endif
 
@@ -2072,6 +2073,7 @@ void AddPandarieScripts()
 	AddSC_sha_of_pride();
 	AddSC_boss_iron_juggernaut();
 	AddSC_boss_dark_shaman();
+	AddSC_boss_general_nazgrim();
 
 #endif
 }
