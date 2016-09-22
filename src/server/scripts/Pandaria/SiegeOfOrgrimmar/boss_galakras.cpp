@@ -102,9 +102,30 @@ class boss_galakras : public CreatureScript
                 pInstance = creature->GetInstanceScript();
             }
 
+            InstanceScript* pInstance;
+
 			void Reset() override
 			{
 				_Reset();
+				me->SetDisableGravity(true);
+				me->SetCanFly(true);
+				me->SetReactState(ReactStates::REACT_PASSIVE);
+
+				switch (me->GetMap()->GetDifficulty())
+				{
+					case MAN10_DIFFICULTY:
+						me->SetMaxHealth(138691568);
+						break;
+					case MAN10_HEROIC_DIFFICULTY:
+						me->SetMaxHealth(218068496);
+						break;
+					case MAN25_DIFFICULTY:
+						me->SetMaxHealth(416946976);
+						break;
+					case MAN25_HEROIC_DIFFICULTY:
+						me->SetMaxHealth(654205504);
+						break;
+				}
 			}
 
 			void EnterCombat(Unit* who)
@@ -142,6 +163,7 @@ class boss_galakras : public CreatureScript
 
 				if (me->GetPositionZ() <= FLOOR_Z && events.IsInPhase(PHASE_ONE))
 				{
+					me->SetReactState(ReactStates::REACT_AGGRESSIVE);
 					events.SetPhase(PHASE_TWO);
 					events.ScheduleEvent(EVENT_FLAMES_OF_GALAKROND, 20000, 0, PHASE_TWO);
 					events.ScheduleEvent(EVENT_PULSING_FLAMES, 0, 0, PHASE_TWO);
@@ -254,9 +276,6 @@ class boss_galakras : public CreatureScript
 					}
 				}
 			}
-
-            InstanceScript* pInstance;
-            EventMap events;
         };
 
         CreatureAI* GetAI(Creature* creature) const

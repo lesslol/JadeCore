@@ -80,7 +80,7 @@ class mob_crawler_mine : public CreatureScript
         }
 };
 
-void AddSC_iron_juggernaut()
+void AddSC_boss_iron_juggernaut()
 {
     new boss_iron_juggernaut();
     new mob_crawler_mine();

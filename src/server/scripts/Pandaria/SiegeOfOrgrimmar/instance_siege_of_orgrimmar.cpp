@@ -82,6 +82,7 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
 			uint64 KardrisGuid;
 
 			// General Nazgrim
+			uint64 NazgrimGuid;
 
 			// Malkorok
 
@@ -148,6 +149,7 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
 				KardrisGuid							= 0;
 
 				// General Nazgrim
+				NazgrimGuid							= 0;
 
 				// Malkorok
 
@@ -239,9 +241,11 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
 						break;
 					case BOSS_WAVEBINDER_KARDRIS:
 						KardrisGuid = creature->GetGUID();
-
+						break;
 					// General Nazgrim
-
+					case BOSS_GENERAL_NAZGRIM:
+						NazgrimGuid = creature->GetGUID();
+						break;
 					// Malkorok
 
 					// Spoils of Pandaria
@@ -531,6 +535,9 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
 						break;
 
 					// General Nazgrim
+					case DATA_GENERAL_NAZGRIM:
+						return NazgrimGuid;
+						break;
 
 					// Malkorok
 
