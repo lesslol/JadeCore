@@ -84,7 +84,6 @@ Pandaria Raids:
 
 Classic Raids:
 
--- Ruins of Ahn'Qiraj
 -- Temple of Ahn'Qiraj
 
 The Maelstrom Zones:
