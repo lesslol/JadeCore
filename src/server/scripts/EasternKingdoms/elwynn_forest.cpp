@@ -121,15 +121,18 @@ public:
 		
         void UpdateAI(const uint32 diff)
         {
-            if(tYell <= diff)
+            if (me->isInCombat() && me->FindNearestCreature(NPC_BLACKROCK_BATTLE_WORG, 6.0f, true))
             {
-                if (WillSay <= SayChance)
-                {			   
-                    Talk(SAY_YELL);
-                    tYell = urand(10000, 20000);          
-                }			   
+                if(tYell <= diff) 
+                {
+                    if (WillSay <= SayChance)
+                    {			   
+                        Talk(SAY_YELL);
+                        tYell = urand(10000, 20000);          
+                    }			   
+                }
+                else tYell -= diff;
             }
-            else tYell -= diff;
 
             if (!UpdateVictim())
                 return;
