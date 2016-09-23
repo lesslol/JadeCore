@@ -91,3 +91,19 @@ The Maelstrom Zones:
 -- Deepholm
 -- The Lost Isles
 -- The Wandering Isle
+
+Mists of Pandaria Start Zones Quests ( 1-5 lvl ) TODO:
+
+-- Human
+-- Orc
+-- Dwarf
+-- Undead
+-- Night Elf
+-- Tauren
+-- Gnome
+-- Troll
+-- Draenei
+-- Blood Elf
+-- Worgen
+-- Goblin
+-- Pandaren
