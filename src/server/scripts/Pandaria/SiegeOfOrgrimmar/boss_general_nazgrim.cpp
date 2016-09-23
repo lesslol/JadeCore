@@ -117,6 +117,7 @@ class boss_general_nazgrim : public CreatureScript
 			}
 			
 			InstanceScript* pInstance;
+			uint32 nazgrimGuid = me->GetGUID();
 			
 			void Reset()
 			{
@@ -229,6 +230,7 @@ class boss_general_nazgrim : public CreatureScript
 					if (me->HasAura(SPELL_COOLING_OFF))
 						return;
 
+					RemoveRage(me, 300, nazgrimGuid);
 					events.ScheduleEvent(EVENT_HEROIC_SHOCKWAVE, 1000);
 				}
 
@@ -237,6 +239,7 @@ class boss_general_nazgrim : public CreatureScript
 					if (me->HasAura(SPELL_COOLING_OFF))
 						return;
 
+					RemoveRage(me, 500, nazgrimGuid);
 					events.ScheduleEvent(EVENT_KORKRON_BANNER, 1000);
 				}
 
@@ -245,6 +248,7 @@ class boss_general_nazgrim : public CreatureScript
 					if (me->HasAura(SPELL_COOLING_OFF))
 						return;
 
+					RemoveRage(me, 750, nazgrimGuid);
 					events.ScheduleEvent(EVENT_WAR_SONG, 1000);
 				}
 
@@ -253,6 +257,7 @@ class boss_general_nazgrim : public CreatureScript
 					if (me->HasAura(SPELL_COOLING_OFF))
 						return;
 
+					RemoveRage(me, 1000, nazgrimGuid);
 					events.ScheduleEvent(EVENT_RAVAGER, 1000);
 				}
 
@@ -325,7 +330,6 @@ class boss_general_nazgrim : public CreatureScript
 						}
 
 						DoCast(me, SPELL_COOLING_OFF);
-						RemoveRage(me, 300, me->GetGUID());
 						break;
 					}
 
@@ -334,7 +338,6 @@ class boss_general_nazgrim : public CreatureScript
 						DoCast(SPELL_KORKRON_BANNER);
 
 						DoCast(me, SPELL_COOLING_OFF);
-						RemoveRage(me, 500, me->GetGUID());
 						break;
 					}
 
@@ -343,7 +346,6 @@ class boss_general_nazgrim : public CreatureScript
 						DoCast(SPELL_WAR_SONG);
 
 						DoCast(me, SPELL_COOLING_OFF);
-						RemoveRage(me, 750, me->GetGUID());
 						break;
 					}
 
@@ -355,7 +357,6 @@ class boss_general_nazgrim : public CreatureScript
 						}
 
 						DoCast(me, SPELL_COOLING_OFF);
-						RemoveRage(me, 1000, me->GetGUID());
 						break;
 					}
 
@@ -893,14 +894,14 @@ class spell_sundering_blow : public SpellScriptLoader
 				if (InstanceScript* m_Instance = GetCaster()->GetInstanceScript())
 					if (Creature * genNazgrim = m_Instance->instance->GetCreature(m_Instance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
 					{
-						ModifyRage(genNazgrim, 13, genNazgrim->GetGUID()); // On hit it gives 5 rage to nazgrim
+						AddRage(genNazgrim, 13, genNazgrim->GetGUID()); // On hit it gives 5 rage to nazgrim
 
 						if (Unit* target = GetHitUnit())
 							if (AuraPtr sunderingBlow = target->GetAura(SPELL_SUNDERING_BLOW))
 							{
 								uint32 stacks = sunderingBlow->GetStackAmount();
 
-								ModifyRage(genNazgrim, 13*stacks, genNazgrim->GetGUID()); // And for every stack of the debuff 5 more rage
+								AddRage(genNazgrim, 13*stacks, genNazgrim->GetGUID()); // And for every stack of the debuff 5 more rage
 							}
 					}
 			}
