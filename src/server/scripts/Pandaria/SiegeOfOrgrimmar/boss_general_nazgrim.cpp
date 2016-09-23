@@ -90,6 +90,7 @@ void ModifyRage(Unit* me,uint32 p_BaseValue, uint64 nazgrimGuid)
     }
 }
 
+// Almost done - need to do talks and find real values for rage cost
 class boss_general_nazgrim : public CreatureScript
 {
 	public:
@@ -103,7 +104,6 @@ class boss_general_nazgrim : public CreatureScript
 			}
 			
 			InstanceScript* pInstance;
-			uint32 RageAmount = me->GetPower(Powers(POWER_RAGE));
 			
 			void Reset()
 			{
@@ -208,7 +208,10 @@ class boss_general_nazgrim : public CreatureScript
                 if (me->HasUnitState(UNIT_STATE_CASTING))
                     return;
 
-				if (RageAmount <= 49 && RageAmount >= 30)
+                events.Update(diff);
+				uint32 RageAmount = me->GetPower(Powers(POWER_RAGE));
+
+				if (RageAmount <= 122.5 && RageAmount >= 75)
 				{
 					if (me->HasAura(SPELL_COOLING_OFF))
 						return;
@@ -217,7 +220,7 @@ class boss_general_nazgrim : public CreatureScript
 					DoCast(me, SPELL_COOLING_OFF);
 				}
 
-				if (RageAmount >= 50 && RageAmount <= 69)
+				if (RageAmount <= 185 && RageAmount >= 125)
 				{
 					if (me->HasAura(SPELL_COOLING_OFF))
 						return;
@@ -226,7 +229,7 @@ class boss_general_nazgrim : public CreatureScript
 					DoCast(me, SPELL_COOLING_OFF);
 				}
 
-				if (RageAmount >= 70 && RageAmount <= 99)
+				if (RageAmount <= 247.5 && RageAmount >= 187.5)
 				{
 					if (me->HasAura(SPELL_COOLING_OFF))
 						return;
@@ -235,16 +238,14 @@ class boss_general_nazgrim : public CreatureScript
 					DoCast(me, SPELL_COOLING_OFF);
 				}
 
-				if (RageAmount == 100)
+				if (RageAmount == 250)
 				{
 					if (me->HasAura(SPELL_COOLING_OFF))
 						return;
 
-					//events.ScheduleEvent(EVENT_RAVAGER, 1000);
+					events.ScheduleEvent(EVENT_RAVAGER, 1000);
 					DoCast(me, SPELL_COOLING_OFF);
 				}
-
-                events.Update(diff);
 
 				switch (events.ExecuteEvent())
 				{
@@ -254,7 +255,7 @@ class boss_general_nazgrim : public CreatureScript
 							me->RemoveAura(SPELL_DEFENSIVE_STANCE);
 
 						DoCast(me, SPELL_BATTLE_STANCE);
-						events.ScheduleEvent(EVENT_BATTLE_STANCE_RAGE, 1000);
+						events.ScheduleEvent(EVENT_BATTLE_STANCE_RAGE, 0);
 						events.ScheduleEvent(EVENT_BERSERKER_STANCE, 60000);
 						break;
 					}
@@ -263,7 +264,7 @@ class boss_general_nazgrim : public CreatureScript
 					{
 						if (me->HasAura(SPELL_BATTLE_STANCE))
 						{
-							ModifyRage(me, 1, me->GetGUID());
+							ModifyRage(me, 2.5, me->GetGUID());
 							events.ScheduleEvent(EVENT_BATTLE_STANCE_RAGE, 1000);
 						}
 
@@ -299,7 +300,7 @@ class boss_general_nazgrim : public CreatureScript
 					case EVENT_DAMAGE_TAKEN:
 					{
 						if (me->HasAura(SPELL_DEFENSIVE_STANCE))
-							ModifyRage(me, 20, me->GetGUID());
+							ModifyRage(me, 5, me->GetGUID());
 						else
 							return;
 
@@ -314,7 +315,7 @@ class boss_general_nazgrim : public CreatureScript
 							DoCast(target_one, SPELL_HEROIC_SHOCKWAVE);
 						}
 
-						ModifyRage(me, RageAmount-300, me->GetGUID());
+						ModifyRage(me, RageAmount-75, me->GetGUID());
 						break;
 					}
 
@@ -322,7 +323,7 @@ class boss_general_nazgrim : public CreatureScript
 					{
 						DoCast(SPELL_KORKRON_BANNER);
 
-						ModifyRage(me, RageAmount-500, me->GetGUID());
+						ModifyRage(me, RageAmount-125, me->GetGUID());
 						break;
 					}
 
@@ -330,7 +331,7 @@ class boss_general_nazgrim : public CreatureScript
 					{
 						DoCast(SPELL_WAR_SONG);
 
-						ModifyRage(me, RageAmount-700, me->GetGUID());
+						ModifyRage(me, RageAmount-187.5, me->GetGUID());
 						break;
 					}
 
@@ -341,7 +342,7 @@ class boss_general_nazgrim : public CreatureScript
 							DoCast(target, SPELL_RAVAGER);
 						}
 
-						ModifyRage(me, RageAmount-1000, me->GetGUID());
+						ModifyRage(me, RageAmount-250, me->GetGUID());
 						break;
 					}
 
@@ -447,6 +448,8 @@ class mob_orgrimmar_faithful : public CreatureScript
 						me->SetMaxHealth(5500000);
 						break;
 				}
+
+				me->setFaction(16);
             }
 
             void UpdateAI(const uint32 diff)
@@ -661,6 +664,7 @@ class mob_korkron_warshaman : public CreatureScript
         }
 };
 
+// Done
 class mob_aftershock : public CreatureScript
 {
     public:
@@ -693,6 +697,7 @@ class mob_aftershock : public CreatureScript
         }
 };
 
+// Done
 class mob_korkron_banner : public CreatureScript
 {
     public:
@@ -746,6 +751,7 @@ class mob_korkron_banner : public CreatureScript
         }
 };
 
+// Done
 class mob_healing_tide_totem : public CreatureScript
 {
     public:
@@ -794,6 +800,7 @@ class mob_healing_tide_totem : public CreatureScript
         }
 };
 
+// Done
 class mob_ravager : public CreatureScript
 {
     public:
@@ -826,6 +833,7 @@ class mob_ravager : public CreatureScript
         }
 };
 
+// Done
 class spell_war_song : public SpellScriptLoader
 {
 	public:
@@ -857,6 +865,7 @@ class spell_war_song : public SpellScriptLoader
 		}
 };
 
+// Done
 class spell_sundering_blow : public SpellScriptLoader
 {
 	public:
@@ -871,15 +880,14 @@ class spell_sundering_blow : public SpellScriptLoader
 				if (InstanceScript* m_Instance = GetCaster()->GetInstanceScript())
 					if (Creature * genNazgrim = m_Instance->instance->GetCreature(m_Instance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
 					{
-						ModifyRage(genNazgrim, 50, genNazgrim->GetGUID()); // On hit it gives 5 rage to nazgrim
+						ModifyRage(genNazgrim, 12.5, genNazgrim->GetGUID()); // On hit it gives 5 rage to nazgrim
 
 						if (Unit* target = GetHitUnit())
 							if (AuraPtr sunderingBlow = target->GetAura(SPELL_SUNDERING_BLOW))
 							{
 								uint32 stacks = sunderingBlow->GetStackAmount();
 
-								for (uint8 i = 0; i <= stacks; i++)
-									ModifyRage(genNazgrim, 50, genNazgrim->GetGUID()); // And for every stack of the debuff 5 more rage
+								ModifyRage(genNazgrim, 12.5*stacks, genNazgrim->GetGUID()); // And for every stack of the debuff 5 more rage
 							}
 					}
 			}
