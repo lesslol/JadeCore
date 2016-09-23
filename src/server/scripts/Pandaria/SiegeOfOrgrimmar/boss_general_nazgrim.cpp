@@ -77,7 +77,7 @@ enum eSays
 {
 };
 
-void ModifyRage(Unit* me,uint32 p_BaseValue, uint64 nazgrimGuid)
+void AddRage(Unit* me,uint32 p_BaseValue, uint64 nazgrimGuid)
 {
     if (nazgrimGuid == NULL)
         return;
@@ -88,6 +88,19 @@ void ModifyRage(Unit* me,uint32 p_BaseValue, uint64 nazgrimGuid)
 
 		generalNazgrim->SetPower(Powers(POWER_RAGE), power + p_BaseValue);
     }
+}
+
+void RemoveRage(Unit* me, uint32 p_BaseValue, uint64 nazgrimGuid)
+{
+	if (nazgrimGuid == NULL)
+		return;
+
+	if (Unit* generalNazgrim = sObjectAccessor->GetCreature(*me, nazgrimGuid))
+	{
+		uint32 power = generalNazgrim->GetPower(Powers(POWER_RAGE));
+
+		generalNazgrim->SetPower(Powers(POWER_RAGE), power - p_BaseValue);
+	}
 }
 
 // Almost done - need to do talks and find real values for rage cost
@@ -211,40 +224,36 @@ class boss_general_nazgrim : public CreatureScript
                 events.Update(diff);
 				uint32 RageAmount = me->GetPower(Powers(POWER_RAGE));
 
-				if (RageAmount <= 122.5 && RageAmount >= 75)
+				if (RageAmount <= 490 && RageAmount >= 300)
 				{
 					if (me->HasAura(SPELL_COOLING_OFF))
 						return;
 
 					events.ScheduleEvent(EVENT_HEROIC_SHOCKWAVE, 1000);
-					DoCast(me, SPELL_COOLING_OFF);
 				}
 
-				if (RageAmount <= 185 && RageAmount >= 125)
+				if (RageAmount <= 740 && RageAmount >= 500)
 				{
 					if (me->HasAura(SPELL_COOLING_OFF))
 						return;
 
 					events.ScheduleEvent(EVENT_KORKRON_BANNER, 1000);
-					DoCast(me, SPELL_COOLING_OFF);
 				}
 
-				if (RageAmount <= 247.5 && RageAmount >= 187.5)
+				if (RageAmount <= 990 && RageAmount >= 750)
 				{
 					if (me->HasAura(SPELL_COOLING_OFF))
 						return;
 
 					events.ScheduleEvent(EVENT_WAR_SONG, 1000);
-					DoCast(me, SPELL_COOLING_OFF);
 				}
 
-				if (RageAmount == 250)
+				if (RageAmount == 1000)
 				{
 					if (me->HasAura(SPELL_COOLING_OFF))
 						return;
 
 					events.ScheduleEvent(EVENT_RAVAGER, 1000);
-					DoCast(me, SPELL_COOLING_OFF);
 				}
 
 				switch (events.ExecuteEvent())
@@ -264,7 +273,7 @@ class boss_general_nazgrim : public CreatureScript
 					{
 						if (me->HasAura(SPELL_BATTLE_STANCE))
 						{
-							ModifyRage(me, 2.5, me->GetGUID());
+							AddRage(me, 10, me->GetGUID());
 							events.ScheduleEvent(EVENT_BATTLE_STANCE_RAGE, 1000);
 						}
 
@@ -300,7 +309,7 @@ class boss_general_nazgrim : public CreatureScript
 					case EVENT_DAMAGE_TAKEN:
 					{
 						if (me->HasAura(SPELL_DEFENSIVE_STANCE))
-							ModifyRage(me, 5, me->GetGUID());
+							AddRage(me, 50, me->GetGUID());
 						else
 							return;
 
@@ -315,7 +324,8 @@ class boss_general_nazgrim : public CreatureScript
 							DoCast(target_one, SPELL_HEROIC_SHOCKWAVE);
 						}
 
-						ModifyRage(me, RageAmount-75, me->GetGUID());
+						DoCast(me, SPELL_COOLING_OFF);
+						RemoveRage(me, 300, me->GetGUID());
 						break;
 					}
 
@@ -323,7 +333,8 @@ class boss_general_nazgrim : public CreatureScript
 					{
 						DoCast(SPELL_KORKRON_BANNER);
 
-						ModifyRage(me, RageAmount-125, me->GetGUID());
+						DoCast(me, SPELL_COOLING_OFF);
+						RemoveRage(me, 500, me->GetGUID());
 						break;
 					}
 
@@ -331,7 +342,8 @@ class boss_general_nazgrim : public CreatureScript
 					{
 						DoCast(SPELL_WAR_SONG);
 
-						ModifyRage(me, RageAmount-187.5, me->GetGUID());
+						DoCast(me, SPELL_COOLING_OFF);
+						RemoveRage(me, 750, me->GetGUID());
 						break;
 					}
 
@@ -342,7 +354,8 @@ class boss_general_nazgrim : public CreatureScript
 							DoCast(target, SPELL_RAVAGER);
 						}
 
-						ModifyRage(me, RageAmount-250, me->GetGUID());
+						DoCast(me, SPELL_COOLING_OFF);
+						RemoveRage(me, 1000, me->GetGUID());
 						break;
 					}
 
@@ -880,14 +893,14 @@ class spell_sundering_blow : public SpellScriptLoader
 				if (InstanceScript* m_Instance = GetCaster()->GetInstanceScript())
 					if (Creature * genNazgrim = m_Instance->instance->GetCreature(m_Instance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
 					{
-						ModifyRage(genNazgrim, 12.5, genNazgrim->GetGUID()); // On hit it gives 5 rage to nazgrim
+						ModifyRage(genNazgrim, 13, genNazgrim->GetGUID()); // On hit it gives 5 rage to nazgrim
 
 						if (Unit* target = GetHitUnit())
 							if (AuraPtr sunderingBlow = target->GetAura(SPELL_SUNDERING_BLOW))
 							{
 								uint32 stacks = sunderingBlow->GetStackAmount();
 
-								ModifyRage(genNazgrim, 12.5*stacks, genNazgrim->GetGUID()); // And for every stack of the debuff 5 more rage
+								ModifyRage(genNazgrim, 13*stacks, genNazgrim->GetGUID()); // And for every stack of the debuff 5 more rage
 							}
 					}
 			}
