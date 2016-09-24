@@ -23,31 +23,31 @@ enum eBosses
 
 enum eSpells
 {
-	SPELL_ACIENT_MIASMA = 142861, 
-	SPELL_ARCING_SMASH = 142815, 
-	SPELL_SEISMIC_SLAM = 142851, 
-	SPELL_DISPLACED_ENERGY = 142913, 
-	SPELL_EXPEL_MIASMA = 143199, 
+	SPELL_ANCIENT_MIASMA	= 142861, 
+	SPELL_ARCING_SMASH		= 142815, 
+	SPELL_SEISMIC_SLAM		= 142851, 
+	SPELL_DISPLACED_ENERGY	= 142913, 
+	SPELL_EXPEL_MIASMA		= 143199, 
 	SPELL_BREATH_OF_YSHAARJ = 142842, 
-	SPELL_ERADICATE = 143916,  
-	SPELL_BLOOD_RAGE = 142879,
-    SPELL_IMPLODING_ENERGY = 142986,
-	SPELL_FATAL_STRIKE = 142990
+	SPELL_ERADICATE			= 143916,  
+	SPELL_BLOOD_RAGE		= 142879,
+    SPELL_IMPLODING_ENERGY	= 142986,
+	SPELL_FATAL_STRIKE		= 142990
 };
 
 enum eEvents
 {
-	EVENT_ARCING_SMASH = 2,
-	EVENT_SEISMIC_SLAM = 3,
-	EVENT_DISPLACED_ENERGY = 4,
-	EVENT_ERADICATE = 7,
-	EVENT_BREATH_OF_YSHARRJ = 6,
-	EVENT_EXPEL_MIASMA = 5,
-	EVENT_ARCING_SMASH_TARGET_SPAWN = 8,
-	EVENT_AGRESSIVE = 10,
-	EVENT_BLOOD_RAGE = 11,
-	EVENT_PHASE1 = 12,
-	EVENT_IMPLODING_ENERY = 13
+	EVENT_ARCING_SMASH				= 1,
+	EVENT_SEISMIC_SLAM				= 2,
+	EVENT_DISPLACED_ENERGY			= 3,
+	EVENT_ERADICATE					= 4,
+	EVENT_BREATH_OF_YSHARRJ			= 5,
+	EVENT_EXPEL_MIASMA				= 6,
+	EVENT_ARCING_SMASH_TARGET_SPAWN = 7,
+	EVENT_AGRESSIVE					= 8,
+	EVENT_BLOOD_RAGE				= 9,
+	EVENT_PHASE1					= 10,
+	EVENT_IMPLODING_ENERY			= 11,
 };
 
 enum Phases
@@ -58,24 +58,23 @@ enum Phases
 
 enum eCreatures
 {
-	CREATURE_Malkorok = 71454,
+	CREATURE_MALKOROK	  = 71454,
 	CREATURE_ARCING_SMASH = 71455
 };
 
 enum eTexts
 {
-	MALKOROK_INTRO,
-	MALKOROK_AGGRO,
-	MALKOROK_ARCING_SMASH_1,
-	MALKOROK_ARCING_SMASH_2,
-	MALKOROK_ARCING_SMASH_3,
-	MALKOROK_BREATH_OF_YSHAARJ_1,
-	MALKOROK_BREATH_OF_YSHAARJ_2,
-	MALKOROK_BLOOD_RAGE_1,
-	MALKOROK_BLOOD_RAGE_2,
-	MALKOROK_BERSERK,
-	MALKOROK_WIPE,
-	MALKOROK_DEATH
+	MALKOROK_INTRO					= 1,
+	MALKOROK_AGGRO					= 2,
+	MALKOROK_ARCING_SMASH_1			= 3,
+	MALKOROK_ARCING_SMASH_2			= 4,
+	MALKOROK_ARCING_SMASH_3			= 5,
+	MALKOROK_BREATH_OF_YSHAARJ		= 6, // 0 or 1 in database
+	MALKOROK_BLOOD_RAGE_1			= 7,
+	MALKOROK_BLOOD_RAGE_2			= 8,
+	MALKOROK_BERSERK				= 9,
+	MALKOROK_WIPE					= 10,
+	MALKOROK_DEATH					= 11,
 };
 
 class boss_malkorok : public CreatureScript
@@ -91,13 +90,16 @@ public:
 	struct boss_malkorok_AI : public BossAI
 	{
 		boss_malkorok_AI(Creature* creature) : BossAI(creature, BOSS_MALKOROK)
-		{}
+		{
+		
+		}
+
 		void Reset()
 		{
+			_Reset();
 			me->SetReactState(REACT_AGGRESSIVE);
 			events.Reset();
-			_Reset();
-			me->setFaction(14);
+			me->setFaction(16);
 			me->setPowerType(POWER_RAGE);
 			me->SetMaxPower(POWER_RAGE, 100);
 			events.SetPhase(PHASE_ONE);
@@ -105,13 +107,13 @@ public:
 
 		void JustDied(Unit* /*killer*/)
 		{
-			DoCastToAllHostilePlayers(SPELL_ACIENT_MIASMA);
-			Talk(MALKOROK_AGGRO);
+			Talk(MALKOROK_DEATH);
 			std::list<Player*> pl_list;
 			me->GetPlayerListInGrid(pl_list, 500.0f);
 			for (auto itr : pl_list)
 			{
-				itr->RemoveAura(SPELL_ACIENT_MIASMA);
+				if (itr->HasAura(SPELL_ANCIENT_MIASMA))
+					itr->RemoveAura(SPELL_ANCIENT_MIASMA);
 			}
 		}
 
@@ -122,14 +124,17 @@ public:
 
 		void EnterCombat(Unit* unit)
 		{
-			DoCastToAllHostilePlayers(SPELL_ACIENT_MIASMA);           
+			DoCastToAllHostilePlayers(SPELL_ANCIENT_MIASMA);           
 			Talk(MALKOROK_AGGRO);
 			std::list<Player*> pl_list;
 			me->GetPlayerListInGrid(pl_list, 500.0f);
+
 			for (auto itr : pl_list)
 			{
-				me->AddAura(SPELL_ACIENT_MIASMA, itr);
+				if (!itr->HasAura(SPELL_ANCIENT_MIASMA))
+					me->AddAura(SPELL_ANCIENT_MIASMA, itr);
 			}
+
 			events.SetPhase(PHASE_ONE);
 			events.ScheduleEvent(EVENT_SEISMIC_SLAM, 5000, PHASE_ONE);
 			events.ScheduleEvent(EVENT_ARCING_SMASH, 11000, PHASE_ONE);
@@ -142,100 +147,112 @@ public:
 			if (!UpdateVictim())
 				return;
 
+			if (me->HasUnitState(UNIT_STATE_CASTING))
+				return;
+
 			events.Update(diff);
-			while (uint32 eventId = events.ExecuteEvent())
+
+
+			switch (events.ExecuteEvent())
 			{
-				switch (eventId)
-				{
 				case EVENT_ARCING_SMASH:
 				{
-					me->CastSpell(me->FindNearestCreature(CREATURE_ARCING_SMASH, 50.00f, true), SPELL_ARCING_SMASH);
+					if (Unit* target = me->FindNearestCreature(CREATURE_ARCING_SMASH, 50.00f, true))
+					{
+						DoCast(target, SPELL_ARCING_SMASH);
+					}
+
 					events.ScheduleEvent(EVENT_ARCING_SMASH, 19000, PHASE_ONE);
 					events.ScheduleEvent(EVENT_IMPLODING_ENERY, 10000, PHASE_ONE);
-					uint8 text = urand(1, 3);
-					if (text == 1)
-					{
-						Talk(MALKOROK_ARCING_SMASH_1);
-					}
-					else if (text == 2)
-					{
-						Talk(MALKOROK_ARCING_SMASH_2);
-					}
-					else if (text == 3)
-					{
-						Talk(MALKOROK_ARCING_SMASH_3);
-					}
 					break;
 				}
+
 				case EVENT_SEISMIC_SLAM:
 				{
 					if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 40.0f, true))
-					me->CastSpell(target, SPELL_SEISMIC_SLAM, false);
+					{
+						DoCast(target, SPELL_SEISMIC_SLAM, false);
+					}
+
 					events.ScheduleEvent(EVENT_SEISMIC_SLAM, 19500, PHASE_ONE);
 					break;
 				}
+
 				case EVENT_BREATH_OF_YSHARRJ:
 				{
-					me->CastSpell(me, SPELL_BREATH_OF_YSHAARJ, false);
+					DoCast(me, SPELL_BREATH_OF_YSHAARJ, false);
+
 					events.ScheduleEvent(EVENT_BREATH_OF_YSHARRJ, 70000, PHASE_ONE);
 					events.ScheduleEvent(EVENT_SEISMIC_SLAM, 7500, PHASE_ONE);
 					events.ScheduleEvent(EVENT_ARCING_SMASH, 14000, PHASE_ONE);
-					uint8 textbreath = urand(1, 2);
-					if (textbreath == 1)
-					{
-						Talk(MALKOROK_BREATH_OF_YSHAARJ_1);
-					}
-					else if (textbreath == 2)
-					{
-						Talk(MALKOROK_BREATH_OF_YSHAARJ_2);
-					}
 					break;
 				}
+
 				case EVENT_EXPEL_MIASMA:
 				{
-					me->CastSpell(me, SPELL_EXPEL_MIASMA, false);
+					DoCast(me, SPELL_EXPEL_MIASMA, false);
+
 					events.ScheduleEvent(EVENT_SEISMIC_SLAM, 7500, PHASE_ONE);
 					events.ScheduleEvent(EVENT_ARCING_SMASH, 14000, PHASE_ONE);
 					events.ScheduleEvent(EVENT_BREATH_OF_YSHARRJ, 70000, PHASE_ONE);
 					break;
 				}
+
 				case EVENT_ERADICATE:
 				{
-					me->CastSpell(me, SPELL_ERADICATE, false);
+					DoCast(me, SPELL_ERADICATE, false);
 					break;
 				}
+
 				case EVENT_ARCING_SMASH_TARGET_SPAWN:
 				{
-					me->GetMotionMaster()->MoveJump(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY(), me->GetHomePosition().GetPositionZ(), 40.0f, 40.0f);
-					Unit* target = SelectTarget(SELECT_TARGET_RANDOM);
-					me->SummonCreature(CREATURE_ARCING_SMASH, target->GetPositionX(), target->GetPositionY(), me->GetPositionZ(), 10.0f, TEMPSUMMON_TIMED_DESPAWN, 5000);
+					float homeX = me->GetHomePosition().GetPositionX();
+					float homeY = me->GetHomePosition().GetPositionY();
+					float homeZ = me->GetHomePosition().GetPositionZ();
+					me->GetMotionMaster()->MoveJump(homeX, homeY, homeZ, 40.0f, 40.0f);
+
+					if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM))
+					{
+						float posX = target->GetPositionX();
+						float posY = target->GetPositionY();
+						float posZ = target->GetPositionZ();
+
+						me->SummonCreature(CREATURE_ARCING_SMASH, posX, posY, posZ, 10.0f, TEMPSUMMON_TIMED_DESPAWN, 5000);
+					}
 					break;
 				}
+
 				case EVENT_BLOOD_RAGE:
 				{
-				events.SetPhase(PHASE_TWO);
-				me->SetPower(POWER_RAGE, 100, false);
-				me->CastSpell(me, SPELL_BLOOD_RAGE);
-				events.ScheduleEvent(EVENT_PHASE1, 22500);
-				events.ScheduleEvent(EVENT_DISPLACED_ENERGY, 3500, PHASE_TWO);
+					events.SetPhase(PHASE_TWO);
+					me->SetPower(POWER_RAGE, 100, false);
+					DoCast(me, SPELL_BLOOD_RAGE);
+
+					events.ScheduleEvent(EVENT_PHASE1, 22500);
+					events.ScheduleEvent(EVENT_DISPLACED_ENERGY, 3500, PHASE_TWO);
+					break;
 				}
+
 				case EVENT_IMPLODING_ENERY:
 				{
-				me->CastSpell(me, SPELL_IMPLODING_ENERGY);
+					me->CastSpell(me, SPELL_IMPLODING_ENERGY);
+					break;
 				}
+
 				case EVENT_PHASE1:
 				{
-				events.SetPhase(PHASE_ONE);
+					events.SetPhase(PHASE_ONE);
+					break;
 				}
+
 				case EVENT_DISPLACED_ENERGY:
 				{
-				me->CastSpell(me, SPELL_DISPLACED_ENERGY);
-				events.ScheduleEvent(EVENT_DISPLACED_ENERGY, 11000, PHASE_TWO);
-				}
-				default:
+					me->CastSpell(me, SPELL_DISPLACED_ENERGY);
+					events.ScheduleEvent(EVENT_DISPLACED_ENERGY, 11000, PHASE_TWO);
 					break;
 				}
 			}
+
 			DoMeleeAttackIfReady();
 		}
 	};
