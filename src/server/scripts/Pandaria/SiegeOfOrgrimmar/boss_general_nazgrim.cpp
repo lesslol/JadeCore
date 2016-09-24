@@ -118,7 +118,7 @@ void RemoveRage(Unit* me, uint32 p_BaseValue, uint64 nazgrimGuid)
 	}
 }
 
-// Almost done - need to do talks and find real values for rage cost
+// 71515 - General Nazgrim
 class boss_general_nazgrim : public CreatureScript
 {
 	public:
@@ -1069,6 +1069,7 @@ void AddSC_boss_general_nazgrim()
 	new mob_aftershock();
 	new mob_korkron_banner();
 	new mob_healing_tide_totem();
+	new mob_ravager();
 
 	new spell_war_song();
 	new spell_sundering_blow();
