@@ -81,10 +81,6 @@ Pandaria Raids:
 -- Terrace of Endless Spring
 -- Throne of Thunder
 
-Classic Raids:
-
--- Temple of Ahn'Qiraj
-
 The Maelstrom Zones:
 
 -- Deepholm
