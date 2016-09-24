@@ -1,25 +1,6 @@
-#include "ObjectMgr.h"
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
-#include "SpellScript.h"
-#include "SpellAuraEffects.h"
-#include "SpellAuras.h"
-#include "MapManager.h"
-#include "Spell.h"
-#include "Vehicle.h"
-#include "Cell.h"
-#include "CellImpl.h"
-#include "GridNotifiers.h"
-#include "GridNotifiersImpl.h"
-#include "CreatureTextMgr.h"
-#include "ScriptedCreature.h"
-#include "ScriptPCH.h"
-#include "ScriptedEscortAI.h"
-
-enum eBosses
-{
-	BOSS_MALKOROK,
-};
+#include "siege_of_orgrimmar.h"
 
 enum eSpells
 {
@@ -32,7 +13,7 @@ enum eSpells
 	SPELL_ERADICATE			= 143916,  
 	SPELL_BLOOD_RAGE		= 142879,
     SPELL_IMPLODING_ENERGY	= 142986,
-	SPELL_FATAL_STRIKE		= 142990
+	SPELL_FATAL_STRIKE		= 142990,
 };
 
 enum eEvents
@@ -46,8 +27,9 @@ enum eEvents
 	EVENT_ARCING_SMASH_TARGET_SPAWN = 7,
 	EVENT_AGRESSIVE					= 8,
 	EVENT_BLOOD_RAGE				= 9,
-	EVENT_PHASE1					= 10,
+	EVENT_PHASE_ONE					= 10,
 	EVENT_IMPLODING_ENERY			= 11,
+	EVENT_PHASE_TWO					= 12,
 };
 
 enum Phases
@@ -66,9 +48,7 @@ enum eTexts
 {
 	MALKOROK_INTRO					= 1,
 	MALKOROK_AGGRO					= 2,
-	MALKOROK_ARCING_SMASH_1			= 3,
-	MALKOROK_ARCING_SMASH_2			= 4,
-	MALKOROK_ARCING_SMASH_3			= 5,
+	MALKOROK_ARCING_SMASH			= 3, // 0, 1 or 2 in database
 	MALKOROK_BREATH_OF_YSHAARJ		= 6, // 0 or 1 in database
 	MALKOROK_BLOOD_RAGE_1			= 7,
 	MALKOROK_BLOOD_RAGE_2			= 8,
@@ -89,7 +69,7 @@ public:
 
 	struct boss_malkorok_AI : public BossAI
 	{
-		boss_malkorok_AI(Creature* creature) : BossAI(creature, BOSS_MALKOROK)
+		boss_malkorok_AI(Creature* creature) : BossAI(creature, DATA_MALKOROK)
 		{
 		
 		}
@@ -136,9 +116,9 @@ public:
 			}
 
 			events.SetPhase(PHASE_ONE);
-			events.ScheduleEvent(EVENT_SEISMIC_SLAM, 5000, PHASE_ONE);
-			events.ScheduleEvent(EVENT_ARCING_SMASH, 11000, PHASE_ONE);
-			events.ScheduleEvent(EVENT_BREATH_OF_YSHARRJ, 68000, PHASE_ONE);
+			events.ScheduleEvent(EVENT_SEISMIC_SLAM, urand(13000, 15000), 0, PHASE_ONE);
+			events.ScheduleEvent(EVENT_ARCING_SMASH_TARGET_SPAWN, 15000, 0, PHASE_ONE);
+			events.ScheduleEvent(EVENT_PHASE_TWO, 120000, 0, PHASE_ONE);
 			me->AddAura(SPELL_FATAL_STRIKE, me);
 		}
 
@@ -162,8 +142,7 @@ public:
 						DoCast(target, SPELL_ARCING_SMASH);
 					}
 
-					events.ScheduleEvent(EVENT_ARCING_SMASH, 19000, PHASE_ONE);
-					events.ScheduleEvent(EVENT_IMPLODING_ENERY, 10000, PHASE_ONE);
+					events.ScheduleEvent(EVENT_ARCING_SMASH_TARGET_SPAWN, 15000, PHASE_ONE);
 					break;
 				}
 
@@ -175,32 +154,6 @@ public:
 					}
 
 					events.ScheduleEvent(EVENT_SEISMIC_SLAM, 19500, PHASE_ONE);
-					break;
-				}
-
-				case EVENT_BREATH_OF_YSHARRJ:
-				{
-					DoCast(me, SPELL_BREATH_OF_YSHAARJ, false);
-
-					events.ScheduleEvent(EVENT_BREATH_OF_YSHARRJ, 70000, PHASE_ONE);
-					events.ScheduleEvent(EVENT_SEISMIC_SLAM, 7500, PHASE_ONE);
-					events.ScheduleEvent(EVENT_ARCING_SMASH, 14000, PHASE_ONE);
-					break;
-				}
-
-				case EVENT_EXPEL_MIASMA:
-				{
-					DoCast(me, SPELL_EXPEL_MIASMA, false);
-
-					events.ScheduleEvent(EVENT_SEISMIC_SLAM, 7500, PHASE_ONE);
-					events.ScheduleEvent(EVENT_ARCING_SMASH, 14000, PHASE_ONE);
-					events.ScheduleEvent(EVENT_BREATH_OF_YSHARRJ, 70000, PHASE_ONE);
-					break;
-				}
-
-				case EVENT_ERADICATE:
-				{
-					DoCast(me, SPELL_ERADICATE, false);
 					break;
 				}
 
@@ -217,38 +170,23 @@ public:
 						float posY = target->GetPositionY();
 						float posZ = target->GetPositionZ();
 
-						me->SummonCreature(CREATURE_ARCING_SMASH, posX, posY, posZ, 10.0f, TEMPSUMMON_TIMED_DESPAWN, 5000);
+						me->SummonCreature(CREATURE_ARCING_SMASH, posX, posY, posZ, 10.0f, TEMPSUMMON_MANUAL_DESPAWN);
 					}
+
+					float myposX = me->GetPositionX();
+					float myposY = me->GetPositionY();
+
+					if (myposX == homeX && myposY == homeY)
+					{
+						events.ScheduleEvent(EVENT_ARCING_SMASH, 0, 0, PHASE_ONE);
+					}
+
 					break;
 				}
 
-				case EVENT_BLOOD_RAGE:
+				case EVENT_PHASE_TWO:
 				{
 					events.SetPhase(PHASE_TWO);
-					me->SetPower(POWER_RAGE, 100, false);
-					DoCast(me, SPELL_BLOOD_RAGE);
-
-					events.ScheduleEvent(EVENT_PHASE1, 22500);
-					events.ScheduleEvent(EVENT_DISPLACED_ENERGY, 3500, PHASE_TWO);
-					break;
-				}
-
-				case EVENT_IMPLODING_ENERY:
-				{
-					me->CastSpell(me, SPELL_IMPLODING_ENERGY);
-					break;
-				}
-
-				case EVENT_PHASE1:
-				{
-					events.SetPhase(PHASE_ONE);
-					break;
-				}
-
-				case EVENT_DISPLACED_ENERGY:
-				{
-					me->CastSpell(me, SPELL_DISPLACED_ENERGY);
-					events.ScheduleEvent(EVENT_DISPLACED_ENERGY, 11000, PHASE_TWO);
 					break;
 				}
 			}
@@ -258,9 +196,38 @@ public:
 	};
 };
 
+class spell_displaced_energy : public SpellScriptLoader
+{
+	public:
+		spell_displaced_energy() : SpellScriptLoader("spell_displaced_energy") { }
+
+		class spell_displaced_energy_AuraScript : public AuraScript
+		{
+			PrepareAuraScript(spell_displaced_energy_AuraScript);
+
+			void OnRemove(constAuraEffectPtr /*aurEff*/, AuraEffectHandleModes /*mode*/)
+			{
+				if (Unit* caster = GetCaster())
+					caster->CastSpell(caster, SPELL_DISPLACED_ENERGY);
+			}
+
+			void Register()
+			{
+				OnEffectRemove += AuraEffectRemoveFn(spell_displaced_energy_AuraScript::OnRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+			}
+		};
+
+		AuraScript* GetAuraScript() const
+		{
+			return new spell_displaced_energy_AuraScript();
+		}
+};
+
 void AddSC_boss_malkorok()
 {
 	new boss_malkorok();
+
+	new spell_displaced_energy();
 }
 
 /*
