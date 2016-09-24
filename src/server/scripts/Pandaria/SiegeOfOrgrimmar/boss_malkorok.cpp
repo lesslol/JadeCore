@@ -1,129 +1,250 @@
+#include "ObjectMgr.h"
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
-#include "siege_of_orgrimmar.h"
+#include "SpellScript.h"
+#include "SpellAuraEffects.h"
+#include "SpellAuras.h"
+#include "MapManager.h"
+#include "Spell.h"
+#include "Vehicle.h"
+#include "Cell.h"
+#include "CellImpl.h"
+#include "GridNotifiers.h"
+#include "GridNotifiersImpl.h"
+#include "CreatureTextMgr.h"
+#include "ScriptedCreature.h"
+#include "ScriptPCH.h"
+#include "ScriptedEscortAI.h"
+
+enum eBosses
+{
+	BOSS_MALKOROK,
+};
 
 enum eSpells
 {
-    SPELL_ANCIENT_MIASMA           = 142861,
-    SPELL_ARCING_SMASH             = 143805,
-    SPELL_BLOOD_RAGE               = 142879,
-    SPELL_BREATH_OF_Y_SHAARJ       = 142842,
-    SPELL_DISPLACED_ENERGY         = 142913,
-    SPELL_ERADICATE                = 143916,
-    SPELL_EXPEL_MIASMA             = 143199,
-    SPELL_FATAL_STRIKE             = 142990,
-    SPELL_RELENTLESS_ASSAULT       = 143261,
-    SPELL_SIESMIC_SLAM             = 142851
+	SPELL_ACIENT_MIASMA = 142861, 
+	SPELL_ARCING_SMASH = 142815, 
+	SPELL_SEISMIC_SLAM = 142851, 
+	SPELL_DISPLACED_ENERGY = 142913, 
+	SPELL_EXPEL_MIASMA = 143199, 
+	SPELL_BREATH_OF_YSHAARJ = 142842, 
+	SPELL_ERADICATE = 143916,  
+	SPELL_BLOOD_RAGE = 142879,
+    SPELL_IMPLODING_ENERGY = 142986,
+	SPELL_FATAL_STRIKE = 142990
 };
 
 enum eEvents
 {
+	EVENT_ARCING_SMASH = 2,
+	EVENT_SEISMIC_SLAM = 3,
+	EVENT_DISPLACED_ENERGY = 4,
+	EVENT_ERADICATE = 7,
+	EVENT_BREATH_OF_YSHARRJ = 6,
+	EVENT_EXPEL_MIASMA = 5,
+	EVENT_ARCING_SMASH_TARGET_SPAWN = 8,
+	EVENT_AGRESSIVE = 10,
+	EVENT_BLOOD_RAGE = 11,
+	EVENT_PHASE1 = 12,
+	EVENT_IMPLODING_ENERY = 13
 };
 
-enum eSays
+enum Phases
 {
-    TALK_INTRO,
-    TALK_AGGRO,
-    TALK_ARCING_SMASH,
-    TALK_BREATH_OF_YSHAARJ,
-    TALK_BLOOD_RAGE,
-    TALK_BERSERK,
-    TALK_WIPE,
-    TALK_DEATH
+	PHASE_ONE = 1,
+	PHASE_TWO = 2,
+};
+
+enum eCreatures
+{
+	CREATURE_Malkorok = 71454,
+	CREATURE_ARCING_SMASH = 71455
+};
+
+enum eTexts
+{
+	MALKOROK_INTRO,
+	MALKOROK_AGGRO,
+	MALKOROK_ARCING_SMASH_1,
+	MALKOROK_ARCING_SMASH_2,
+	MALKOROK_ARCING_SMASH_3,
+	MALKOROK_BREATH_OF_YSHAARJ_1,
+	MALKOROK_BREATH_OF_YSHAARJ_2,
+	MALKOROK_BLOOD_RAGE_1,
+	MALKOROK_BLOOD_RAGE_2,
+	MALKOROK_BERSERK,
+	MALKOROK_WIPE,
+	MALKOROK_DEATH
 };
 
 class boss_malkorok : public CreatureScript
 {
-    public:
-        boss_malkorok() : CreatureScript("boss_malkorok") { }
+public:
+	boss_malkorok() : CreatureScript("boss_malkorok") { }
 
-        struct boss_malkorokAI : public BossAI
-        {
-            boss_malkorokAI(Creature* creature) : BossAI(creature, DATA_MALKOROK)
-            {
-                pInstance = creature->GetInstanceScript();
-            }
-			
-            EventMap events;
-            InstanceScript* pInstance;
-			
-            void Reset()
-            {
-                Reset();
-				
-                events.Reset();
-				
-                summons.DespawnAll();
-				
-                if (pInstance)
-                    pInstance->SendEncounterUnit(ENCOUNTER_FRAME_DISENGAGE, me);
-            }
-			
-            void JustReachedHome()
-            {
-                _JustReachedHome();
+	CreatureAI* GetAI(Creature* creature) const
+	{
+		return new boss_malkorok_AI(creature);
+	}
 
-                if (pInstance)
-                    pInstance->SetBossState(DATA_MALKOROK, FAIL);
-            }
-			
-            void EnterCombat(Unit* attacker)
-            {
-                // @TODO: Set in combat for other protectors
-                if (pInstance)
-                {
-                    pInstance->SendEncounterUnit(ENCOUNTER_FRAME_ENGAGE, me);
-                    pInstance->SetBossState(DATA_MALKOROK, IN_PROGRESS);
-                }
-            }
-			
-            void JustSummoned(Creature* summon)
-            {
-                summons.Summon(summon);
-            }
+	struct boss_malkorok_AI : public BossAI
+	{
+		boss_malkorok_AI(Creature* creature) : BossAI(creature, BOSS_MALKOROK)
+		{}
+		void Reset()
+		{
+			me->SetReactState(REACT_AGGRESSIVE);
+			events.Reset();
+			_Reset();
+			me->setFaction(14);
+			me->setPowerType(POWER_RAGE);
+			me->SetMaxPower(POWER_RAGE, 100);
+			events.SetPhase(PHASE_ONE);
+		}
 
-            void SummonedCreatureDespawn(Creature* summon)
-            {
-                summons.Despawn(summon);
-            }
-			
-            void KilledUnit(Unit* who)
-            {
-            }
-			
-            void JustDied(Unit* killer)
-            {
-                _JustDied();
+		void JustDied(Unit* /*killer*/)
+		{
+			DoCastToAllHostilePlayers(SPELL_ACIENT_MIASMA);
+			Talk(MALKOROK_AGGRO);
+			std::list<Player*> pl_list;
+			me->GetPlayerListInGrid(pl_list, 500.0f);
+			for (auto itr : pl_list)
+			{
+				itr->RemoveAura(SPELL_ACIENT_MIASMA);
+			}
+		}
 
-                if (pInstance)
-                {
-                    pInstance->SendEncounterUnit(ENCOUNTER_FRAME_DISENGAGE, me);
-                    pInstance->SetBossState(DATA_MALKOROK, DONE);
-                }
-            }
-			
-            void UpdateAI(const uint32 diff)
-            {
-                if (!UpdateVictim())
-                    return;
+		void KilledUnit(Unit* u)
+		{
+		}
 
-                if (me->HasUnitState(UNIT_STATE_CASTING))
-                    return;
 
-                events.Update(diff);
-            }
-        };
+		void EnterCombat(Unit* unit)
+		{
+			DoCastToAllHostilePlayers(SPELL_ACIENT_MIASMA);           
+			Talk(MALKOROK_AGGRO);
+			std::list<Player*> pl_list;
+			me->GetPlayerListInGrid(pl_list, 500.0f);
+			for (auto itr : pl_list)
+			{
+				me->AddAura(SPELL_ACIENT_MIASMA, itr);
+			}
+			events.SetPhase(PHASE_ONE);
+			events.ScheduleEvent(EVENT_SEISMIC_SLAM, 5000, PHASE_ONE);
+			events.ScheduleEvent(EVENT_ARCING_SMASH, 11000, PHASE_ONE);
+			events.ScheduleEvent(EVENT_BREATH_OF_YSHARRJ, 68000, PHASE_ONE);
+			me->AddAura(SPELL_FATAL_STRIKE, me);
+		}
 
-        CreatureAI* GetAI(Creature* pCreature) const
-        {
-            return new boss_malkorokAI(pCreature);
-        }
+		void UpdateAI(const uint32 diff)
+		{
+			if (!UpdateVictim())
+				return;
+
+			events.Update(diff);
+			while (uint32 eventId = events.ExecuteEvent())
+			{
+				switch (eventId)
+				{
+				case EVENT_ARCING_SMASH:
+				{
+					me->CastSpell(me->FindNearestCreature(CREATURE_ARCING_SMASH, 50.00f, true), SPELL_ARCING_SMASH);
+					events.ScheduleEvent(EVENT_ARCING_SMASH, 19000, PHASE_ONE);
+					events.ScheduleEvent(EVENT_IMPLODING_ENERY, 10000, PHASE_ONE);
+					uint8 text = urand(1, 3);
+					if (text == 1)
+					{
+						Talk(MALKOROK_ARCING_SMASH_1);
+					}
+					else if (text == 2)
+					{
+						Talk(MALKOROK_ARCING_SMASH_2);
+					}
+					else if (text == 3)
+					{
+						Talk(MALKOROK_ARCING_SMASH_3);
+					}
+					break;
+				}
+				case EVENT_SEISMIC_SLAM:
+				{
+					if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 40.0f, true))
+					me->CastSpell(target, SPELL_SEISMIC_SLAM, false);
+					events.ScheduleEvent(EVENT_SEISMIC_SLAM, 19500);
+					break;
+				}
+				case EVENT_BREATH_OF_YSHARRJ:
+				{
+					me->CastSpell(me, SPELL_BREATH_OF_YSHAARJ, false);
+					events.ScheduleEvent(EVENT_BREATH_OF_YSHARRJ, 70000, PHASE_ONE);
+					events.ScheduleEvent(EVENT_SEISMIC_SLAM, 7500, PHASE_ONE);
+					events.ScheduleEvent(EVENT_ARCING_SMASH, 14000, PHASE_ONE);
+					uint8 textbreath = urand(1, 2);
+					if (textbreath == 1)
+					{
+						Talk(MALKOROK_BREATH_OF_YSHAARJ_1);
+					}
+					else if (textbreath == 2)
+					{
+						Talk(MALKOROK_BREATH_OF_YSHAARJ_1);
+					}
+					break;
+				}
+				case EVENT_EXPEL_MIASMA:
+				{
+					me->CastSpell(me, SPELL_EXPEL_MIASMA, false);
+					events.ScheduleEvent(EVENT_SEISMIC_SLAM, 7500, PHASE_ONE);
+					events.ScheduleEvent(EVENT_ARCING_SMASH, 14000, PHASE_ONE);
+					events.ScheduleEvent(EVENT_BREATH_OF_YSHARRJ, 70000, PHASE_ONE);
+					break;
+				}
+				case EVENT_ERADICATE:
+				{
+					me->CastSpell(me, SPELL_ERADICATE, false);
+					break;
+				}
+				case EVENT_ARCING_SMASH_TARGET_SPAWN:
+				{
+					me->GetMotionMaster()->MoveJump(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY(), me->GetHomePosition().GetPositionZ(), 40.0f, 40.0f);
+					Unit* target = SelectTarget(SELECT_TARGET_RANDOM);
+					me->SummonCreature(CREATURE_ARCING_SMASH, target->GetPositionX(), target->GetPositionY(), me->GetPositionZ(), 10.0f, TEMPSUMMON_TIMED_DESPAWN, 5000);
+					break;
+				}
+				case EVENT_BLOOD_RAGE:
+				{
+				events.SetPhase(PHASE_TWO);
+				me->SetPower(POWER_RAGE, 100, false);
+				me->CastSpell(me, SPELL_BLOOD_RAGE);
+				events.ScheduleEvent(EVENT_PHASE1, 22500);
+				events.ScheduleEvent(EVENT_DISPLACED_ENERGY, 3500, PHASE_TWO);
+				}
+				case EVENT_IMPLODING_ENERY:
+				{
+				me->CastSpell(me, SPELL_IMPLODING_ENERGY);
+				}
+				case EVENT_PHASE1:
+				{
+				events.SetPhase(PHASE_ONE);
+				}
+				case EVENT_DISPLACED_ENERGY:
+				{
+				me->CastSpell(me, SPELL_DISPLACED_ENERGY);
+				events.ScheduleEvent(EVENT_DISPLACED_ENERGY, 11000, PHASE_TWO);
+				}
+				default:
+					break;
+				}
+			}
+			DoMeleeAttackIfReady();
+		}
+	};
 };
 
-void AddSC_malkorok()
+void AddSC_boss_malkorok()
 {
-    new boss_malkorok();
-};
+	new boss_malkorok();
+}
 
 /*
 INSERT INTO creature_text VALUES
