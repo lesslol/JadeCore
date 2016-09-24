@@ -171,7 +171,7 @@ public:
 				{
 					if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 40.0f, true))
 					me->CastSpell(target, SPELL_SEISMIC_SLAM, false);
-					events.ScheduleEvent(EVENT_SEISMIC_SLAM, 19500);
+					events.ScheduleEvent(EVENT_SEISMIC_SLAM, 19500, PHASE_ONE);
 					break;
 				}
 				case EVENT_BREATH_OF_YSHARRJ:
@@ -187,7 +187,7 @@ public:
 					}
 					else if (textbreath == 2)
 					{
-						Talk(MALKOROK_BREATH_OF_YSHAARJ_1);
+						Talk(MALKOROK_BREATH_OF_YSHAARJ_2);
 					}
 					break;
 				}
