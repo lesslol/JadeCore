@@ -35,7 +35,6 @@
     - Need to rewrite Norushen
     - Need to finish Galakras script
     - Need to finish Iron Juggernaut script
-    - Need to add script for General Nazgrim
     - Need to add script for Malkorok
     - Need to add script for Spoils of Pandaria
     - Need to add script for Thok the Bloodthirsty
