@@ -15,6 +15,9 @@ enum eSpells
     SPELL_IMPLODING_ENERGY	 = 142986,
 	SPELL_FATAL_STRIKE		 = 142990,
 	SPELL_RELENTLESS_ASSAULT = 143261,
+	SPELL_BREATH_DAMAGE		 = 142816,
+	SPELL_DISPLACED_ENERGY_D = 142928,
+	SPELL_BLOOD_RAGE_DAMAGE  = 142890,
 };
 
 enum eEvents
@@ -44,8 +47,7 @@ enum Phases
 
 enum eCreatures
 {
-	CREATURE_MALKOROK	  = 71454,
-	CREATURE_ARCING_SMASH = 71455
+	CREATURE_ARCING_SMASH = 71455,
 };
 
 enum eTexts
@@ -75,7 +77,7 @@ public:
 	{
 		boss_malkorok_AI(Creature* creature) : BossAI(creature, DATA_MALKOROK)
 		{
-		
+
 		}
 
 		uint8 arcingSmashController;
@@ -139,7 +141,7 @@ public:
 			if (!UpdateVictim())
 				return;
 
-			if (me->HasUnitState(UNIT_STATE_CASTING) && !events.IsInPhase(PHASE_TWO))
+			if (me->HasUnitState(UNIT_STATE_CASTING))
 				return;
 
 			events.Update(diff);
@@ -161,6 +163,8 @@ public:
 
 				case EVENT_ARCING_SMASH_DAMAGE:
 				{
+					me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+					me->RemoveUnitMovementFlag(MOVEMENTFLAG_ROOT);
 					if (Unit* target = me->FindNearestCreature(CREATURE_ARCING_SMASH, 50.00f, true))
 					{
 						DoCast(target, SPELL_ARCING_SMASH);
@@ -186,6 +190,8 @@ public:
 
 				case EVENT_ARCING_SMASH_FIRST:
 				{
+					me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+					me->AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
 					Talk(MALKOROK_ARCING_SMASH);
 					arcingSmashController = 1;
 					float homeX = me->GetHomePosition().GetPositionX();
@@ -198,23 +204,19 @@ public:
 						float posX = target->GetPositionX();
 						float posY = target->GetPositionY();
 						float posZ = target->GetPositionZ();
+						float posO = target->GetOrientation();
 
-						me->SummonCreature(CREATURE_ARCING_SMASH, posX, posY, posZ, 10.0f, TEMPSUMMON_MANUAL_DESPAWN);
+						me->SummonCreature(CREATURE_ARCING_SMASH, posX, posY, posZ, 10.0f, TEMPSUMMON_TIMED_DESPAWN, 5000);
 					}
 
-					float myposX = me->GetPositionX();
-					float myposY = me->GetPositionY();
-
-					if (myposX == homeX && myposY == homeY)
-					{
-						events.ScheduleEvent(EVENT_ARCING_SMASH_DAMAGE, 0, 0, PHASE_ONE);
-					}
-
+					events.ScheduleEvent(EVENT_ARCING_SMASH_DAMAGE, 1000, 0, PHASE_ONE);
 					break;
 				}
 
 				case EVENT_ARCING_SMASH_SECOND:
 				{
+					me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+					me->AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
 					arcingSmashController = 2;
 					float homeX = me->GetHomePosition().GetPositionX();
 					float homeY = me->GetHomePosition().GetPositionY();
@@ -226,23 +228,19 @@ public:
 						float posX = target->GetPositionX();
 						float posY = target->GetPositionY();
 						float posZ = target->GetPositionZ();
+						float posO = target->GetOrientation();
 
-						me->SummonCreature(CREATURE_ARCING_SMASH, posX, posY, posZ, 10.0f, TEMPSUMMON_MANUAL_DESPAWN);
+						me->SummonCreature(CREATURE_ARCING_SMASH, posX, posY, posZ, posO, TEMPSUMMON_TIMED_DESPAWN, 5000);
 					}
 
-					float myposX = me->GetPositionX();
-					float myposY = me->GetPositionY();
-
-					if (myposX == homeX && myposY == homeY)
-					{
-						events.ScheduleEvent(EVENT_ARCING_SMASH_DAMAGE, 0, 0, PHASE_ONE);
-					}
-
+					events.ScheduleEvent(EVENT_ARCING_SMASH_DAMAGE, 1000, 0, PHASE_ONE);
 					break;
 				}
 
 				case EVENT_ARCING_SMASH_THIRD:
 				{
+					me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+					me->AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
 					arcingSmashController = 3;
 					float homeX = me->GetHomePosition().GetPositionX();
 					float homeY = me->GetHomePosition().GetPositionY();
@@ -254,34 +252,21 @@ public:
 						float posX = target->GetPositionX();
 						float posY = target->GetPositionY();
 						float posZ = target->GetPositionZ();
+						float posO = target->GetOrientation();
 
-						me->SummonCreature(CREATURE_ARCING_SMASH, posX, posY, posZ, 10.0f, TEMPSUMMON_MANUAL_DESPAWN);
+						me->SummonCreature(CREATURE_ARCING_SMASH, posX, posY, posZ, posO, TEMPSUMMON_MANUAL_DESPAWN);
 					}
 
-					float myposX = me->GetPositionX();
-					float myposY = me->GetPositionY();
-
-					if (myposX == homeX && myposY == homeY)
-					{
-						events.ScheduleEvent(EVENT_ARCING_SMASH_DAMAGE, 0, 0, PHASE_ONE);
-					}
-
+					events.ScheduleEvent(EVENT_ARCING_SMASH_DAMAGE, 1000, 0, PHASE_ONE);
 					events.ScheduleEvent(EVENT_BREATH_OF_YSHARRJ, 10000, 0, PHASE_ONE);
-
 					break;
 				}
 
 				case EVENT_BREATH_OF_YSHARRJ:
 				{
-					std::list<Creature*> creatures;
-					me->GetCreatureListWithEntryInGrid(creatures, CREATURE_ARCING_SMASH, 500.0f);
+					DoCast(SPELL_BREATH_OF_YSHAARJ);
 
-					for (auto itr : creatures)
-					{
-						DoCast(itr, SPELL_BREATH_OF_YSHAARJ);
-					}
-
-					events.ScheduleEvent(EVENT_DESPAWN_ARCING_SMASH, 0, 0, PHASE_ONE);
+					events.ScheduleEvent(EVENT_DESPAWN_ARCING_SMASH, 2500, 0, PHASE_ONE);
 					break;
 				}
 
@@ -292,6 +277,7 @@ public:
 
 					for (auto itr : creatures)
 					{
+						DoCast(itr, SPELL_BREATH_DAMAGE);
 						itr->DespawnOrUnsummon();
 					}
 					
@@ -302,10 +288,6 @@ public:
 				{
 					if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 40.0f, true))
 					{
-						float posX = target->GetPositionX();
-						float posY = target->GetPositionY();
-						float posZ = target->GetPositionZ();
-
 						std::list<Player*> pl_list;
 						target->GetPlayerListInGrid(pl_list, 5.0f);
 						for (auto itr : pl_list)
@@ -325,6 +307,7 @@ public:
 					events.Reset();
 					events.SetPhase(PHASE_TWO);
 
+					DoCast(SPELL_BLOOD_RAGE);
 					events.ScheduleEvent(EVENT_BLOOD_RAGE, 1000, 0, PHASE_TWO);
 					events.ScheduleEvent(EVENT_DISPLACED_ENERGY, 5000, 0, PHASE_TWO);
 					events.ScheduleEvent(EVENT_PHASE_ONE, 20000, 0, PHASE_TWO);
@@ -333,7 +316,7 @@ public:
 
 				case EVENT_BLOOD_RAGE:
 				{
-					DoCast(SPELL_BLOOD_RAGE);
+					DoCast(SPELL_BLOOD_RAGE_DAMAGE);
 
 					events.ScheduleEvent(EVENT_BLOOD_RAGE, 1000, 0, PHASE_TWO);
 					break;
@@ -373,7 +356,7 @@ class spell_displaced_energy : public SpellScriptLoader
 			void OnRemove(constAuraEffectPtr /*aurEff*/, AuraEffectHandleModes /*mode*/)
 			{
 				if (Unit* caster = GetCaster())
-					caster->CastSpell(caster, SPELL_DISPLACED_ENERGY);
+					caster->CastSpell(caster, SPELL_DISPLACED_ENERGY_D);
 			}
 
 			void Register()
