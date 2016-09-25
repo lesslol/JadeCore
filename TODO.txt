@@ -83,7 +83,6 @@ Pandaria Raids:
 
 The Maelstrom Zones:
 
--- Deepholm
 -- The Lost Isles
 -- The Wandering Isle
 
