@@ -1,3 +1,21 @@
+/*
+* Copyright (C) 2015-2016 JadeCore <https://github.com/cooler-SAI/JadeCore548-patched>
+* Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
+*
+* This program is free software; you can redistribute it and/or modify it
+* under the terms of the GNU General Public License as published by the
+* Free Software Foundation; either version 2 of the License, or (at your
+* option) any later version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+* FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+* more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "siege_of_orgrimmar.h"
@@ -13,6 +31,7 @@ enum eSpells
 	SPELL_SUNDERING_BLOW		= 143494,
 	SPELL_BONECRACKER			= 143638,
 	SPELL_COOLING_OFF			= 143484,
+	SPELL_EXECUTE				= 143502,
 
 	// Rage Spells
 	SPELL_HEROIC_SHOCKWAVE		= 143716,
@@ -78,6 +97,8 @@ enum eEvents
 	EVENT_EARTH_SHIELD		 = 22,
 	EVENT_CHAIN_HEAL		 = 23,
 	EVENT_HEALING_TIDE_TOTEM = 24,
+
+	EVENT_EXECUTE			 = 25,
 };
 
 enum eCreatures
@@ -86,6 +107,7 @@ enum eCreatures
 	CREATURE_KORKRON_ASSASSINS	= 71518,
 	CREATURE_KORKRON_ARCWEAVER	= 71517,
 	CREATURE_KORKRON_WARSHAMAN	= 71519,
+	CREATURE_KORKRON_SNIPERS	= 71656,
 };
 
 enum eSays
@@ -194,6 +216,9 @@ class boss_general_nazgrim : public CreatureScript
 				events.ScheduleEvent(EVENT_SUMMON_ADDS_ONE, 45000);
 				events.ScheduleEvent(EVENT_SUNDERING_BLOW, urand(5000, 10000));
 				events.ScheduleEvent(EVENT_BONECRACKER, 30000);
+
+				if (me->GetMap()->IsHeroic())
+					events.ScheduleEvent(EVENT_EXECUTE, 15000);
             }
 			
 			void JustSummoned(Creature* summon)
@@ -227,6 +252,22 @@ class boss_general_nazgrim : public CreatureScript
 					return;
 				else if (me->HasAura(SPELL_DEFENSIVE_STANCE) && !attacker->HasAura(SPELL_SUNDERING_BLOW))
 					events.ScheduleEvent(EVENT_DAMAGE_TAKEN, 1000); // Made it as event because rage gain can occur only once per second
+			}
+
+			int GetRand()
+			{
+				if (roll_chance_i(52))
+					return CREATURE_KORKRON_IRONBLADE;
+				if (roll_chance_i(51))
+					return CREATURE_KORKRON_ASSASSINS;
+				if (roll_chance_i(49))
+					return CREATURE_KORKRON_ARCWEAVER;
+				if (roll_chance_i(48))
+					return CREATURE_KORKRON_WARSHAMAN;
+
+				if (me->GetMap()->IsHeroic())
+					if (roll_chance_i(50))
+						return CREATURE_KORKRON_SNIPERS;
 			}
 
 			void UpdateAI(const uint32 diff)
@@ -397,8 +438,8 @@ class boss_general_nazgrim : public CreatureScript
 							{ posX+5.0f, posY+5.0f, posZ, posO },
 						};
 
-						me->SummonCreature(CREATURE_KORKRON_IRONBLADE, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
-						me->SummonCreature(CREATURE_KORKRON_WARSHAMAN, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+						me->SummonCreature(GetRand(), pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+						me->SummonCreature(GetRand(), pos[1], TEMPSUMMON_MANUAL_DESPAWN);
 
 						events.ScheduleEvent(EVENT_SUMMON_ADDS_TWO, 45000);
 						break;
@@ -417,8 +458,8 @@ class boss_general_nazgrim : public CreatureScript
 							{ posX + 5.0f, posY + 5.0f, posZ, posO },
 						};
 
-						me->SummonCreature(CREATURE_KORKRON_ARCWEAVER, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
-						me->SummonCreature(CREATURE_KORKRON_ASSASSINS, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+						me->SummonCreature(GetRand(), pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+						me->SummonCreature(GetRand(), pos[1], TEMPSUMMON_MANUAL_DESPAWN);
 
 						events.ScheduleEvent(EVENT_SUMMON_ADDS_ONE, 45000);
 						break;
@@ -440,6 +481,14 @@ class boss_general_nazgrim : public CreatureScript
 						}
 
 						events.ScheduleEvent(EVENT_BONECRACKER, 30000);
+						break;
+					}
+
+					case EVENT_EXECUTE:
+					{
+						DoCastVictim(SPELL_EXECUTE);
+
+						events.ScheduleEvent(EVENT_EXECUTE, 15000);
 						break;
 					}
 				}

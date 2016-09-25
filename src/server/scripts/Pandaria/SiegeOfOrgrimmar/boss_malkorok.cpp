@@ -206,7 +206,7 @@ public:
 						float posZ = target->GetPositionZ();
 						float posO = target->GetOrientation();
 
-						me->SummonCreature(CREATURE_ARCING_SMASH, posX, posY, posZ, 10.0f, TEMPSUMMON_TIMED_DESPAWN, 5000);
+						me->SummonCreature(CREATURE_ARCING_SMASH, posX, posY, posZ, posO, TEMPSUMMON_TIMED_DESPAWN, 5000);
 					}
 
 					events.ScheduleEvent(EVENT_ARCING_SMASH_DAMAGE, 1000, 0, PHASE_ONE);
