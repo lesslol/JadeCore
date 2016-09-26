@@ -438,8 +438,8 @@ class boss_general_nazgrim : public CreatureScript
 							{ posX+5.0f, posY+5.0f, posZ, posO },
 						};
 
-						me->SummonCreature(GetRand(), pos[0], TEMPSUMMON_MANUAL_DESPAWN);
-						me->SummonCreature(GetRand(), pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+						for (int i = 0; i < 2; i++)
+							me->SummonCreature(GetRand(), pos[i], TEMPSUMMON_MANUAL_DESPAWN);
 
 						events.ScheduleEvent(EVENT_SUMMON_ADDS_TWO, 45000);
 						break;
@@ -458,8 +458,8 @@ class boss_general_nazgrim : public CreatureScript
 							{ posX + 5.0f, posY + 5.0f, posZ, posO },
 						};
 
-						me->SummonCreature(GetRand(), pos[0], TEMPSUMMON_MANUAL_DESPAWN);
-						me->SummonCreature(GetRand(), pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+						for (int i = 0; i < 2; i++)
+							me->SummonCreature(GetRand(), pos[i], TEMPSUMMON_MANUAL_DESPAWN);
 
 						events.ScheduleEvent(EVENT_SUMMON_ADDS_ONE, 45000);
 						break;
