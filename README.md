@@ -15,7 +15,7 @@
 
 If you want to join our team you can just open issue requesting an invite and we will add you.
 
-This is GPL-based source so do whatever you want with it.
+This is GPL-based source so do whatever you want with it. Test
 
 
 ![ach_btpxep9i](https://cloud.githubusercontent.com/assets/812439/18764475/45ac7bd2-811a-11e6-8861-e5d518e5449d.jpg)
