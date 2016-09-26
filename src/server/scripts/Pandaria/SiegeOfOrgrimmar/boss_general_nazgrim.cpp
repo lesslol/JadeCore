@@ -61,6 +61,11 @@ enum eSpells
 	SPELL_EMPOWERED_CHAIN_HEAL	= 143473,
 	SPELL_HEALING_TIDE_TOTEM	= 143474,
 	SPELL_HEALING_TIDE			= 143477,
+
+	// Kor'kron Sniper
+	SPELL_HUNTERS_MARK			= 143882,
+	SPELL_SHOOT					= 143884,
+	SPELL_MULTI_SHOT			= 143887,
 };
 
 enum eEvents
@@ -99,6 +104,10 @@ enum eEvents
 	EVENT_HEALING_TIDE_TOTEM = 24,
 
 	EVENT_EXECUTE			 = 25,
+
+	EVENT_HUNTERS_MARK		 = 26,
+	EVENT_SHOOT				 = 27,
+	EVENT_MULTI_SHOT		 = 28,
 };
 
 enum eCreatures
@@ -154,9 +163,8 @@ class boss_general_nazgrim : public CreatureScript
 			}
 			
 			InstanceScript* pInstance;
-			uint32 nazgrimGuid = me->GetGUID();
 			
-			void Reset()
+			void Reset() override
 			{
 				_Reset();
 				
@@ -252,22 +260,6 @@ class boss_general_nazgrim : public CreatureScript
 					return;
 				else if (me->HasAura(SPELL_DEFENSIVE_STANCE) && !attacker->HasAura(SPELL_SUNDERING_BLOW))
 					events.ScheduleEvent(EVENT_DAMAGE_TAKEN, 1000); // Made it as event because rage gain can occur only once per second
-			}
-
-			int GetRand()
-			{
-				if (roll_chance_i(52))
-					return CREATURE_KORKRON_IRONBLADE;
-				if (roll_chance_i(51))
-					return CREATURE_KORKRON_ASSASSINS;
-				if (roll_chance_i(49))
-					return CREATURE_KORKRON_ARCWEAVER;
-				if (roll_chance_i(48))
-					return CREATURE_KORKRON_WARSHAMAN;
-
-				if (me->GetMap()->IsHeroic())
-					if (roll_chance_i(50))
-						return CREATURE_KORKRON_SNIPERS;
 			}
 
 			void UpdateAI(const uint32 diff)
@@ -445,14 +437,31 @@ class boss_general_nazgrim : public CreatureScript
 						float posZ = me->GetPositionZ();
 						float posO = me->GetOrientation();
 
-						Position pos[2] =
+						if (!me->GetMap()->IsHeroic())
 						{
-							{ posX-5.0f, posY-5.0f, posZ, posO },
-							{ posX+5.0f, posY+5.0f, posZ, posO },
-						};
+							Position pos[2] =
+							{
+								{ posX-5.0f, posY-5.0f, posZ, posO },
+								{ posX+5.0f, posY+5.0f, posZ, posO },
+							};
 
-						for (int i = 0; i < 2; i++)
-							me->SummonCreature(GetRand(), pos[i], TEMPSUMMON_MANUAL_DESPAWN);
+							me->SummonCreature(CREATURE_KORKRON_IRONBLADE, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+							me->SummonCreature(CREATURE_KORKRON_WARSHAMAN, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+						}
+
+						if (me->GetMap()->IsHeroic())
+						{
+							Position pos[3] =
+							{
+								{ posX-4.0f, posY-4.0f, posZ, posO },
+								{ posX+4.0f, posY+4.0f, posZ, posO },
+								{ posX+8.0f, posY+8.0f, posZ, posO },
+							};
+
+							me->SummonCreature(CREATURE_KORKRON_IRONBLADE, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+							me->SummonCreature(CREATURE_KORKRON_WARSHAMAN, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+							me->SummonCreature(CREATURE_KORKRON_SNIPERS  , pos[2], TEMPSUMMON_MANUAL_DESPAWN);
+						}
 
 						events.ScheduleEvent(EVENT_SUMMON_ADDS_TWO, 45000);
 						break;
@@ -465,14 +474,31 @@ class boss_general_nazgrim : public CreatureScript
 						float posZ = me->GetPositionZ();
 						float posO = me->GetOrientation();
 
-						Position pos[2] =
+						if (!me->GetMap()->IsHeroic())
 						{
-							{ posX - 5.0f, posY - 5.0f, posZ, posO },
-							{ posX + 5.0f, posY + 5.0f, posZ, posO },
-						};
+							Position pos[2] =
+							{
+								{ posX-5.0f, posY-5.0f, posZ, posO },
+								{ posX+5.0f, posY+5.0f, posZ, posO },
+							};
 
-						for (int i = 0; i < 2; i++)
-							me->SummonCreature(GetRand(), pos[i], TEMPSUMMON_MANUAL_DESPAWN);
+							me->SummonCreature(CREATURE_KORKRON_ASSASSINS, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+							me->SummonCreature(CREATURE_KORKRON_ARCWEAVER, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+						}
+
+						if (me->GetMap()->IsHeroic())
+						{
+							Position pos[3] =
+							{
+								{ posX-4.0f, posY-4.0f, posZ, posO },
+								{ posX+4.0f, posY+4.0f, posZ, posO },
+								{ posX+8.0f, posY+8.0f, posZ, posO },
+							};
+
+							me->SummonCreature(CREATURE_KORKRON_ASSASSINS, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+							me->SummonCreature(CREATURE_KORKRON_ARCWEAVER, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+							me->SummonCreature(CREATURE_KORKRON_SNIPERS  , pos[2], TEMPSUMMON_MANUAL_DESPAWN);
+						}
 
 						events.ScheduleEvent(EVENT_SUMMON_ADDS_ONE, 45000);
 						break;
@@ -531,7 +557,7 @@ class mob_orgrimmar_faithful : public CreatureScript
 
             InstanceScript* pInstance;
 
-            void Reset()
+            void Reset() override
             {
                 events.Reset();
 				switch (me->GetMap()->GetDifficulty())
@@ -581,9 +607,8 @@ class mob_korkron_ironblade : public CreatureScript
             }
 
             InstanceScript* pInstance;
-            EventMap events;
 
-            void Reset()
+            void Reset() override
             {
                 events.Reset();
 
@@ -661,9 +686,8 @@ class mob_korkron_arcweaver : public CreatureScript
             }
 
             InstanceScript* pInstance;
-            EventMap events;
 
-            void Reset()
+            void Reset() override
             {
                 events.Reset();
 				switch (me->GetMap()->GetDifficulty())
@@ -745,9 +769,8 @@ class mob_korkron_assassin : public CreatureScript
             }
 
             InstanceScript* pInstance;
-            EventMap events;
 
-            void Reset()
+            void Reset() override
             {
                 events.Reset();
 				switch (me->GetMap()->GetDifficulty())
@@ -811,7 +834,6 @@ class mob_korkron_warshaman : public CreatureScript
             }
 
             InstanceScript* pInstance;
-            EventMap events;
 
             void Reset()
             {
@@ -879,6 +901,91 @@ class mob_korkron_warshaman : public CreatureScript
         }
 };
 
+class mob_korkron_sniper : public CreatureScript
+{
+	public:
+		mob_korkron_sniper() : CreatureScript("mob_korkron_sniper") { }
+
+		struct mob_korkron_sniperAI : ScriptedAI
+		{
+			mob_korkron_sniperAI(Creature* creature) : ScriptedAI(creature)
+			{
+				pInstance = creature->GetInstanceScript();
+			}
+
+			InstanceScript* pInstance;
+
+			void Reset() override
+			{
+				events.Reset();
+				switch (me->GetMap()->GetDifficulty())
+				{
+					case MAN10_DIFFICULTY:
+						me->SetMaxHealth(7000000);
+						break;
+					case MAN10_HEROIC_DIFFICULTY:
+						me->SetMaxHealth(8400000);
+						break;
+					case MAN25_DIFFICULTY:
+						me->SetMaxHealth(20000000);
+						break;
+					case MAN25_HEROIC_DIFFICULTY:
+						me->SetMaxHealth(29500000);
+						break;
+				}
+
+				events.ScheduleEvent(EVENT_HUNTERS_MARK, 1000);
+				events.ScheduleEvent(EVENT_SHOOT, 2500);
+				events.ScheduleEvent(EVENT_MULTI_SHOT, 10000);
+			}
+
+			void UpdateAI(const uint32 diff)
+			{
+				if (!UpdateVictim())
+					return;
+
+				if (me->HasUnitState(UNIT_STATE_CASTING))
+					return;
+
+				events.Update(diff);
+
+				switch (events.ExecuteEvent())
+				{
+					case EVENT_HUNTERS_MARK:
+					{
+						if (Unit* target = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 50.0f, true))
+						{
+							DoCast(target, SPELL_HUNTERS_MARK);
+						}
+
+						break;
+					}
+
+					case EVENT_SHOOT:
+					{
+						DoCastVictim(SPELL_SHOOT);
+						
+						events.ScheduleEvent(EVENT_SHOOT, 2500);
+						break;
+					}
+
+					case EVENT_MULTI_SHOT:
+					{
+						DoCastVictim(SPELL_MULTI_SHOT);
+
+						events.ScheduleEvent(EVENT_MULTI_SHOT, 10000);
+						break;
+					}
+				}
+			}
+		};
+
+		CreatureAI* GetAI(Creature* creature) const
+		{
+			return new mob_korkron_sniperAI(creature);
+		}
+};
+
 // Done
 class mob_aftershock : public CreatureScript
 {
@@ -927,7 +1034,7 @@ class mob_korkron_banner : public CreatureScript
 
             InstanceScript* pInstance;
 
-            void Reset()
+            void Reset() override
             {
                 events.Reset();
 
@@ -981,7 +1088,7 @@ class mob_healing_tide_totem : public CreatureScript
 
             InstanceScript* pInstance;
 
-            void Reset()
+            void Reset() override
             {
                 events.Reset();
 
@@ -1031,7 +1138,7 @@ class mob_ravager : public CreatureScript
             InstanceScript* pInstance;
             EventMap events;
 
-            void Reset()
+            void Reset() override
             {
                 events.Reset();
 				me->SetReactState(ReactStates::REACT_PASSIVE);
