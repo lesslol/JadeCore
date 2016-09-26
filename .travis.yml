@@ -1,0 +1,48 @@
+# Copyright (C) 2013-2016 JadeCore <http://www.jadecore.net/>
+#
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without
+# modifications, as long as this notice is preserved.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
+
+language: cpp
+compiler:
+  - clang
+
+git:
+  depth: 1
+
+before_install:
+  - echo "yes" | sudo add-apt-repository ppa:kalakris/cmake
+  - echo "yes" | sudo add-apt-repository ppa:boost-latest/ppa
+  - echo "yes" | sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+  - sudo apt-get -qq update
+  - sudo apt-get -qq install build-essential libtool gcc-4.8 g++-4.8 make cmake openssl
+  - sudo apt-get -qq install libssl-dev libmysqlclient15-dev libmysql++-dev libreadline6-dev zlib1g-dev libbz2-dev libzmq3-dev
+  - sudo apt-get -qq install libboost1.55-dev libboost-thread1.55-dev libboost-system1.55-dev libboost-program-options1.55-dev
+
+install:
+  - mysql -uroot -e 'create database test_mysql;'
+  - mkdir bin
+  - cd bin
+  - cmake ../ -DSCRIPTS=1 -DTOOLS=1
+
+script:
+  - cd ..
+  - mysql -uroot < sql/create/create_mysql.sql
+  - mysql -ujadecore -pjadecore auth < sql/base/auth_database.sql
+  - mysql -ujadecore -pjadecore characters < sql/base/characters_database.sql
+  - mysql -ujadecore -pjadecore world < sql/base/dev/world_database.sql
+  - cat sql/updates/auth/5.4.7/*.sql | mysql -ujadecore -pjadecore auth
+  - cat sql/updates/characters/5.4.7/*.sql | mysql -ujadecore -pjadecore characters
+  - cat sql/updates/world/5.4.7/*.sql | mysql -ujadecore -pjadecore world
+  - mysql -uroot < sql/create/drop_mysql.sql
+  - cd bin
+  - make -j 10
+  
+notifications:
+  email:
+    - jadecoreproject@gmail.com
