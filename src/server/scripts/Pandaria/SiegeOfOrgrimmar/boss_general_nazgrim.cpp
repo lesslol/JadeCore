@@ -98,16 +98,17 @@ enum eEvents
 	EVENT_UNSTABLE_BLINK	 = 20,
 	
 	EVENT_BACKSTAB			 = 21,
+	EVENT_ASSASSINS_MARK	 = 22,
 
-	EVENT_EARTH_SHIELD		 = 22,
-	EVENT_CHAIN_HEAL		 = 23,
-	EVENT_HEALING_TIDE_TOTEM = 24,
+	EVENT_EARTH_SHIELD		 = 23,
+	EVENT_CHAIN_HEAL		 = 24,
+	EVENT_HEALING_TIDE_TOTEM = 25,
 
-	EVENT_EXECUTE			 = 25,
+	EVENT_EXECUTE			 = 26,
 
-	EVENT_HUNTERS_MARK		 = 26,
-	EVENT_SHOOT				 = 27,
-	EVENT_MULTI_SHOT		 = 28,
+	EVENT_HUNTERS_MARK		 = 27,
+	EVENT_SHOOT				 = 28,
+	EVENT_MULTI_SHOT		 = 29,
 };
 
 enum eCreatures
@@ -791,6 +792,7 @@ class mob_korkron_assassin : public CreatureScript
 
 				DoCast(me, SPELL_STEALTH);
 				events.ScheduleEvent(EVENT_BACKSTAB, 5000);
+				events.ScheduleEvent(EVENT_ASSASSINS_MARK, 1000);
 				if (Unit* target = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 40.0f, true))
 					DoCast(target, SPELL_ASSASSINS_MARK);
             }
@@ -802,6 +804,19 @@ class mob_korkron_assassin : public CreatureScript
 
 				switch (events.ExecuteEvent())
 				{
+					case EVENT_ASSASSINS_MARK:
+					{
+						if (Unit* target = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 40.0f, true))
+						{
+							me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
+							me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_ATTACK_ME, true);
+							DoResetThreat();
+							DoCast(target, SPELL_ASSASSINS_MARK);
+							me->AddThreat(target, 1000000.0f);
+							AttackStart(target);
+						}
+					}
+
 					case EVENT_BACKSTAB:
 					{
 						DoCastVictim(SPELL_BACKSTAB);
@@ -955,7 +970,12 @@ class mob_korkron_sniper : public CreatureScript
 					{
 						if (Unit* target = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 50.0f, true))
 						{
+							me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
+							me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_ATTACK_ME, true);
+							DoResetThreat();
 							DoCast(target, SPELL_HUNTERS_MARK);
+							me->AddThreat(target, 1000000.0f);
+							AttackStart(target);
 						}
 
 						break;
