@@ -20,6 +20,7 @@ This is the new source of JadeCore we are updating slowly adding new scripts and
 
 #Required files
 
+<<<<<<< HEAD
 
 
 
@@ -86,6 +87,9 @@ This project is brought to you thanks to:
 ## Links
 
 [Forums](#)
+=======
+This is GPL-based source so do whatever you want with it. Test
+>>>>>>> 4c44a1e0a6ce13926a16c12161efded3b47cdca0
 
 
 ![ach_btpxep9i](https://cloud.githubusercontent.com/assets/812439/18764475/45ac7bd2-811a-11e6-8861-e5d518e5449d.jpg)
