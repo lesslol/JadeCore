@@ -1041,6 +1041,9 @@ class WorldObject : public Object, public WorldLocation
         void SummonCreatureGroup(uint8 group, std::list<TempSummon*>& list);
 
         Creature*   FindNearestCreature(uint32 entry, float range, bool alive = true) const;
+        std::list<Creature*> FindNearestCreatures(uint32 entry, float range) const;
+        std::vector<Creature*> FindNearestCreatures(uint32 entry, float range, bool alive) const;
+        Creature*   FindRandomCreatureInRange(uint32 entry, float range, bool alive);
         GameObject* FindNearestGameObject(uint32 entry, float range) const;
         GameObject* FindNearestGameObjectOfType(GameobjectTypes type, float range) const;
         Player*     FindNearestPlayer(float range, bool alive = true);
