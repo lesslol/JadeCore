@@ -283,37 +283,50 @@ class boss_general_nazgrim : public CreatureScript
 
 				if (RageAmount <= 490 && RageAmount >= 300)
 				{
-					if (RageAmount > 490)
-						return;
-
 					if (me->HasAura(SPELL_COOLING_OFF))
-						return;
+					{
 
-					events.ScheduleEvent(EVENT_HEROIC_SHOCKWAVE_J, 0);
+					}
+					else
+					{
+						events.ScheduleEvent(EVENT_HEROIC_SHOCKWAVE_J, 0);
+					}
 				}
 
 				if (RageAmount <= 740 && RageAmount >= 500)
 				{
 					if (me->HasAura(SPELL_COOLING_OFF))
-						return;
+					{
 
-					events.ScheduleEvent(EVENT_KORKRON_BANNER, 1000);
+					}
+					else
+					{
+						events.ScheduleEvent(EVENT_KORKRON_BANNER, 1000);
+					}
 				}
 
 				if (RageAmount <= 990 && RageAmount >= 750)
 				{
 					if (me->HasAura(SPELL_COOLING_OFF))
-						return;
+					{
 
-					events.ScheduleEvent(EVENT_WAR_SONG, 1000);
+					}
+					else
+					{
+						events.ScheduleEvent(EVENT_WAR_SONG, 1000);
+					}
 				}
 
 				if (RageAmount == 1000)
 				{
 					if (me->HasAura(SPELL_COOLING_OFF))
-						return;
+					{
 
-					events.ScheduleEvent(EVENT_RAVAGER, 1000);
+					}
+					else
+					{
+						events.ScheduleEvent(EVENT_RAVAGER, 1000);
+					}
 				}
 
 				switch (events.ExecuteEvent())
