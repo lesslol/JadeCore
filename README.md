@@ -1,4 +1,4 @@
-# ![logo](http://image.prntscr.com/image/d9fdcdc7308b45bdb89d99bfd77c3ce3.png)
+# ![logo](http://image.prntscr.com/image/fad4a61aad304cb8aef28783c8a37640.png)
 
 #Project General Information
 
@@ -52,7 +52,7 @@ For more information about the project, visit our website at project [JadeCore O
 + CMake = 2.8.0 
 + OpenSSL = 1.0.0 
 + GCC = 4.7.2 (Linux only) 
-+ MS Visual Studio = 12 (2013) or 14 (2015) (Windows only)
++ MS Visual Studio = 12 (2013)(Windows only)
 
 
 ## Reporting issues
