@@ -642,7 +642,7 @@ public:
             if (!m_phase)
             {
                 me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP | UNIT_NPC_FLAG_QUESTGIVER);
-                me->SetUInt32Value(UNIT_FIELD_BYTES_1, UNIT_STAND_STATE_STAND);
+                me->HandleEmoteState(EMOTE_STATE_NONE);
                 m_player = player;
                 m_phase = 1;
                 m_timer = 100;
