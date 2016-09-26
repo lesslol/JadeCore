@@ -371,11 +371,48 @@ class spell_displaced_energy : public SpellScriptLoader
 		}
 };
 
+class spell_blood_rage : public SpellScriptLoader
+{
+	public:
+		spell_blood_rage() : SpellScriptLoader("spell_blood_rage") { }
+
+		class spell_blood_rage_SpellScript : public SpellScript
+		{
+			PrepareSpellScript(spell_blood_rage_SpellScript);
+
+			bool Load()
+			{
+				players = 1;
+				return true;
+			}
+
+			void CountTargets(std::list<WorldObject*>& targets)
+			{
+				players = targets.size();
+			}
+
+			void SplitDamage(SpellEffIndex /*eff*/)
+			{
+				SetHitDamage(int32(GetHitDamage() / players));
+			}
+
+			void Register()
+			{
+				OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_blood_rage_SpellScript::CountTargets, EFFECT_0, TARGET_UNIT_DEST_AREA_ENEMY);
+				OnEffectHitTarget += SpellEffectFn(spell_blood_rage_SpellScript::SplitDamage, EFFECT_0, SPELL_EFFECT_SCHOOL_DAMAGE);
+			}
+
+			private:
+				uint8 players;
+		};
+};
+
 void AddSC_boss_malkorok()
 {
 	new boss_malkorok();
 
 	new spell_displaced_energy();
+	new spell_blood_rage();
 }
 
 /*
