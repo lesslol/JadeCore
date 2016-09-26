@@ -1235,6 +1235,7 @@ void AddSC_boss_general_nazgrim()
     new mob_korkron_arcweaver();
     new mob_korkron_assassin();
     new mob_korkron_warshaman();
+	new mob_korkron_sniper();
 	new mob_aftershock();
 	new mob_korkron_banner();
 	new mob_healing_tide_totem();
