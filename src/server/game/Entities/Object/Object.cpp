@@ -3102,6 +3102,46 @@ Creature* WorldObject::FindNearestCreature(uint32 entry, float range, bool alive
     return creature;
 }
 
+std::list<Creature*> WorldObject::FindNearestCreatures(uint32 entry, float range) const
+{
+	std::list<Creature*> creatureList;
+	GetCreatureListWithEntryInGrid(creatureList, entry, range);
+	return creatureList;
+}
+
+std::vector<Creature*> WorldObject::FindNearestCreatures(uint32 entry, float range, bool alive) const
+{
+	std::list<Creature*> creatureList;
+	std::vector<Creature*> returnList;
+	GetCreatureListWithEntryInGrid(creatureList, entry, range);
+
+	for (std::list<Creature*>::iterator itr = creatureList.begin(); itr != creatureList.end(); ++itr)
+	{
+		if ((*itr)->isAlive() == alive)
+			returnList.push_back(*itr);
+	}
+	return returnList;
+}
+
+Creature* WorldObject::FindRandomCreatureInRange(uint32 entry, float range, bool alive)
+{
+	Creature* creature = NULL;
+	std::list<Creature*> creatureList = FindNearestCreatures(entry, range);
+	if (creatureList.empty())
+		return NULL;
+
+	int32 r1 = urand(0, creatureList.size() - 1);
+	int32 r2 = -1;
+	for (std::list<Creature*>::iterator itr = creatureList.begin(); itr != creatureList.end(); ++itr)
+	{
+		r2++;
+		if (r1 == r2)
+			return *itr;
+	}
+
+	return NULL;
+}
+
 GameObject* WorldObject::FindNearestGameObject(uint32 entry, float range) const
 {
     GameObject* go = NULL;
