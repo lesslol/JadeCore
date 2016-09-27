@@ -1,8 +1,10 @@
-# ![logo](http://image.prntscr.com/image/fad4a61aad304cb8aef28783c8a37640.png)
+﻿# ![logo](http://image.prntscr.com/image/fad4a61aad304cb8aef28783c8a37640.png)
 
 | JadeCore 5.4.7 |
 :------------: |
 | [![JadeCore_5.4.7](https://travis-ci.org/JadeEmu/JadeCore_547.svg?branch=master)](https://travis-ci.org/JadeEmu/JadeCore_547/builds)
+| [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/JadeEmu/JadeCore_547.svg)](http://isitmaintained.com/project/JadeEmu/JadeCore_547 "Average time to resolve an issue")
+| [![Percentage of issues still open](http://isitmaintained.com/badge/open/JadeEmu/JadeCore_547.svg)](http://isitmaintained.com/project/JadeEmu/JadeCore_547 "Percentage of issues still open")
 
 #Project General Information
 

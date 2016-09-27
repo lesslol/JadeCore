@@ -585,7 +585,22 @@ class mob_orgrimmar_faithful : public CreatureScript
                 if (!UpdateVictim())
                     return;
 
-				DoMeleeAttackIfReady();
+				if (UpdateVictim())
+				{
+					if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
+						if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
+						{
+							if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+								AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+
+							if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+								AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+
+							DoMeleeAttackIfReady();
+						}
+				}
+				else
+					DoMeleeAttackIfReady();
             }
         };
 
@@ -665,6 +680,23 @@ class mob_korkron_ironblade : public CreatureScript
 						break;
 					}
 				}
+
+				if (UpdateVictim())
+				{
+					if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
+						if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
+						{
+							if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+								AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+
+							if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+								AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+
+							DoMeleeAttackIfReady();
+						}
+				}
+				else
+					DoMeleeAttackIfReady();
             }
         };
 
@@ -747,6 +779,23 @@ class mob_korkron_arcweaver : public CreatureScript
 						events.ScheduleEvent(EVENT_UNSTABLE_BLINK, 10000);
 						break;
 					}
+
+					if (UpdateVictim())
+					{
+						if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
+							if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
+							{
+								if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+
+								if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+
+								DoMeleeAttackIfReady();
+							}
+					}
+					else
+						DoMeleeAttackIfReady();
 				}
             }
         };
@@ -826,7 +875,22 @@ class mob_korkron_assassin : public CreatureScript
 					}
 				}
 
-				DoMeleeAttackIfReady();
+				if (UpdateVictim())
+				{
+					if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
+						if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
+						{
+							if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+								AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+
+							if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+								AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+
+							DoMeleeAttackIfReady();
+						}
+				}
+				else
+					DoMeleeAttackIfReady();
             }
         };
 
@@ -906,6 +970,23 @@ class mob_korkron_warshaman : public CreatureScript
 						events.ScheduleEvent(EVENT_HEALING_TIDE_TOTEM, 15000);
 						break;
 					}
+
+					if (UpdateVictim())
+					{
+						if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
+							if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
+							{
+								if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+
+								if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+
+								DoMeleeAttackIfReady();
+							}
+					}
+					else
+						DoMeleeAttackIfReady();
 				}
             }
         };
@@ -996,6 +1077,23 @@ class mob_korkron_sniper : public CreatureScript
 						events.ScheduleEvent(EVENT_MULTI_SHOT, 10000);
 						break;
 					}
+
+					if (UpdateVictim())
+					{
+						if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
+							if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
+							{
+								if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+
+								if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+
+								DoMeleeAttackIfReady();
+							}
+					}
+					else
+						DoMeleeAttackIfReady();
 				}
 			}
 		};
@@ -1254,38 +1352,40 @@ class spell_sundering_blow : public SpellScriptLoader
 		}
 };
 
-// Testing only
+// Apply only on offensive spells from adds on boss General Nazgrim
 class spell_korkron_banner_aura : public SpellScriptLoader
 {
 	public:
 		spell_korkron_banner_aura() : SpellScriptLoader("spell_korkron_banner_aura") { }
 
-		class spell_korkron_banner_aura_AuraScript : public AuraScript
+		class spell_korkron_banner_aura_SpellScript : public SpellScript
 		{
-			PrepareAuraScript(spell_korkron_banner_aura_AuraScript);
+			PrepareSpellScript(spell_korkron_banner_aura_SpellScript);
 
-			void OnPeriodic(constAuraEffectPtr /*aurEffect*/)
+			void HandleOnHit()
 			{
-				if (InstanceScript* m_Instance = GetCaster()->GetInstanceScript())
-					if (Creature * genNazgrim = m_Instance->instance->GetCreature(m_Instance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
-					{
-						if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
-							AddRage(genNazgrim, 3, genNazgrim->GetGUID());
+				if (Unit* caster = GetCaster())
+					if (caster->HasAura(SPELL_KORKRON_BANNER_AURA))
+						if (InstanceScript* m_Instance = GetCaster()->GetInstanceScript())
+							if (Creature * genNazgrim = m_Instance->instance->GetCreature(m_Instance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
+							{
+								if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 3, genNazgrim->GetGUID());
 
-						if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
-							AddRage(genNazgrim, 6, genNazgrim->GetGUID());
-					}
+								if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 6, genNazgrim->GetGUID());
+							}
 			}
 
 			void Register()
 			{
-				OnEffectPeriodic += AuraEffectPeriodicFn(spell_korkron_banner_aura_AuraScript::OnPeriodic, EFFECT_0, SPELL_AURA_PERIODIC_DUMMY);
+				OnHit += SpellHitFn(spell_korkron_banner_aura_SpellScript::HandleOnHit);
 			}
 		};
 
-		AuraScript* GetAuraScript() const
+		SpellScript* GetSpellScript() const
 		{
-			return new spell_korkron_banner_aura_AuraScript();
+			return new spell_korkron_banner_aura_SpellScript();
 		}
 };
 
@@ -1306,5 +1406,5 @@ void AddSC_boss_general_nazgrim()
 
 	new spell_war_song();
 	new spell_sundering_blow();
-	new spell_korkron_banner_aura(); // Testing only
+	new spell_korkron_banner_aura();
 };
