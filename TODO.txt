@@ -99,3 +99,10 @@ Mists of Pandaria Start Zones Quests ( 1-5 lvl ) TODO:
 -- Worgen
 -- Goblin
 -- Pandaren
+
+Mists of Pandaria Misc TODO:
+
+-- Character Boost 90 lvl
+-- BattlePet
+-- BattleShop
+-- Items: 109013, 112327, 112326
