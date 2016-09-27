@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2015-2016 JadeCore <https://github.com/cooler-SAI/JadeCore548-patched>
+* Copyright (C) 2015-2016 JadeCore <https://github.com/JadeEmu/JadeCore_547>
 * Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
 *
 * This program is free software; you can redistribute it and/or modify it

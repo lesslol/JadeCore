@@ -172,11 +172,130 @@ struct ItemExtendedCostEntry
     //uint32    Unk_5;                                                  // 30 Only 0
 };
 
+// ------------------------------------------------
+// Battle Pet Datastores
+// ------------------------------------------------
+
+#define MAX_BATTLE_PET_PROPERTIES 6
+
+// BattlePetAbility.db2
+struct BattlePetAbilityEntry
+{
+    uint32 Id;                                              // 0
+    uint32 FamilyId;                                        // 1 - battle pet family id or -1 for aura
+    //uint32 Unk1                                           // 2 - icon id?
+    uint32 Cooldown;                                        // 3 - cooldown in turns
+    uint32 VisualId;                                        // 4 - visual id (BattlePetVisual.db2)
+    uint32 Flags;                                           // 5 - flags (see BattlePetAbilityFlags enum)
+    char*  Name;                                            // 6 - name text
+    char*  Description;                                     // 7 - description text
+};
+
+// BattlePetAbilityState.db2
+struct BattlePetAbilityStateEntry
+{
+    uint32 Id;                                              // 0
+    uint32 AbilityId;                                       // 1 - battle pet ability id (BattlePetAbility.db2)
+    uint32 StateId;                                         // 2 - battle pet state id (BattlePetState.db2)
+    int32 Value;                                            // 3 - value for state
+};
+
+// BattlePetAbilityEffect.db2
+struct BattlePetAbilityEffectEntry
+{
+    uint32 Id;                                              // 0
+    uint32 AbilityTurnId;                                   // 1 - ability turn id (BattlePetAbilityTurn.db2)
+    uint32 VisualId;                                        // 2 - visual id (BattlePetVisual.db2)
+    uint32 TriggerAbility;                                  // 3 - parent ability
+    uint32 EffectProperty;                                  // 4 - effect property id (BattlePetEffectProperties.db2)
+    //uint32 Unk1;                                          // 5 - effect property offset?
+    int32  Properties[MAX_BATTLE_PET_PROPERTIES];           // 6 - values for effect property
+};
+
+// BattlePetAbilityTurn.db2
+struct BattlePetAbilityTurnEntry
+{
+    uint32 Id;                                              // 0
+    uint32 AbilityId;                                       // 1 - parent ability id (BattlePetAbility.db2)
+    uint32 VisualId;                                        // 2 - visual id (BattlePetVisual.db2)
+    uint32 Duration;                                        // 3 - amount of turns the ability lasts
+    uint32 HasProcType;                                     // 4 - if set to 1, next value is positive else -1
+    int32  ProcType;
+};
+
+// BattlePetBreedQuality.db2
+struct BattlePetBreedQualityEntry
+{
+    uint32 Id;                                              // 0
+    uint32 Quality;                                         // 1 - battle pet quality id (same as item quality)
+    float  Multiplier;                                      // 2 - multiplier, better the quality higher the multiplier
+};
+
+// BattlePetBreedState.db2
+struct BattlePetBreedStateEntry
+{
+    uint32 Id;                                              // 0
+    uint32 BreedId;                                         // 1 - battle pet breed id
+    uint32 StateId;                                         // 2 - battle pet state id (BattlePetState.db2)
+    int32  Modifier;                                        // 3 - modifier value for state
+};
+
+// BattlePetEffectProperties.db2
+struct BattlePetEffectPropertiesEntry
+{
+    uint32 Id;                                              // 0
+    uint32 Flags;                                           // 1 - flags
+    char*  PropertyName[MAX_BATTLE_PET_PROPERTIES];         // 2 - name
+    uint32 IsAura[MAX_BATTLE_PET_PROPERTIES];               // 3 - set to 1 if an aura id
+};
+
+// BattlePetNPCTeamMember.db2
+// TODO...
+
+// BattlePetSpecies.db2
 struct BattlePetSpeciesEntry
 {
-    uint32 ID;
-    uint32 CreatureEntry;
+    uint32 Id;                                              // 0
+    uint32 NpcId;                                           // 1 - npc id
+    uint32 IconId;                                          // 2 - icon id
+    uint32 SpellId;                                         // 3 - summon spell id (Spell.dbc)
+    uint32 FamilyId;                                        // 4 - battle pet family id
+    //int32 Unk1;                                           // 5
+    uint32 Flags;                                           // 6 - flags (see BattlePetSpeciesFlags enum)
+    char*  Description;                                     // 7 - description text, contains method to obtain and cost
+    char*  Flavor;                                          // 8 - flavor text
 };
+
+// BattlePetSpeciesState.db2
+struct BattlePetSpeciesStateEntry
+{
+    uint32 Id;                                              // 0
+    uint32 SpeciesId;                                       // 1 - battle pet species id (BattlePetSpecies.db2)
+    uint32 StateId;                                         // 2 - battle pet state id (BattlePetState.db2)
+    int32  Modifier;                                        // 3 - modifier value for state
+};
+
+// BattlePetSpeciesXAbility.db2
+struct BattlePetSpeciesXAbilityEntry
+{
+    uint32 Id;                                              // 0
+    uint32 SpeciesId;                                       // 1 - battle pet species id (BattlePetSpecies.db2)
+    uint32 AbilityId;                                       // 2 - battle pet ability id (BattlePetAbility.db2)
+    uint32 RequiredLevel;                                   // 3 - required level to use this ability
+    int32  SlotId;                                          // 4 - ability slot id (0-2)
+};
+
+// BattlePetState.db2
+struct BattlePetState
+{
+    uint32 Id;                                              // 0
+    // uint32 Unk1;                                         // 1 - parent? only set for 34 (Mechanic_IsBurning)
+    char * Name;                                            // 2 - state name
+    uint32 Flags;                                           // 3 - flags
+};
+
+// BattlePetVisual.db2
+// TODO...
 
 // GCC has alternative #pragma pack(N) syntax and old gcc version does not support pack(push, N), also any gcc version does not support it at some platform
 #if defined(__GNUC__)

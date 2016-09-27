@@ -834,7 +834,12 @@ enum TrinityStrings
     LANG_MOVEGENS_EFFECT                = 1142,
     LANG_MOVEFLAGS_GET                  = 1143,
     LANG_MOVEFLAGS_SET                  = 1144,
-    // Room for more level 3              1144-1150 not used
+    LANG_GROUP_ALREADY_IN_GROUP         = 1145,
+    LANG_GROUP_PLAYER_JOINED            = 1146,
+    LANG_GROUP_NOT_IN_GROUP             = 1147,
+    LANG_GROUP_FULL                     = 1148,
+    LANG_GROUP_TYPE                     = 1149,
+    LANG_GROUP_PLAYER_NAME_GUID         = 1150,
     LANG_LIST_MAIL_HEADER               = 1151,
     LANG_LIST_MAIL_INFO_1               = 1152,
     LANG_LIST_MAIL_INFO_2               = 1153,
@@ -842,6 +847,10 @@ enum TrinityStrings
     LANG_LIST_MAIL_INFO_ITEM            = 1155,
     LANG_LIST_MAIL_NOT_FOUND            = 1156,
     // Room for more level 3              1157-1199 not used
+
+	// Battle Pet
+    LANG_BATTLE_PET_NOT_PLAYER_OWNED    = 1160,
+    LANG_BATTLE_PET_TARGET_LEVELED      = 1161,
 
     // Debug commands
     LANG_CINEMATIC_NOT_EXIST            = 1200,
