@@ -590,7 +590,12 @@ class mob_orgrimmar_faithful : public CreatureScript
 					if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
 						if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
 						{
-							AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+							if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+								AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+
+							if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+								AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+
 							DoMeleeAttackIfReady();
 						}
 				}
@@ -681,7 +686,12 @@ class mob_korkron_ironblade : public CreatureScript
 					if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
 						if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
 						{
-							AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+							if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+								AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+
+							if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+								AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+
 							DoMeleeAttackIfReady();
 						}
 				}
@@ -775,7 +785,12 @@ class mob_korkron_arcweaver : public CreatureScript
 						if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
 							if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
 							{
-								AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+								if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+
+								if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+
 								DoMeleeAttackIfReady();
 							}
 					}
@@ -865,7 +880,12 @@ class mob_korkron_assassin : public CreatureScript
 					if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
 						if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
 						{
-							AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+							if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+								AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+
+							if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+								AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+
 							DoMeleeAttackIfReady();
 						}
 				}
@@ -956,7 +976,12 @@ class mob_korkron_warshaman : public CreatureScript
 						if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
 							if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
 							{
-								AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+								if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+
+								if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+
 								DoMeleeAttackIfReady();
 							}
 					}
@@ -1058,7 +1083,12 @@ class mob_korkron_sniper : public CreatureScript
 						if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
 							if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
 							{
-								AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+								if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+
+								if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+
 								DoMeleeAttackIfReady();
 							}
 					}
@@ -1338,7 +1368,13 @@ class spell_korkron_banner_aura : public SpellScriptLoader
 					if (caster->HasAura(SPELL_KORKRON_BANNER_AURA))
 						if (InstanceScript* m_Instance = GetCaster()->GetInstanceScript())
 							if (Creature * genNazgrim = m_Instance->instance->GetCreature(m_Instance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
-								AddRage(genNazgrim, 3, genNazgrim->GetGUID());
+							{
+								if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 3, genNazgrim->GetGUID());
+
+								if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 6, genNazgrim->GetGUID());
+							}
 			}
 
 			void Register()
