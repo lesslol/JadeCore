@@ -95,7 +95,6 @@ Mists of Pandaria Start Zones Quests ( 1-5 lvl ) TODO:
 -- Gnome
 -- Troll
 -- Draenei
--- Blood Elf
 -- Worgen
 -- Goblin
 -- Pandaren
