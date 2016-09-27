@@ -1222,14 +1222,22 @@ class spell_sundering_blow : public SpellScriptLoader
 				if (InstanceScript* m_Instance = GetCaster()->GetInstanceScript())
 					if (Creature * genNazgrim = m_Instance->instance->GetCreature(m_Instance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
 					{
-						AddRage(genNazgrim, 13, genNazgrim->GetGUID()); // On hit it gives 5 rage to nazgrim
+						if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+							AddRage(genNazgrim, 13, genNazgrim->GetGUID()); // On hit it gives 5 rage to nazgrim
+
+						if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+							AddRage(genNazgrim, 26, genNazgrim->GetGUID()); // On hit it gives 10 rage to nazgrim
 
 						if (Unit* target = GetHitUnit())
 							if (AuraPtr sunderingBlow = target->GetAura(SPELL_SUNDERING_BLOW))
 							{
 								uint32 stacks = sunderingBlow->GetStackAmount();
 
-								AddRage(genNazgrim, 13*stacks, genNazgrim->GetGUID()); // And for every stack of the debuff 5 more rage
+								if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 13*stacks, genNazgrim->GetGUID()); // And for every stack of the debuff 5 more rage
+
+								if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+									AddRage(genNazgrim, 26*stacks, genNazgrim->GetGUID()); // And for every stack of the debuff 10 more rage
 							}
 					}
 			}
@@ -1243,6 +1251,41 @@ class spell_sundering_blow : public SpellScriptLoader
 		SpellScript* GetSpellScript() const
 		{
 			return new spell_sundering_blow_SpellScript();
+		}
+};
+
+// Testing only
+class spell_korkron_banner_aura : public SpellScriptLoader
+{
+	public:
+		spell_korkron_banner_aura() : SpellScriptLoader("spell_korkron_banner_aura") { }
+
+		class spell_korkron_banner_aura_AuraScript : public AuraScript
+		{
+			PrepareAuraScript(spell_korkron_banner_aura_AuraScript);
+
+			void OnPeriodic(constAuraEffectPtr /*aurEffect*/)
+			{
+				if (InstanceScript* m_Instance = GetCaster()->GetInstanceScript())
+					if (Creature * genNazgrim = m_Instance->instance->GetCreature(m_Instance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
+					{
+						if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+							AddRage(genNazgrim, 3, genNazgrim->GetGUID());
+
+						if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+							AddRage(genNazgrim, 6, genNazgrim->GetGUID());
+					}
+			}
+
+			void Register()
+			{
+				OnEffectPeriodic += AuraEffectPeriodicFn(spell_korkron_banner_aura_AuraScript::OnPeriodic, EFFECT_0, SPELL_AURA_PERIODIC_DUMMY);
+			}
+		};
+
+		AuraScript* GetAuraScript() const
+		{
+			return new spell_korkron_banner_aura_AuraScript();
 		}
 };
 
@@ -1263,4 +1306,5 @@ void AddSC_boss_general_nazgrim()
 
 	new spell_war_song();
 	new spell_sundering_blow();
+	new spell_korkron_banner_aura(); // Testing only
 };

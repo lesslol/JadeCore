@@ -405,6 +405,11 @@ class spell_blood_rage : public SpellScriptLoader
 			private:
 				uint8 players;
 		};
+
+		SpellScript* GetSpellScript() const
+		{
+			return new spell_blood_rage_SpellScript();
+		}
 };
 
 void AddSC_boss_malkorok()
