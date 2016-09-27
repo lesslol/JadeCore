@@ -1406,5 +1406,5 @@ void AddSC_boss_general_nazgrim()
 
 	new spell_war_song();
 	new spell_sundering_blow();
-	new spell_korkron_banner_aura(); // Testing only
+	new spell_korkron_banner_aura();
 };
