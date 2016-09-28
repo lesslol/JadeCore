@@ -62,6 +62,8 @@ include_directories(
   ${OPENSSL_INCLUDE_DIR}
 )
 
+GroupSources(${CMAKE_CURRENT_SOURCE_DIR})
+
 set(authserver_LINK_FLAGS "")
 
 add_executable(authserver

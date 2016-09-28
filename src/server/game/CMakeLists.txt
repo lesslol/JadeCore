@@ -217,6 +217,8 @@ include_directories(
   ${OPENSSL_INCLUDE_DIR}
 )
 
+GroupSources(${CMAKE_CURRENT_SOURCE_DIR})
+
 add_library(game STATIC ${game_STAT_SRCS})
 
 # Generate precompiled header
