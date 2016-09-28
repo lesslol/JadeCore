@@ -2930,6 +2930,52 @@ INSERT INTO `time_diff_log` VALUES ('3001', '1472306158', '24', '37', '1'), ('30
 COMMIT;
 
 -- ----------------------------
+-- Table structure for `updates`
+-- ----------------------------
+DROP TABLE IF EXISTS `updates`;
+CREATE TABLE `updates` (
+`name`  varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'filename with extension of the update.' ,
+`hash`  char(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT 'sha1 hash of the sql file.' ,
+`state`  enum('RELEASED','ARCHIVED') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'RELEASED' COMMENT 'defines if an update is released or archived.' ,
+`timestamp`  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'timestamp when the query was applied.' ,
+`speed`  int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'time the query takes to apply in ms.' ,
+PRIMARY KEY (`name`)
+)
+ENGINE=MyISAM
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+COMMENT='List of all applied updates in this database.'
+
+;
+
+-- ----------------------------
+-- Records of updates
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for `updates_include`
+-- ----------------------------
+DROP TABLE IF EXISTS `updates_include`;
+CREATE TABLE `updates_include` (
+`path`  varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'directory to include. $ means relative to the source directory.' ,
+`state`  enum('RELEASED','ARCHIVED') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'RELEASED' COMMENT 'defines if the directory contains released or archived updates.' ,
+PRIMARY KEY (`path`)
+)
+ENGINE=MyISAM
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+COMMENT='List of directories where we want to include sql updates.'
+
+;
+
+-- ----------------------------
+-- Records of updates_include
+-- ----------------------------
+BEGIN;
+INSERT INTO `updates_include` VALUES ('$/sql/updates/characters/5.4.7', 'RELEASED'), ('$/sql/custom/characters', 'RELEASED');
+COMMIT;
+
+-- ----------------------------
 -- Table structure for `warden_action`
 -- ----------------------------
 DROP TABLE IF EXISTS `warden_action`;
