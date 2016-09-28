@@ -1,6 +1,6 @@
-################################################
+############################################
 # JadeCore World Server configuration file #
-################################################
+############################################
 [worldserver]
 
 ###################################################################################################
@@ -63,7 +63,7 @@ RealmID = 1
 #        Example:     "@prefix@/share/jadecore"
 #        Default:     "."
 
-DataDir = "."
+DataDir = "data"
 
 #
 #    LogsDir
@@ -72,7 +72,7 @@ DataDir = "."
 #                     Logs directory must exists, or log file creation will be disabled.
 #        Default:     "" - (Log files will be stored in the current path)
 
-LogsDir = ""
+LogsDir = "logs"
 
 #
 #    LoginDatabaseInfo
@@ -259,7 +259,7 @@ PlayerSaveInterval = 120000
 #        Default:     0  - (Disabled, Do not save character stats)
 #                     1+ - (Enabled, Level beyond which character stats are saved)
 
-PlayerSave.Stats.MinLevel = 0
+PlayerSave.Stats.MinLevel = 1
 
 #
 #    PlayerSave.Stats.SaveOnlyOnLogout
@@ -1095,7 +1095,7 @@ BeepAtStart = 1
 #        Example:     "Welcome to John\'s Server@This server runs on JadeCore."
 #        Default:     "Welcome to a JadeCore server."
 
-Motd = "Welcome to JadeCore 5.4.8 Mists of Pandaria"
+Motd = "Welcome to JadeCore 5.4.7 Open-Sourced Game Emulation"
 
 #
 #    Server.LoginInfo
