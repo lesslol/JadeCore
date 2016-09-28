@@ -4,13 +4,13 @@
 
 enum eSpells
 {
-	SPELL_ANCIENT_MIASMA	 = 142861, 
-	SPELL_ARCING_SMASH		 = 142815, 
-	SPELL_SEISMIC_SLAM		 = 142851, 
-	SPELL_DISPLACED_ENERGY	 = 142913, 
-	SPELL_EXPEL_MIASMA		 = 143199, 
-	SPELL_BREATH_OF_YSHAARJ  = 142842, 
-	SPELL_ERADICATE			 = 143916,  
+	SPELL_ANCIENT_MIASMA	 = 142861,
+	SPELL_ARCING_SMASH		 = 142815,
+	SPELL_SEISMIC_SLAM		 = 142849,
+	SPELL_DISPLACED_ENERGY	 = 142913,
+	SPELL_EXPEL_MIASMA		 = 143199,
+	SPELL_BREATH_OF_YSHAARJ  = 142842,
+	SPELL_ERADICATE			 = 143916,
 	SPELL_BLOOD_RAGE		 = 142879,
     SPELL_IMPLODING_ENERGY	 = 142986,
 	SPELL_FATAL_STRIKE		 = 142990,
@@ -18,6 +18,9 @@ enum eSpells
 	SPELL_BREATH_DAMAGE		 = 142816,
 	SPELL_DISPLACED_ENERGY_D = 142928,
 	SPELL_BLOOD_RAGE_DAMAGE  = 142890,
+	SPELL_ANCIENT_BARRIER	 = 142864,
+	SPELL_ANCIENT_MIASMA_VIS = 143018,
+	SPELL_ANCIENT_MIASMA_DMG = 142906,
 };
 
 enum eEvents
@@ -47,7 +50,8 @@ enum Phases
 
 enum eCreatures
 {
-	CREATURE_ARCING_SMASH = 71455,
+	CREATURE_ARCING_SMASH   = 71455,
+	CREATURE_ANCIENT_MIASMA = 71513,
 };
 
 enum eTexts
@@ -99,15 +103,6 @@ public:
 		void JustDied(Unit* /*killer*/)
 		{
 			Talk(MALKOROK_DEATH);
-
-			std::list<Player*> pl_list;
-			me->GetPlayerListInGrid(pl_list, 500.0f);
-
-			for (auto itr : pl_list)
-			{
-				if (itr->HasAura(SPELL_ANCIENT_MIASMA))
-					itr->RemoveAura(SPELL_ANCIENT_MIASMA);
-			}
 		}
 
 		void KilledUnit(Unit* u)
@@ -119,15 +114,10 @@ public:
 		{
 			Talk(MALKOROK_AGGRO);
 			
-			DoCastToAllHostilePlayers(SPELL_ANCIENT_MIASMA);           
-			std::list<Player*> pl_list;
-			me->GetPlayerListInGrid(pl_list, 500.0f);
-
-			for (auto itr : pl_list)
-			{
-				if (!itr->HasAura(SPELL_ANCIENT_MIASMA))
-					me->AddAura(SPELL_ANCIENT_MIASMA, itr);
-			}
+			float homeX = me->GetHomePosition().GetPositionX();
+			float homeY = me->GetHomePosition().GetPositionY();
+			float homeZ = me->GetHomePosition().GetPositionZ();
+			me->SummonCreature(CREATURE_ANCIENT_MIASMA, homeX, homeY, homeZ, 5.0f, TEMPSUMMON_MANUAL_DESPAWN);
 
 			events.SetPhase(PHASE_ONE);
 			events.ScheduleEvent(EVENT_SEISMIC_SLAM, urand(13000, 17000), 0, PHASE_ONE);
@@ -324,14 +314,9 @@ public:
 
 				case EVENT_DISPLACED_ENERGY:
 				{
-					if (Unit* target_one = SelectTarget(SELECT_TARGET_RANDOM, 0, 40.0f, true))
+					if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 40.0f, true))
 					{
-						DoCast(target_one, SPELL_DISPLACED_ENERGY);
-					}
-
-					if (Unit* target_two = SelectTarget(SELECT_TARGET_RANDOM, 0, 40.0f, true))
-					{
-						DoCast(target_two, SPELL_DISPLACED_ENERGY);
+						DoCast(target, SPELL_DISPLACED_ENERGY);
 					}
 
 					events.ScheduleEvent(EVENT_DISPLACED_ENERGY, 5000, 0, PHASE_TWO);
@@ -342,6 +327,41 @@ public:
 			DoMeleeAttackIfReady();
 		}
 	};
+
+	CreatureAI* GetAI(Creature* pCreature) const
+	{
+		return new boss_malkorokAI(pCreature);
+	}
+};
+
+class mob_ancient_miasma : public CreatureScript
+{
+	public:
+		mob_ancient_miasma() : CreatureScript("mob_ancient_miasma") { }
+
+		struct mob_ancient_miasmaAI : public ScriptedAI
+		{
+			mob_ancient_miasmaAI(Creature* creature) : ScriptedAI(creature)
+			{
+				pInstance = creature->GetInstanceScript();
+			}
+
+			InstanceScript* pInstance;
+
+			void Reset() override
+			{
+				me->SetInCombatWithZone();
+				DoCast(SPELL_ANCIENT_MIASMA_VIS);
+				DoCast(SPELL_ANCIENT_MIASMA_DMG);
+				me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_NOT_SELECTABLE);
+				me->AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
+			}
+		};
+
+		CreatureAI* GetAI(Creature* pCreature) const
+		{
+			return new mob_ancient_miasmaAI(pCreature);
+		}
 };
 
 class spell_displaced_energy : public SpellScriptLoader
@@ -412,12 +432,45 @@ class spell_blood_rage : public SpellScriptLoader
 		}
 };
 
+class spell_ancient_barrier : public SpellScriptLoader
+{
+	public:
+		spell_ancient_barrier() : SpellScriptLoader("spell_ancient_barrier") { }
+
+		class spell_ancient_barrier_AuraScript : public AuraScript
+		{
+			PrepareAuraScript(spell_ancient_barrier_AuraScript);
+
+			void HandleDummy(AuraEffectPtr /*aurEff*/, DamageInfo & dmgInfo, uint32 & absorbAmount)
+			{
+				if (Unit* caster = GetCaster())
+					if (Unit* player = GetTarget())
+					{
+						int32 absorb = player->GetHealingTakenInPastSecs(1);
+						absorb = absorb + absorb;
+						caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER, &absorb, NULL, NULL, true);
+					}
+			}
+
+			void Register()
+			{
+				OnEffectAbsorb += AuraEffectAbsorbFn(spell_ancient_barrier_AuraScript::HandleDummy, EFFECT_0);
+			}
+		};
+
+		AuraScript* GetAuraScript() const
+		{
+			return new spell_ancient_barrier_AuraScript();
+		}
+};
+
 void AddSC_boss_malkorok()
 {
 	new boss_malkorok();
 
 	new spell_displaced_energy();
 	new spell_blood_rage();
+	new spell_ancient_barrier();
 }
 
 /*
