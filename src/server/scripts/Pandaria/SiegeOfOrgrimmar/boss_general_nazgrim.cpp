@@ -324,7 +324,7 @@ class boss_general_nazgrim : public CreatureScript
 					}
 				}
 
-				if (RageAmount <= 990 && RageAmount >= 750)
+				if (RageAmount <= 990 && RageAmount >= 700)
 				{
 					if (me->HasAura(SPELL_COOLING_OFF))
 					{
@@ -356,7 +356,7 @@ class boss_general_nazgrim : public CreatureScript
 							me->RemoveAura(SPELL_DEFENSIVE_STANCE);
 
 						DoCast(me, SPELL_BATTLE_STANCE);
-						events.ScheduleEvent(EVENT_BATTLE_STANCE_RAGE, 0);
+						events.ScheduleEvent(EVENT_BATTLE_STANCE_RAGE, 1000);
 						events.ScheduleEvent(EVENT_BERSERKER_STANCE, 60000);
 						break;
 					}
@@ -471,8 +471,6 @@ class boss_general_nazgrim : public CreatureScript
 						{
 							Position pos[2] =
 							{
-								//{ posX-5.0f, posY-5.0f, posZ, posO },
-								//{ posX+5.0f, posY+5.0f, posZ, posO },
 								{ 1568, -4646, -66, 0},
 								{ 1560, -4634, -67, 0},
 							};
@@ -485,9 +483,6 @@ class boss_general_nazgrim : public CreatureScript
 						{
 							Position pos[3] =
 							{
-								//{ posX-4.0f, posY-4.0f, posZ, posO },
-								//{ posX+4.0f, posY+4.0f, posZ, posO },
-								//{ posX+8.0f, posY+8.0f, posZ, posO },
 								{ 1568, -4646, -66, 0 },
 								{ 1560, -4634, -67, 0 },
 								{ 1560, -4622, -66, 5},
@@ -513,8 +508,6 @@ class boss_general_nazgrim : public CreatureScript
 						{
 							Position pos[2] =
 							{
-								//{ posX-5.0f, posY-5.0f, posZ, posO },
-								//{ posX+5.0f, posY+5.0f, posZ, posO },
 								{ 1568, -4646, -66, 0 },
 								{ 1560, -4634, -67, 0 },
 							};
@@ -527,9 +520,6 @@ class boss_general_nazgrim : public CreatureScript
 						{
 							Position pos[3] =
 							{
-								//{ posX-4.0f, posY-4.0f, posZ, posO },
-								//{ posX+4.0f, posY+4.0f, posZ, posO },
-								//{ posX+8.0f, posY+8.0f, posZ, posO },
 								{ 1568, -4646, -66, 0 },
 								{ 1560, -4634, -67, 0 },
 								{ 1560, -4622, -66, 5 },
@@ -624,19 +614,19 @@ class mob_orgrimmar_faithful : public CreatureScript
                 if (!UpdateVictim())
                     return;
 
-				if (UpdateVictim())
+				if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
 				{
-					if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
-						if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
-						{
-							if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
-								AddRage(genNazgrim, 10, genNazgrim->GetGUID());
 
-							if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
-								AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+					if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
+					{
+						if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+							AddRage(genNazgrim, 10, genNazgrim->GetGUID());
 
-							DoMeleeAttackIfReady();
-						}
+						if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+							AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+
+						DoMeleeAttackIfReady();
+					}
 				}
 				else
 					DoMeleeAttackIfReady();
@@ -754,22 +744,17 @@ class mob_korkron_ironblade : public CreatureScript
 					}
 				}
 
-				//if (UpdateVictim())
-				//{
-					if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
-						if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
-						{
-							if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
-								AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+				if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
+					if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
+					{
+						if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+							AddRage(genNazgrim, 10, genNazgrim->GetGUID());
 
-							if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
-								AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+						if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+							AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+					}
 
-							//DoMeleeAttackIfReady();
-						}
-				//}
-				//else
-					DoMeleeAttackIfReady();
+				DoMeleeAttackIfReady();
             }
         };
 
@@ -863,7 +848,6 @@ class mob_korkron_arcweaver : public CreatureScript
 				{
 					case EVENT_ARCANE_SHOCK:
 					{
-						//DoCastVictim(SPELL_ARCANE_SHOCK);
 							std::list<Unit*> targets;
 							uint32 minTargets = RAID_MODE<uint32>(2, 5, 2, 5);
 							SelectTargetList(targets, minTargets, SELECT_TARGET_RANDOM, 80, true);
@@ -888,25 +872,19 @@ class mob_korkron_arcweaver : public CreatureScript
 
 						events.ScheduleEvent(EVENT_UNSTABLE_BLINK, 10000);
 						break;
+					}		
+				}
+
+				if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
+					if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
+					{
+						if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+							AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+
+						if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+							AddRage(genNazgrim, 20, genNazgrim->GetGUID());
 					}
 
-					//if (UpdateVictim())
-					//{
-						if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
-							if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
-							{
-								if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
-									AddRage(genNazgrim, 10, genNazgrim->GetGUID());
-
-								if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
-									AddRage(genNazgrim, 20, genNazgrim->GetGUID());
-
-								//DoMeleeAttackIfReady();
-							}
-					//}
-					//else
-					
-				}
 				DoMeleeAttackIfReady();
             }
         };
@@ -934,7 +912,6 @@ class mob_korkron_assassin : public CreatureScript
             void Reset() override
             {
                 events.Reset();
-				//damage
 				const CreatureTemplate* cinfo = me->GetCreatureTemplate();
 
 				switch (me->GetMap()->GetDifficulty())
@@ -1028,22 +1005,17 @@ class mob_korkron_assassin : public CreatureScript
 					
 				}
 
-				//if (UpdateVictim())
-				//{
-					if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
-						if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
-						{
-							if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
-								AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+				if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
+					if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
+					{
+						if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+							AddRage(genNazgrim, 10, genNazgrim->GetGUID());
 
-							if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
-								AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+						if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+							AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+					}
 
-							//DoMeleeAttackIfReady();
-						}
-				//}
-				//else
-					DoMeleeAttackIfReady();
+				DoMeleeAttackIfReady();
             }
         };
 
@@ -1162,24 +1134,18 @@ class mob_korkron_warshaman : public CreatureScript
 						events.DelayEvents(2000, GCD_CAST);
 						break;
 					}
-
-					//if (UpdateVictim())
-					//{
-						if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
-							if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
-							{
-								if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
-									AddRage(genNazgrim, 10, genNazgrim->GetGUID());
-
-								if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
-									AddRage(genNazgrim, 20, genNazgrim->GetGUID());
-
-								//DoMeleeAttackIfReady();
-							}
-					//}
-					//else
-						//DoMeleeAttackIfReady();
 				}
+
+				if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
+					if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
+					{
+						if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+							AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+
+						if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+							AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+					}
+
 				DoMeleeAttackIfReady();
             }
         };
@@ -1301,24 +1267,19 @@ class mob_korkron_sniper : public CreatureScript
 						events.ScheduleEvent(EVENT_MULTI_SHOT, 10000);
 						break;
 					}
-
-					//if (UpdateVictim())
-					//{
-						if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
-							if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
-							{
-								if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
-									AddRage(genNazgrim, 10, genNazgrim->GetGUID());
-
-								if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
-									AddRage(genNazgrim, 20, genNazgrim->GetGUID());
-
-								//DoMeleeAttackIfReady();
-							}
-					//}
-					//else
-						//DoMeleeAttackIfReady();
 				}
+
+				if (me->HasAura(SPELL_KORKRON_BANNER_AURA))
+					if (Creature * genNazgrim = pInstance->instance->GetCreature(pInstance->GetData64(eData::DATA_GENERAL_NAZGRIM)))
+					{
+						if (!genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+							AddRage(genNazgrim, 10, genNazgrim->GetGUID());
+
+						if (genNazgrim->HasAura(SPELL_BERSERKER_STANCE))
+							AddRage(genNazgrim, 20, genNazgrim->GetGUID());
+					}
+
+				DoMeleeAttackIfReady();
 			}
 		};
 
