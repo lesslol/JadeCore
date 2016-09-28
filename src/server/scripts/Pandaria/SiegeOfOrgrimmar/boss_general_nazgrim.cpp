@@ -73,6 +73,16 @@ enum Enum
 	GCD_CAST         = 1,
 };
 
+enum Say
+{
+	SAY_AGGRO                   =0,
+	SAY_AGGRO_HORDE             =1,
+	SAY_DEATH                   =2,
+	SAY_DEATH_HORDE             =3,
+	SAY_SUMMON                  =4,
+	SAY_KILL                    =5,
+};
+
 enum eEvents
 {
 	EVENT_BATTLE_STANCE		 = 1,
@@ -169,6 +179,7 @@ class boss_general_nazgrim : public CreatureScript
 			}
 			
 			InstanceScript* pInstance;
+			TeamId TeamIdInInstance;
 			
 			void Reset() override
 			{
@@ -228,6 +239,7 @@ class boss_general_nazgrim : public CreatureScript
 				me->SetInt32Value(UNIT_FIELD_POWER1, 0);
 				me->SetMaxPower(POWER_RAGE, 1000);
 				me->SetInt32Value(UNIT_FIELD_MAXPOWER1, 1000);
+				instance->HandleGameObject(instance->GetData64(DATA_NAZGRIM_ENTRY_DOOR), true);
 			}
 			
 			void JustReachedHome()
@@ -241,6 +253,7 @@ class boss_general_nazgrim : public CreatureScript
 			void EnterCombat(Unit* attacker)
             {
 				_EnterCombat();
+
                 if (pInstance)
                 {
                     pInstance->SendEncounterUnit(ENCOUNTER_FRAME_ENGAGE, me);
@@ -254,6 +267,15 @@ class boss_general_nazgrim : public CreatureScript
 
 				if (me->GetMap()->IsHeroic())
 					events.ScheduleEvent(EVENT_EXECUTE, 15000);
+				if (TeamIdInInstance == TEAM_ALLIANCE)
+				{
+					Talk(SAY_AGGRO);
+				}
+				else
+				{
+					Talk(SAY_AGGRO_HORDE);
+				}
+				instance->HandleGameObject(instance->GetData64(DATA_NAZGRIM_ENTRY_DOOR), false);
             }
 			
 			void JustSummoned(Creature* summon)
@@ -268,17 +290,28 @@ class boss_general_nazgrim : public CreatureScript
 			
 			void KilledUnit(Unit* who)
             {
+				Talk(SAY_KILL);
             }
 			
 			void JustDied(Unit* killer)
             {
                 _JustDied();
+				instance->HandleGameObject(instance->GetData64(DATA_NAZGRIM_ENTRY_DOOR), true);
 
                 if (pInstance)
                 {
                     pInstance->SendEncounterUnit(ENCOUNTER_FRAME_DISENGAGE, me);
                     pInstance->SetBossState(DATA_GENERAL_NAZGRIM, DONE);
                 }
+
+				if (TeamIdInInstance == TEAM_ALLIANCE)
+				{
+					Talk(SAY_DEATH);
+				}
+				else
+				{
+					Talk(SAY_DEATH_HORDE);
+				}
             }
 			
 			void DamageTaken(Unit* attacker, uint32& damage)
@@ -493,6 +526,7 @@ class boss_general_nazgrim : public CreatureScript
 							me->SummonCreature(CREATURE_KORKRON_SNIPERS  , pos[2], TEMPSUMMON_MANUAL_DESPAWN);
 						}
 
+						Talk(SAY_SUMMON);
 						events.ScheduleEvent(EVENT_SUMMON_ADDS_TWO, 45000);
 						break;
 					}
@@ -530,6 +564,7 @@ class boss_general_nazgrim : public CreatureScript
 							me->SummonCreature(CREATURE_KORKRON_SNIPERS  , pos[2], TEMPSUMMON_MANUAL_DESPAWN);
 						}
 
+						Talk(SAY_SUMMON);
 						events.ScheduleEvent(EVENT_SUMMON_ADDS_ONE, 45000);
 						break;
 					}
@@ -704,7 +739,7 @@ class mob_korkron_ironblade : public CreatureScript
 				}
 
 				events.ScheduleEvent(EVENT_IRONSTORM, 10000);
-				DoZoneInCombat();
+				me->SetInCombatWithZone();
             }
 
             void UpdateAI(const uint32 diff)
@@ -831,7 +866,7 @@ class mob_korkron_arcweaver : public CreatureScript
 				events.ScheduleEvent(EVENT_ARCANE_SHOCK, urand(5000,8000));
 				events.ScheduleEvent(EVENT_MAGISTRIKE, 20000);
 				events.ScheduleEvent(EVENT_UNSTABLE_BLINK, 10000);
-				DoZoneInCombat();
+				me->SetInCombatWithZone();
             }
 
             void UpdateAI(const uint32 diff)
@@ -968,7 +1003,7 @@ class mob_korkron_assassin : public CreatureScript
 				events.ScheduleEvent(EVENT_ASSASSINS_MARK, 1000);
 				if (Unit* target = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 40.0f, true))
 					DoCast(target, SPELL_ASSASSINS_MARK);
-				DoZoneInCombat();
+				me->SetInCombatWithZone();
             }
 
 
@@ -1091,7 +1126,7 @@ class mob_korkron_warshaman : public CreatureScript
 				events.ScheduleEvent(EVENT_EARTH_SHIELD, urand(10000,15000));
 				events.ScheduleEvent(EVENT_CHAIN_HEAL, urand(6000, 9000));
 				events.ScheduleEvent(EVENT_HEALING_TIDE_TOTEM, urand(18500, 20500));
-				DoZoneInCombat();
+				me->SetInCombatWithZone();
             }
 
             void UpdateAI(const uint32 diff)
@@ -1222,7 +1257,7 @@ class mob_korkron_sniper : public CreatureScript
 				events.ScheduleEvent(EVENT_HUNTERS_MARK, 1000);
 				events.ScheduleEvent(EVENT_SHOOT, 1500);
 				events.ScheduleEvent(EVENT_MULTI_SHOT, 12000);
-				DoZoneInCombat();
+				me->SetInCombatWithZone();
 			}
 
 			void UpdateAI(const uint32 diff)
