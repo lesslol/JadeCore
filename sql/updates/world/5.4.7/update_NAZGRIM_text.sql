@@ -1,0 +1,14 @@
+INSERT INTO `creature_text` VALUES (71515, 0, 0, '我是纳兹戈林，酋长之拳，部落统帅。就算我今天难逃一死，也要光荣地战死沙场。为了部落！', 14, 0, 0, 0, 100, 38191, 'alliance AGGRO');
+INSERT INTO `creature_text` VALUES (71515, 1, 0, '能够与你一战是我的荣幸。Lok\'tar Ogar，为了荣耀，为了部落！', 14, 0, 0, 0, 100, 38192, 'horde AGGRO');
+INSERT INTO `creature_text` VALUES (71515, 2, 0, '我……虽死犹荣……Lok\'tar Ogar……', 14, 0, 0, 0, 100, 38193, 'DEATH1');
+INSERT INTO `creature_text` VALUES (71515, 2, 1, '啊……加摩尔……你终于变强了……能死在……你的手上……是我的荣幸……', 14, 0, 0, 0, 100, 38194, 'DEATH2');
+INSERT INTO `creature_text` VALUES (71515, 2, 2, '为了部落……', 14, 0, 0, 0, 100, 38195, 'DEATH3');
+INSERT INTO `creature_text` VALUES (71515, 3, 0, '啊……你学会了很多……学得很好……光荣的战斗。', 14, 0, 0, 0, 100, 38196, 'DEATH HORDE 1');
+INSERT INTO `creature_text` VALUES (71515, 3, 1, '我最终站在了酋长一边，因为这是我的使命，很高兴打倒我的人是你。愿你的力量……带领部落……走向繁荣昌盛。', 14, 0, 0, 0, 100, 38197, 'DEATH HORDE 2');
+INSERT INTO `creature_text` VALUES (71515, 4, 0, '库卡隆，支援我！', 14, 0, 0, 0, 100, 38198, 'summon1');
+INSERT INTO `creature_text` VALUES (71515, 4, 1, '战士们，快过来！', 14, 0, 0, 0, 100, 38199, 'Summon2');
+INSERT INTO `creature_text` VALUES (71515, 4, 2, '下一队，冲上去！', 14, 0, 0, 0, 100, 38200, 'Summon3');
+INSERT INTO `creature_text` VALUES (71515, 4, 3, '守住大门！', 14, 0, 0, 0, 100, 38201, 'Summon4');
+INSERT INTO `creature_text` VALUES (71515, 4, 4, '重新整队！', 14, 0, 0, 0, 100, 38202, 'Summon5');
+INSERT INTO `creature_text` VALUES (71515, 4, 5, '库卡隆，听我的命令，杀了他们！', 14, 0, 0, 0, 100, 38203, 'Summon6');
+INSERT INTO `creature_text` VALUES (71515, 5, 0, '你训练得太糟糕了。', 14, 0, 0, 0, 100, 38209, 'KILL');
