@@ -90,7 +90,7 @@ Read file [COPYING](#)
 
 This project is brought to you thanks to:
 
-![ach_bcn0o95x](https://cloud.githubusercontent.com/assets/812439/18851130/34762a76-8443-11e6-8b96-e72766ee6fd8.jpg)
+![ach_gjqbctw6](https://cloud.githubusercontent.com/assets/812439/18919030/66919942-85a5-11e6-8c7f-c2078be9854f.jpg)
 
 - [JadeCore developers and contributors](https://github.com/JadeEmu/JadeCore_547/graphs/contributors)
 - [TrinityCore developers and contributors](https://github.com/TrinityCore/TrinityCore/blob/3.3.5/THANKS)
