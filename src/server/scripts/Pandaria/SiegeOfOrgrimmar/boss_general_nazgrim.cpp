@@ -720,22 +720,24 @@ class mob_korkron_ironblade : public CreatureScript
 
 				if (HealthBelowPct(50))
 				{
-					if (me->HasAura(SPELL_LAST_STAND)){}
+					if (me->HasAura(SPELL_LAST_STAND))
+					{
+					
+					}
 					else
 					{
-					events.ScheduleEvent(EVENT_LAST_STAND, 0);
+						events.ScheduleEvent(EVENT_LAST_STAND, 0);
 					}
 				}
 
 				switch (events.ExecuteEvent())
 				{
-				case EVENT_IRONSTORM:
-				{
+					case EVENT_IRONSTORM:
+					{
 						DoCast(me, SPELL_IRONSTORM);
 						events.ScheduleEvent(EVENT_IRONSTORM, 30000);
 						break;
-					
-				}
+					}
 
 					case EVENT_LAST_STAND:
 					{
@@ -848,13 +850,13 @@ class mob_korkron_arcweaver : public CreatureScript
 				{
 					case EVENT_ARCANE_SHOCK:
 					{
-							std::list<Unit*> targets;
-							uint32 minTargets = RAID_MODE<uint32>(2, 5, 2, 5);
-							SelectTargetList(targets, minTargets, SELECT_TARGET_RANDOM, 80, true);
-							for (std::list<Unit*>::const_iterator i = targets.begin(); i != targets.end(); ++i)
-								DoCast(*i,SPELL_ARCANE_SHOCK);
+						std::list<Unit*> targets;
+						uint32 minTargets = RAID_MODE<uint32>(2, 5, 2, 5);
+						SelectTargetList(targets, minTargets, SELECT_TARGET_RANDOM, 80, true);
+						for (std::list<Unit*>::const_iterator i = targets.begin(); i != targets.end(); ++i)
+							DoCast(*i,SPELL_ARCANE_SHOCK);
 
-							events.ScheduleEvent(EVENT_ARCANE_SHOCK, urand(5000, 8000));
+						events.ScheduleEvent(EVENT_ARCANE_SHOCK, urand(5000, 8000));
 						break;
 					}
 
