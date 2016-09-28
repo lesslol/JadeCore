@@ -1,0 +1,5 @@
+UPDATE `creature_template` SET `equipment_id` = 0 WHERE `entry` IN (34913, 49835, 49743, 49732, 49725, 64916, 64902, 62397, 63036, 62543, 63035, 63048, 70236, 71979, 211112, 211113, 311111, 311112, 311113, 702360, 99911);
+
+UPDATE `creature` SET `equipment_id` = 0 WHERE `id` IN (49541, 52234, 54014, 69296, 72376, 73025, 104722);
+
+DELETE FROM `creature_template_addon` WHERE `entry` = 43499;

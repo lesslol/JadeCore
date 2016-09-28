@@ -62,13 +62,13 @@ include_directories(
   ${OPENSSL_INCLUDE_DIR}
 )
 
+GroupSources(${CMAKE_CURRENT_SOURCE_DIR})
+
 set(authserver_LINK_FLAGS "")
 
 add_executable(authserver
   ${authserver_SRCS}
 )
-
-add_dependencies(authserver revision.h)
 
 if( NOT WIN32 )
   add_definitions(-D_TRINITY_REALM_CONFIG='"${CONF_DIR}/authserver.conf"')

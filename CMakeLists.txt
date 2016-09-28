@@ -15,9 +15,6 @@ project(JadeCore)
 # CMake policies (can not be handled elsewhere)
 cmake_minimum_required(VERSION 2.6)
 cmake_policy(SET CMP0005 OLD)
-
-# CMake policies (can not be handled elsewhere)
-cmake_policy(SET CMP0005 OLD)
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD) # Disable 'Ignore COMPILE_DEFINITIONS_<Config> properties'
 endif()
@@ -57,6 +54,8 @@ if( NOPCH )
 endif()
 
 include(CheckPlatform)
+
+include(GroupSources)
 
 # basic packagesearching and setup (further support will be needed, this is a preliminary release!)
 find_package(PCHSupport)

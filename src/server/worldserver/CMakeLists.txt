@@ -144,6 +144,8 @@ include_directories(
   ${OPENSSL_INCLUDE_DIR}
 )
 
+GroupSources(${CMAKE_CURRENT_SOURCE_DIR})
+
 set(worldserver_LINK_FLAGS "")
 
 add_executable(worldserver ${worldserver_SRCS})
@@ -151,8 +153,6 @@ add_executable(worldserver ${worldserver_SRCS})
 if( NOT WIN32 )
   add_definitions(-D_TRINITY_CORE_CONFIG='"${CONF_DIR}/worldserver.conf"')
 endif()
-
-add_dependencies(worldserver revision.h)
 
 if( UNIX )
   set(worldserver_LINK_FLAGS "-pthread ${worldserver_LINK_FLAGS}")

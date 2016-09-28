@@ -157,9 +157,9 @@ include_directories(
   ${MYSQL_INCLUDE_DIR}
 )
 
-add_library(scripts STATIC ${scripts_STAT_SRCS})
+GroupSources(${CMAKE_CURRENT_SOURCE_DIR})
 
-add_dependencies(scripts revision.h)
+add_library(scripts STATIC ${scripts_STAT_SRCS})
 
 # Generate precompiled header
 if( USE_SCRIPTPCH )

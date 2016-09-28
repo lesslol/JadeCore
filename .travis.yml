@@ -9,44 +9,28 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
 
 language: cpp
-compiler:
-  - clang
 
 git:
   depth: 1
 
+compiler:
+  - gcc
+
 before_install:
-  - sudo apt-get -qq install build-essential libtool make cmake cmake-data openssl
-  - sudo apt-get -qq install libssl-dev libmysqlclient-dev libmysql++-dev libreadline6-dev zlib1g-dev libbz2-dev
-  - sudo apt-get -qq install libboost1.55-dev libboost-thread1.55-dev libboost-filesystem1.55-dev libboost-system1.55-dev libboost-program-options1.55-dev libboost-iostreams1.55-dev
-  - sudo apt-get -qq install mysql-server
-  - git config user.email "travis@build.bot" && git config user.name "Travis CI"
-  - git tag -a -m "Travis build" init
-
-install:
-  - mysql -uroot -e 'create database test_mysql;'
-  - mkdir bin
-  - cd bin
-  - cmake ../ -DWITH_WARNINGS=1 -DWITH_COREDEBUG=0 -DUSE_COREPCH=1 -DUSE_SCRIPTPCH=1 -DTOOLS=1 -DSCRIPTS="dynamic" -DSERVERS=1 -DNOJEM=1 -DWITH_DYNAMIC_LINKING=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=check_install
-  - cd ..
-  - chmod +x contrib/check_updates.sh
-
-script:
-  - cd ..
-  - mysql -uroot < sql/create/create_mysql.sql
-  - mysql -ujadecore -pjadecore auth < sql/base/auth_database.sql
-  - mysql -ujadecore -pjadecore characters < sql/base/characters_database.sql
-  - mysql -ujadecore -pjadecore world < sql/base/dev/world_database.sql
-  - cat sql/updates/auth/5.4.7/*.sql | mysql -ujadecore -pjadecore auth
-  - cat sql/updates/characters/5.4.7/*.sql | mysql -ujadecore -pjadecore characters
-  - cat sql/updates/world/5.4.7/*.sql | mysql -ujadecore -pjadecore world
-  - mysql -uroot < sql/create/drop_mysql.sql
-  - cd bin
-  - make -j 8 -k && make install
-  - cd check_install/bin
-  - ./authserver --version
-  - ./worldserver --version
+  - sudo add-apt-repository ppa:kalakris/cmake -y
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo add-apt-repository 'deb http://llvm.org/apt/precise/ llvm-toolchain-precise-3.7 main'
+  - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
+  - sudo apt-get update -qq
+  - sudo apt-get install libace-dev
+  - sudo apt-get install libncurses5-dev
+  - sudo apt-get install build-essential autoconf libtool make cmake git-core patch wget links zip unzip unrar
+  - sudo apt-get install openssl libssl-dev mysql-server mysql-client libmysqlclient15-dev libmysql++-dev libreadline6-dev zlib1g-dev libbz2-dev
+  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
   
-notifications:
-  email:
-    - jadecoreproject@gmail.com
+script:
+  - mkdir build
+  - cd build
+  - cmake ../ -DSCRIPTS=1 -DTOOLS=1
+  - make -j8
