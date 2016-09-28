@@ -1744,7 +1744,7 @@ class Player : public Unit, public GridObject<Player>
         /***                   LOAD SYSTEM                     ***/
         /*********************************************************/
 
-        bool LoadFromDB(uint32 guid, SQLQueryHolder *holder, PreparedQueryResult accountResult);
+        bool LoadFromDB(uint32 guid, SQLQueryHolder *holder, PreparedQueryResult accountResult, SQLQueryHolder *authHolder);
         bool isBeingLoaded() const { return GetSession()->PlayerLoading();}
 
         void Initialize(uint32 guid);

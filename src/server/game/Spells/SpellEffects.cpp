@@ -4532,18 +4532,57 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
         }
         case SUMMON_TYPE_MINIPET:
         {
-            summon = m_caster->GetMap()->SummonCreature(entry, *destTarget, properties, duration, m_originalCaster, m_spellInfo->Id);
-            if (!summon || !summon->HasUnitTypeMask(UNIT_MASK_MINION))
-                return;
+            auto &battlePetMgr = m_caster->ToPlayer()->GetBattlePetMgr();
 
-            summon->SelectLevel(summon->GetCreatureTemplate());       // some summoned creaters have different from 1 DB data for level/hp
-            summon->SetUInt32Value(UNIT_NPC_FLAGS, summon->GetCreatureTemplate()->npcflag);
-            summon->SetUInt32Value(UNIT_NPC_FLAGS + 1, summon->GetCreatureTemplate()->npcflag2);
+                    // this shouldn't fail
+                    BattlePet* battlePet = battlePetMgr.GetBattlePet(battlePetMgr.GetCurrentSummonId());
+					if (!battlePet) // normal minipet
+					{
+						summon = m_caster->GetMap()->SummonCreature(entry, *destTarget, properties, duration, m_originalCaster, m_spellInfo->Id);
+						if (!summon || !summon->HasUnitTypeMask(UNIT_MASK_MINION))
+							return;
 
-            summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);
+						summon->SelectLevel(summon->GetCreatureTemplate());       // some summoned creaters have different from 1 DB data for level/hp
+						summon->SetUInt32Value(UNIT_NPC_FLAGS, summon->GetCreatureTemplate()->npcflag);
+						summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);
+						summon->AI()->EnterEvadeMode();
+						return;
+					}
 
-            summon->AI()->EnterEvadeMode();
-            break;
+                    // battle pets use a generic/reused trigger NPC
+                    if (entry == BATTLE_PET_TRIGGER_NPC)
+                        entry = battlePet->GetNpc();
+
+                    // create creature in the world
+                    summon = m_caster->GetMap()->SummonCreature(entry, *destTarget, properties, duration, m_originalCaster, m_spellInfo->Id);
+                    if (!summon || !summon->HasUnitTypeMask(UNIT_MASK_MINION))
+                        return;
+
+                    battlePetMgr.SetCurrentSummon(summon);
+
+                    // update player fields
+                    m_caster->ToPlayer()->SetUInt64Value(PLAYER_FIELD_SUMMONED_BATTLE_PET_GUID, battlePet->GetId());
+                    m_caster->ToPlayer()->SetUInt32Value(PLAYER_FIELD_CURRENT_BATTLE_PET_BREED_QUALITY, battlePet->GetQuality());
+
+                    // update health
+                    summon->SetCreateHealth(battlePet->GetMaxHealth());
+                    summon->SetMaxHealth(battlePet->GetMaxHealth());
+                    summon->SetHealth(battlePet->GetCurrentHealth());
+
+                    // update battle pet fields
+                    summon->SetUInt64Value(UNIT_FIELD_BATTLE_PET_COMPANION_GUID, battlePet->GetId());
+                    summon->SetUInt32Value(UNIT_FIELD_BATTLE_PET_COMPANION_NAME_TIMESTAMP, battlePet->GetTimestamp());
+                    summon->SetUInt64Value(UNIT_FIELD_CREATEDBY, m_caster->ToPlayer()->GetGUID());
+                    summon->SetUInt32Value(UNIT_FIELD_WILD_BATTLE_PET_LEVEL, battlePet->GetLevel());
+                    summon->SetUInt32Value(UNIT_NPC_FLAGS, summon->GetCreatureTemplate()->npcflag);
+                    summon->SetUInt32Value(UNIT_NPC_FLAGS + 1, summon->GetCreatureTemplate()->npcflag2);
+
+                    // final setup for summon
+                    summon->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_PETBATTLE);
+                    summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);
+                    summon->AI()->EnterEvadeMode();
+
+                    break;
         }
         default:
         {
@@ -9483,4 +9522,29 @@ void Spell::EffectResurrectWithAura(SpellEffIndex effIndex)
     ExecuteLogEffectResurrect(effIndex, target);
     target->SetResurrectRequestData(m_caster, health, mana, resurrectAura);
     SendResurrectRequest(target);
+}
+
+void Spell::EffectHealBattlePet(SpellEffIndex effIndex)
+{
+    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT)
+        return;
+
+    if (sPetBattleSystem->GetPlayerPetBattle(m_caster->GetGUID()))
+        return;
+
+    auto &battlePetMgr = m_caster->ToPlayer()->GetBattlePetMgr();
+    for (auto battlePet : battlePetMgr.BattlePets)
+    {
+        // don't heal pets marked for deletion
+        if (battlePet->GetDbState() == BATTLE_PET_DB_STATE_DELETE)
+            continue;
+
+        // don't heal pets already on full health
+        if (battlePet->GetCurrentHealth() == battlePet->GetMaxHealth())
+            continue;
+
+        // heal and notify client
+        battlePet->SetCurrentHealth(battlePet->GetMaxHealth());
+        battlePetMgr.SendBattlePetUpdate(battlePet, false);
+    }
 }
