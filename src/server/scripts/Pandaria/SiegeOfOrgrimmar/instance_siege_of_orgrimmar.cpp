@@ -83,6 +83,8 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
 
 			// General Nazgrim
 			uint64 NazgrimGuid;
+			uint64 extinazgrimGuid;
+			uint64 entrynazgrimGuid;
 
 			// Malkorok
 
@@ -150,6 +152,8 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
 
 				// General Nazgrim
 				NazgrimGuid							= 0;
+				extinazgrimGuid                     = 0;
+				entrynazgrimGuid                    = 0;
 
 				// Malkorok
 
@@ -280,9 +284,13 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
                 if (!creature)
                     return;
 
-                // switch (creature->GetEntry())
-                // {
-                // }
+                 switch (creature->GetEntry())
+                 {
+				 case BOSS_GENERAL_NAZGRIM:
+				 if (GameObject* go = instance->GetGameObject(extinazgrimGuid))
+					 go->SetGoState(GO_STATE_ACTIVE);
+					 
+                 }
             }
             
             void OnGameObjectCreate(GameObject* go)
@@ -430,6 +438,14 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
                         PrideEntranceGuid = go->GetGUID();
                         break;
                     }
+					case GAMEOBJECT_NAZGRIM_ENTRY:
+						entrynazgrimGuid = go->GetGUID();
+						break;
+
+					case GAMEOBJECT_NAZGRIM_EXTI:
+						extinazgrimGuid = go->GetGUID();
+						break;
+
 
                 default:
                     break;
@@ -537,6 +553,12 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
 					// General Nazgrim
 					case DATA_GENERAL_NAZGRIM:
 						return NazgrimGuid;
+						break;
+					case DATA_NAZGRIM_EXTI_DOOR:
+						return extinazgrimGuid;
+						break;
+					case DATA_NAZGRIM_ENTRY_DOOR:
+						return entrynazgrimGuid;
 						break;
 
 					// Malkorok
