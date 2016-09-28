@@ -885,6 +885,17 @@ enum PetLoginQueryIndex
     MAX_PET_LOGIN_QUERY                             = 4
 };
 
+enum AuthLoginQueryIndex
+{
+    AUTH_LOGIN_QUERY_LOAD_SPELLS = 0,
+    AUTH_LOGIN_QUERY_LOAD_ACHIEVEMENTS,
+    AUTH_LOGIN_QUERY_LOAD_CRITERIA_PROGRESS,
+    AUTH_LOGIN_QUERY_LOAD_BATTLE_PETS,
+    AUTH_LOGIN_QUERY_LOAD_BATTLE_PET_SLOTS,
+
+    MAX_AUTH_LOGIN_QUERY
+};
+
 enum PlayerDelayedOperations
 {
     DELAYED_SAVE_PLAYER         = 0x01,

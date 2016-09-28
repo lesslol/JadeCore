@@ -35,4 +35,8 @@ extern DB2Storage <RulesetItemUpgradeEntry> sRulesetItemUpgradeStore;
 
 void LoadDB2Stores(const std::string& dataPath);
 
+bool HasBattlePetSpeciesFlag(uint16 species, uint16 flag);
+uint32 GetBattlePetSummonSpell(uint16 species);
+uint16 GetBattlePetSpeciesFromSpell(uint32 spellId);
+
 #endif
