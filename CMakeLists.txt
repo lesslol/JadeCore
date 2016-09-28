@@ -15,7 +15,6 @@ project(JadeCore)
 # CMake policies (can not be handled elsewhere)
 cmake_minimum_required(VERSION 2.6)
 cmake_policy(SET CMP0005 OLD)
-cmake_policy(SET CMP0046 OLD)
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD) # Disable 'Ignore COMPILE_DEFINITIONS_<Config> properties'
 endif()
