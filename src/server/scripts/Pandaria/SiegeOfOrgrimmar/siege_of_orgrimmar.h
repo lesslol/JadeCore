@@ -77,6 +77,8 @@ enum eData
 
 	// General Nazgrim
 	DATA_GENERAL_NAZGRIM					= 35,
+	DATA_NAZGRIM_ENTRY_DOOR                 = 56,
+	DATA_NAZGRIM_EXTI_DOOR                  = 57,
 
 	// Malkorok
 	DATA_MALKOROK							= 36,
@@ -208,6 +210,10 @@ enum eGameObjectsLocal
 
     GAMEOBJECT_RIGHT_DOOR			= 221440,
     GAMEOBJECT_LEFT_DOOR			= 221439,
+
+	//Nazgrim
+	GAMEOBJECT_NAZGRIM_EXTI         = 221793,
+	GAMEOBJECT_NAZGRIM_ENTRY        = 223276,
 };
 
 enum eSpellsLocal
