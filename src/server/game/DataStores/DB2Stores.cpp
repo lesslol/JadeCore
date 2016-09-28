@@ -119,30 +119,3 @@ void LoadDB2Stores(const std::string& dataPath)
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Initialized %d DB2 data stores.", DB2FilesCount);
 }
-
-bool HasBattlePetSpeciesFlag(uint16 species, uint16 flag)
-{
-    auto speciesEntry = sBattlePetSpeciesStore.LookupEntry(species);
-    if (!speciesEntry)
-        return false;
-
-    return (speciesEntry->Flags & flag) != 0;
-}
-
-uint32 GetBattlePetSummonSpell(uint16 species)
-{
-    auto speciesEntry = sBattlePetSpeciesStore.LookupEntry(species);
-    if (!speciesEntry)
-        return 0;
-
-    return speciesEntry->SpellId;
-}
-
-uint16 GetBattlePetSpeciesFromSpell(uint32 spellId)
-{
-    auto spellSpeciesEntry = sBattlePetSpellXSpeciesStore.find(spellId);
-    if (spellSpeciesEntry == sBattlePetSpellXSpeciesStore.end())
-        return 0;
-
-    return spellSpeciesEntry->second;
-}

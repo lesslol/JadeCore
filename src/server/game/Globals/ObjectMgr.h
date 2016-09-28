@@ -1312,14 +1312,6 @@ class ObjectMgr
             _lootViewGUID[lootview] = creature;
         }
 
-		void LoadBattlePetBreedData();
-		void LoadBattlePetQualityData();
-		void LoadBattlePetItemToSpeciesData();
-
-		uint8 BattlePetGetRandomBreed(uint16 speciesId) const;
-		uint8 BattlePetGetRandomQuality(uint16 speciesId) const;
-		uint16 BattlePetGetSpeciesFromItem(uint32 itemId) const;
-
     private:
         // first free id for selected id type
         uint32 _auctionId;
@@ -1328,7 +1320,6 @@ class ObjectMgr
         uint32 _mailId;
         uint32 _hiPetNumber;
         uint64 _voidItemId;
-		uint32 _battlePetId;
 
         // first free low guid for selected guid type
         uint32 _hiCharGuid;
@@ -1402,16 +1393,6 @@ class ObjectMgr
 
         ResearchZoneMap _researchZoneMap;
         ResearchLootVector _researchLoot;
-
-		typedef std::set<uint8> BattleBetBreedSet;
-		typedef std::map<uint16, BattleBetBreedSet> BattlePetBreedXSpeciesMap;
-		typedef std::set<uint8> BattlePetQualitySet;
-		typedef std::map<uint16, BattlePetQualitySet> BattlePetQualityXSpeciesMap;
-		typedef std::map<uint32, uint16> BattlePetItemToSpeciesMap;
-
-		BattlePetBreedXSpeciesMap m_battlePetBreedXSpeciesStore;
-		BattlePetQualityXSpeciesMap m_battlePetQualityXSpeciesStore;
-		BattlePetItemToSpeciesMap m_battlePetItemToSpeciesStore;
 
     private:
         void LoadScripts(ScriptsType type);

@@ -4901,25 +4901,13 @@ bool Player::addSpell(uint32 spellId, bool active, bool learning, bool dependent
         return false;
     }
 
-	// handle battle pets learned from trainers
-	if (uint16 species = GetBattlePetSpeciesFromSpell(spellId))
-		if (!loading)
-			GetBattlePetMgr().Create(species);
-
-	// handle battle pet training
-	if (!loading && spellId == SPELL_BATTLE_PET_TRAINING)
-	{
-		if (HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_BATTLE_PET))
-			return false;
-
-		SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_BATTLE_PET);
-
-		learnSpell(SPELL_BATTLE_PET_TRAINING_PASSIVE, false);
-		learnSpell(SPELL_TRACK_PETS, false);
-		learnSpell(SPELL_REVIVE_BATTLE_PETS, false);
-
-		GetBattlePetMgr().UnlockLoadoutSlot(0);
-	}
+    // If is summon companion spell, send update of battle pet journal
+    if (learning && spellInfo->Effects[0].Effect == SPELL_EFFECT_SUMMON && spellInfo->Effects[0].MiscValueB == 3221)
+    {
+        WorldPacket data;
+        GetBattlePetMgr().BuildBattlePetJournal(&data);
+        GetSession()->SendPacket(&data);
+    }
 
     // update used talent points count
     if (sSpellMgr->IsTalent(spellInfo->Id))
@@ -19275,7 +19263,7 @@ float Player::GetFloatValueFromArray(Tokenizer const& data, uint16 index)
     return result;
 }
 
-bool Player::LoadFromDB(uint32 guid, SQLQueryHolder *holder, PreparedQueryResult accountResult, SQLQueryHolder *authHolder)
+bool Player::LoadFromDB(uint32 guid, SQLQueryHolder *holder, PreparedQueryResult accountResult)
 {
     ////                                                     0     1        2     3     4        5      6    7      8     9           10              11
     //QueryResult* result = CharacterDatabase.PQuery("SELECT guid, account, name, race, class, gender, level, xp, money, playerBytes, playerBytes2, playerFlags, "
@@ -19386,10 +19374,6 @@ bool Player::LoadFromDB(uint32 guid, SQLQueryHolder *holder, PreparedQueryResult
     m_petSlotUsed = fields[62].GetUInt32();
 
     InitDisplayIds();
-
-	// battle pet
-	m_battlePetMgr.LoadFromDb(authHolder->GetPreparedResult(AUTH_LOGIN_QUERY_LOAD_BATTLE_PETS));
-	m_battlePetMgr.LoadSlotsFromDb(authHolder->GetPreparedResult(AUTH_LOGIN_QUERY_LOAD_BATTLE_PET_SLOTS));
 
     // cleanup inventory related item value fields (its will be filled correctly in _LoadInventory)
     for (uint8 slot = EQUIPMENT_SLOT_START; slot < EQUIPMENT_SLOT_END; ++slot)
@@ -26004,8 +25988,6 @@ void Player::SendInitialPacketsAfterAddToMap()
         default:
             break;
     }
-
-	GetBattlePetMgr().SendBattlePetJournal();
 }
 
 void Player::SendUpdateToOutOfRangeGroupMembers()

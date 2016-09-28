@@ -58,19 +58,6 @@ class LoginQueryHolder : public SQLQueryHolder
         bool Initialize();
 };
 
-class AuthLoginQueryHolder final : public SQLQueryHolder
-{
-    uint32 m_accountId;
-
-public:
-    AuthLoginQueryHolder(uint32 accountId)
-        : m_accountId(accountId)
-    { }
-
-    uint32 GetAccountId() const { return m_accountId; }
-    bool Initialize();
-};
-
 bool LoginQueryHolder::Initialize()
 {
     SetSize(MAX_PLAYER_LOGIN_QUERY);
@@ -244,24 +231,6 @@ bool LoginQueryHolder::Initialize()
     res &= SetPreparedQuery(PLAYER_LOGIN_QUERY_LOAD_CUF_PROFILES, stmt);
 
     return res;
-}
-
-bool AuthLoginQueryHolder::Initialize()
-{
-	SetSize(MAX_AUTH_LOGIN_QUERY);
-
-	bool res = true;
-	PreparedStatement* stmt = NULL;
-
-	stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_BATTLE_PETS);
-	stmt->setUInt32(0, GetAccountId());
-	res &= SetPreparedQuery(AUTH_LOGIN_QUERY_LOAD_BATTLE_PETS, stmt);
-
-	stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_BATTLE_PET_SLOTS);
-	stmt->setUInt32(0, GetAccountId());
-	res &= SetPreparedQuery(AUTH_LOGIN_QUERY_LOAD_BATTLE_PET_SLOTS, stmt);
-
-	return res;
 }
 
 void WorldSession::HandleCharEnum(PreparedQueryResult result)
@@ -1313,9 +1282,6 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder, PreparedQueryResu
     // Hackfix Remove Talent spell - Remove Glyph spell
     pCurrChar->learnSpell(111621, false); // Reset Glyph
     pCurrChar->learnSpell(113873, false); // Reset Talent
-
-	if (pCurrChar->GetBattlePetMgr().HasPendingPassiveLearn())
-		pCurrChar->learnSpell(SPELL_BATTLE_PET_TRAINING_PASSIVE, false);
 
     // Druids eclipse power must be == 0 on login, so we need to remove last eclipse power
     if (pCurrChar->getClass() == CLASS_DRUID && pCurrChar->getLevel() > 20 && pCurrChar->GetSpecializationId(pCurrChar->GetActiveSpec()) == SPEC_DROOD_BALANCE)

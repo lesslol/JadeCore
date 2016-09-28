@@ -885,17 +885,6 @@ enum PetLoginQueryIndex
     MAX_PET_LOGIN_QUERY                             = 4
 };
 
-enum AuthLoginQueryIndex
-{
-    AUTH_LOGIN_QUERY_LOAD_SPELLS = 0,
-    AUTH_LOGIN_QUERY_LOAD_ACHIEVEMENTS,
-    AUTH_LOGIN_QUERY_LOAD_CRITERIA_PROGRESS,
-    AUTH_LOGIN_QUERY_LOAD_BATTLE_PETS,
-    AUTH_LOGIN_QUERY_LOAD_BATTLE_PET_SLOTS,
-
-    MAX_AUTH_LOGIN_QUERY
-};
-
 enum PlayerDelayedOperations
 {
     DELAYED_SAVE_PLAYER         = 0x01,
@@ -1744,7 +1733,7 @@ class Player : public Unit, public GridObject<Player>
         /***                   LOAD SYSTEM                     ***/
         /*********************************************************/
 
-        bool LoadFromDB(uint32 guid, SQLQueryHolder *holder, PreparedQueryResult accountResult, SQLQueryHolder *authHolder);
+        bool LoadFromDB(uint32 guid, SQLQueryHolder *holder, PreparedQueryResult accountResult);
         bool isBeingLoaded() const { return GetSession()->PlayerLoading();}
 
         void Initialize(uint32 guid);
