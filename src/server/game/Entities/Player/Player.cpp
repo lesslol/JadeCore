@@ -28436,7 +28436,7 @@ bool Player::LearnTalent(uint32 talentId)
 
         if (tInfo->rank == talentInfo->rank && HasSpell(tInfo->spellId))
         {
-            sLog->OutPandashan("[Cheat] Player GUID %u try to learn talent %u, but he has already spell %u", GetGUIDLow(), talentInfo->spellId, tInfo->spellId);
+            sLog->OutJadeCore("[Cheat] Player GUID %u try to learn talent %u, but he has already spell %u", GetGUIDLow(), talentInfo->spellId, tInfo->spellId);
             return false;
         }
     }

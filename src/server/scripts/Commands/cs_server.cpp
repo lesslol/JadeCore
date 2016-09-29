@@ -130,8 +130,8 @@ public:
         std::string uptime          = secsToTimeString(sWorld->GetUptime());
         uint32 updateTime           = sWorld->GetUpdateTime();
 
-        handler->PSendSysMessage(GitRevision::GetFullVersion());
-        handler->PSendSysMessage(GitRevision::GetFullDatabase());
+        handler->SendSysMessage(GitRevision::GetFullVersion());
+        handler->SendSysMessage(GitRevision::GetFullDatabase());
         handler->PSendSysMessage(LANG_CONNECTED_PLAYERS, playersNum, maxPlayersNum);
         handler->PSendSysMessage(LANG_CONNECTED_USERS, activeClientsNum, maxActiveClientsNum, queuedClientsNum, maxQueuedClientsNum);
         handler->PSendSysMessage(LANG_UPTIME, uptime.c_str());

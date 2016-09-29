@@ -37,15 +37,15 @@ public:
 
         static ChatCommand vipCommandTable[] =
         {
-            { "bank",           SEC_PLAYER,         false, &HandleVipBankCommand,               "", NULL },
-            { "home",           SEC_PLAYER,         false, &HandleVipHomeCommand,               "", NULL },
+            { "bank",           SEC_VIP,         false, &HandleVipBankCommand,               "", NULL },
+            { "home",           SEC_VIP,         false, &HandleVipHomeCommand,               "", NULL },
             { NULL,             0,                  false, NULL,                                "", NULL }
         };
 
 
         static ChatCommand commandTable[] =
         {
-            { "vip",            SEC_PLAYER,      false, NULL,                                "", vipCommandTable },
+            { "vip",            SEC_VIP,      false, NULL,                                "", vipCommandTable },
             { NULL,             0,               false, NULL,                                "", NULL }
         };
         return commandTable;

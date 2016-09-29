@@ -220,13 +220,13 @@ class boss_secured_stockpile_of_spoils : public CreatureScript
 
 				events.Update(diff);
 
-				while (uint32 eventId = events.ExecuteEvent())
+				/*while (uint32 eventId = events.ExecuteEvent())
 				{
 					switch (eventId)
 					{
 
 					}
-				}
+				}*/
 			}
 		};
 
@@ -966,13 +966,13 @@ class mob_srithik_bombadiers : public CreatureScript
 				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
 
-				while (uint32 eventId = events.ExecuteEvent())
+				/*while (uint32 eventId = events.ExecuteEvent())
 				{
 					switch (eventId)
 					{
 
 					}
-				}
+				}*/
 			}
 		};
 
@@ -1009,13 +1009,13 @@ class mob_amber_encased_kunchongs : public CreatureScript
 				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
 
-				while (uint32 eventId = events.ExecuteEvent())
+				/*while (uint32 eventId = events.ExecuteEvent())
 				{
 					switch (eventId)
 					{
 
 					}
-				}
+				}*/
 			}
 		};
 
@@ -1052,13 +1052,13 @@ class mob_korthik_warcallers : public CreatureScript
 				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
 
-				while (uint32 eventId = events.ExecuteEvent())
+				/*while (uint32 eventId = events.ExecuteEvent())
 				{
 					switch (eventId)
 					{
 
 					}
-				}
+				}*/
 			}
 		};
 
@@ -1140,13 +1140,13 @@ class mob_zarthik_amber_priests : public CreatureScript
 				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
 
-				while (uint32 eventId = events.ExecuteEvent())
+				/*while (uint32 eventId = events.ExecuteEvent())
 				{
 					switch (eventId)
 					{
 
 					}
-				}
+				}*/
 			}
 		};
 
@@ -1183,13 +1183,13 @@ class mob_setthik_wind_wielders : public CreatureScript
 				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
 
-				while (uint32 eventId = events.ExecuteEvent())
+				/*while (uint32 eventId = events.ExecuteEvent())
 				{
 					switch (eventId)
 					{
 
 					}
-				}
+				}*/
 			}
 		};
 
@@ -1263,13 +1263,13 @@ class mob_commander_tik : public CreatureScript
 				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
 
-				while (uint32 eventId = events.ExecuteEvent())
+				/*while (uint32 eventId = events.ExecuteEvent())
 				{
 					switch (eventId)
 					{
 
 					}
-				}
+				}*/
 			}
 		};
 
@@ -1306,13 +1306,13 @@ class mob_commander_iktal : public CreatureScript
 				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
 
-				while (uint32 eventId = events.ExecuteEvent())
+				/*while (uint32 eventId = events.ExecuteEvent())
 				{
 					switch (eventId)
 					{
 
 					}
-				}
+				}*/
 			}
 		};
 
@@ -1349,13 +1349,13 @@ class mob_commander_nakaz : public CreatureScript
 				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
 
-				while (uint32 eventId = events.ExecuteEvent())
+				/*while (uint32 eventId = events.ExecuteEvent())
 				{
 					switch (eventId)
 					{
 
 					}
-				}
+				}*/
 			}
 		};
 
@@ -1392,13 +1392,13 @@ class mob_commander_zaktar : public CreatureScript
 				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
 
-				while (uint32 eventId = events.ExecuteEvent())
+				/*while (uint32 eventId = events.ExecuteEvent())
 				{
 					switch (eventId)
 					{
 
 					}
-				}
+				}*/
 			}
 		};
 
@@ -1490,13 +1490,13 @@ class mob_ancient_brewmaster_spirits : public CreatureScript
 				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
 
-				while (uint32 eventId = events.ExecuteEvent())
+				/*while (uint32 eventId = events.ExecuteEvent())
 				{
 					switch (eventId)
 					{
 
 					}
-				}
+				}*/
 			}
 		};
 
@@ -1533,13 +1533,13 @@ class mob_wise_mistweaver_spirits : public CreatureScript
 				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
 
-				while (uint32 eventId = events.ExecuteEvent())
+				/*while (uint32 eventId = events.ExecuteEvent())
 				{
 					switch (eventId)
 					{
 
 					}
-				}
+				}*/
 			}
 		};
 
@@ -1576,13 +1576,13 @@ class mob_nameless_windwalker_spirits : public CreatureScript
 				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
 
-				while (uint32 eventId = events.ExecuteEvent())
+				/*while (uint32 eventId = events.ExecuteEvent())
 				{
 					switch (eventId)
 					{
 
 					}
-				}
+				}*/
 			}
 		};
 

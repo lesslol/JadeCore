@@ -101,6 +101,7 @@ Mists of Pandaria Start Zones Quests ( 1-5 lvl ) TODO:
 
 Mists of Pandaria Misc TODO:
 
+-- Mmaps
 -- Character Boost 90 lvl
 -- BattlePet
 -- BattleShop

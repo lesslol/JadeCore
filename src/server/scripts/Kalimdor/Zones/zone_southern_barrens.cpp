@@ -20,9 +20,7 @@ class mob_high_road_scout : public CreatureScript
 
         struct mob_high_road_scoutAI : public ScriptedAI
         {
-            mob_high_road_scoutAI(Creature* creature) : ScriptedAI(creature)
-            {
-            }
+            mob_high_road_scoutAI(Creature* creature) : ScriptedAI(creature) { }
 
             EventMap events;
 
