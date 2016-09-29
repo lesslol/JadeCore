@@ -4,6 +4,7 @@
 
 enum eSpells
 {
+	// Secured Stockpile of Spoils
     SPELL_GB_11010_ARMAGEDDON_CLASS_DEFENSE_SYSTEME = 145864,
     SPELL_UNSTABLE_DEFENSE_SYSTEME                  = 145685
 };
@@ -394,6 +395,36 @@ class gob_stout_crate_mogu : public GameObjectScript
 {
 	public:
 		gob_stout_crate_mogu() : GameObjectScript("gob_stout_crate_mogu") { }
+
+		bool OnGossipHello(Player* /*player*/, GameObject* go)
+		{
+			uint32 randomMob = urand(1, 2);
+			float posX = go->GetPositionX();
+			float posY = go->GetPositionY();
+			float posZ = go->GetPositionZ();
+			float posO = go->GetOrientation();
+
+			switch (randomMob)
+			{
+				case 1: // Modified Anima Golem
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_MODIFIED_ANIMA_GOLEM, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+
+				case 2: // Mogu Shadow Ritualist
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_MOGU_SHADOW_RITUALIST, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+			}
+
+			return true;
+		}
 };
 
 // Massive Crates
@@ -573,6 +604,52 @@ class gob_massive_crate_mogu : public GameObjectScript
 {
 	public:
 		gob_massive_crate_mogu() : GameObjectScript("gob_massive_crate_mogu") { }
+
+		bool OnGossipHello(Player* /*player*/, GameObject* go)
+		{
+			uint32 randomMob = urand(1, 4);
+			float posX = go->GetPositionX();
+			float posY = go->GetPositionY();
+			float posZ = go->GetPositionZ();
+			float posO = go->GetOrientation();
+
+			switch (randomMob)
+			{
+				case 1:
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_JUN_WEI, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+
+				case 2:
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_ZU_YIN, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+
+				case 3:
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_XIANG_LIN, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+
+				case 4:
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_KUN_DA, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+			}
+
+			return true;
+		}
 };
 
 /***********************/
@@ -712,6 +789,44 @@ class gob_lightweight_crate_mantid : public GameObjectScript
 {
 	public:
 		gob_lightweight_crate_mantid() : GameObjectScript("gob_lightweight_crate_mantid") { }
+
+		bool OnGossipHello(Player* /*player*/, GameObject* go)
+		{
+			uint32 randomMob = urand(1, 3);
+			float posX = go->GetPositionX();
+			float posY = go->GetPositionY();
+			float posZ = go->GetPositionZ();
+			float posO = go->GetOrientation();
+
+			switch (randomMob)
+			{
+				case 1:
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_SRITHINK_BOMBARDIER, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+
+				case 2:
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_AMBER_ENCASED_KUNCHONG, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+
+				case 3:
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_KORTHIK_WARCALLER, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+			}
+
+			return true;
+		}
 };
 
 // Stout Crates
@@ -805,6 +920,36 @@ class gob_stout_crate_mantid : public GameObjectScript
 {
 	public:
 		gob_stout_crate_mantid() : GameObjectScript("gob_stout_crate_mantid") { }
+
+		bool OnGossipHello(Player* /*player*/, GameObject* go)
+		{
+			uint32 randomMob = urand(1, 2);
+			float posX = go->GetPositionX();
+			float posY = go->GetPositionY();
+			float posZ = go->GetPositionZ();
+			float posO = go->GetOrientation();
+
+			switch (randomMob)
+			{
+				case 1:
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_SERTHIK_WIND_WIELDER, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+
+				case 2:
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_ZARTHIK_AMBER_PRIEST, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+			}
+
+			return true;
+		}
 };
 
 // Massive Crates
@@ -984,6 +1129,52 @@ class gob_massive_crate_mantid : public GameObjectScript
 {
 	public:
 		gob_massive_crate_mantid() : GameObjectScript("gob_massive_crate_mantid") { }
+
+		bool OnGossipHello(Player* /*player*/, GameObject* go)
+		{
+			uint32 randomMob = urand(1, 4);
+			float posX = go->GetPositionX();
+			float posY = go->GetPositionY();
+			float posZ = go->GetPositionZ();
+			float posO = go->GetOrientation();
+
+			switch (randomMob)
+			{
+				case 1:
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_COMMANDER_TIK, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+
+				case 2:
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_COMMANDER_IKTAL, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+
+				case 3:
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_COMMANDER_NAKAZ, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+
+				case 4:
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_COMMANDER_ZAKTAR, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+			}
+
+			return true;
+		}
 };
 
 /*************************/
@@ -1122,6 +1313,44 @@ class gob_pandaren_crate : public GameObjectScript
 {
 	public:
 		gob_pandaren_crate() : GameObjectScript("gob_pandaren_crate") { }
+
+		bool OnGossipHello(Player* /*player*/, GameObject* go)
+		{
+			uint32 randomMob = urand(1, 3);
+			float posX = go->GetPositionX();
+			float posY = go->GetPositionY();
+			float posZ = go->GetPositionZ();
+			float posO = go->GetOrientation();
+
+			switch (randomMob)
+			{
+				case 1:
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_ANCIENT_BREWMASTER_SPIRIT, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+
+				case 2:
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_WISE_MISTWEAVER_SPIRIT, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+
+				case 3:
+				{
+					Position pos = { posX, posY, posZ, posO };
+
+					go->SummonCreature(CREATURE_NAMELESS_WINDWALKER_SPIRIT, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					break;
+				}
+			}
+
+			return true;
+		}
 };
 
 void AddSC_spoils_of_pandaria()
