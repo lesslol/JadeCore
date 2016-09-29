@@ -6,7 +6,75 @@ enum eSpells
 {
 	// Secured Stockpile of Spoils
     SPELL_GB_11010_ARMAGEDDON_CLASS_DEFENSE_SYSTEME = 145864,
-    SPELL_UNSTABLE_DEFENSE_SYSTEME                  = 145685
+    SPELL_UNSTABLE_DEFENSE_SYSTEME                  = 145685,
+
+	// Animated Stone Mogu
+	SPELL_HARDEN_FLESH                              = 145218,
+	SPELL_EARTHEN_SHARD                             = 144923,
+
+	// Burial Urn - Sparks of Life
+	SPELL_PULSE                                     = 142765,
+	SPELL_NOVA                                      = 142775,
+
+	// Quillen Guardian
+	SPELL_CARNIVOROUS_BITE                          = 144853,
+
+	// Modified Anima Golem
+	SPELL_MATTER_SCRAMBLE                           = 145393,
+	SPELL_CRIMSON_RECONSTITUTION                    = 145271,
+
+	// Mogu Shadow Ritualist
+	SPELL_TORMENT                                   = 142942,
+	SPELL_FORBIDDEN_MAGIC                           = 145240,
+	SPELL_MOGU_RUNE_OF_POWER                        = 145460,
+
+	// Jun Wei
+	SPELL_SHADOW_VOLLEY                             = 148515,
+
+	// Zu Yin
+	SPELL_MOLTEN_FIST                               = 148518,
+
+	// Xiang Lin
+	SPELL_JADE_TEMPEST                              = 148582,
+
+	// Kun Da
+	SPELL_FRACTURE                                  = 148513,
+
+	// Sri'tik Bombardrier
+	SPELL_GUSTING_BOMB                              = 145718,
+	SPELL_THROW_EXPLOSIVES                          = 145706,
+
+	// Amber Encased Kunchong
+	SPELL_ENCAPSULED_PHEROMONES                     = 145748,
+
+	// Kor'thik Warcaller
+	SPELL_ENRAGE                                    = 145692,
+
+	// Zar'thik Amber Priest
+	SPELL_MANTID_SWARM                              = 145808,
+	SPELL_RESIDUE                                   = 145790,
+
+	// Ser'thik Wind Wielder
+	SPELL_WINDSTORM                                 = 145817,
+	SPELL_RAGE_OF_THE_EMPRESS                       = 145812,
+
+	// Commanders
+	SPELL_SET_TO_BLOW                               = 145993,
+	SPELL_PHEROMONE_CLOUD                           = 148760,
+
+	// Ancient Brewmaster Spirit
+	SPELL_KEG_TOSS                                  = 146217,
+	SPELL_BREATH_OF_FIRE                            = 146222,
+	SPELL_BLADE_OF_THE_HUNDRED_STEPS                = 146081,
+
+	// Wise Mistweaver Spirit
+	SPELL_GUSTING_CRANE_KICK                        = 146180,
+	SPELL_EMINENCE                                  = 146189,
+	SPELL_STAFF_OF_RESONATING_WATER                 = 146679,
+
+	// Nameless Windwalker Spirit
+	SPELL_PATH_OF_BLOSSOMS                          = 146257,
+	SPELL_CLAW_OF_BURNING_ANGER                     = 146142,
 };
 
 enum eEvents
@@ -35,7 +103,7 @@ enum eCreatures
 	CREATURE_KUN_DA                     = 71408,
 
 	// Lightweight Crates - Mandit
-	CREATURE_SRITHINK_BOMBARDIER        = 71385,
+	CREATURE_SRITHIK_BOMBARDIER         = 71385,
 	CREATURE_AMBER_ENCASED_KUNCHONG     = 71388,
 	CREATURE_KORTHIK_WARCALLER          = 71383,
 
@@ -804,7 +872,7 @@ class gob_lightweight_crate_mantid : public GameObjectScript
 				{
 					Position pos = { posX, posY, posZ, posO };
 
-					go->SummonCreature(CREATURE_SRITHINK_BOMBARDIER, pos, TEMPSUMMON_MANUAL_DESPAWN);
+					go->SummonCreature(CREATURE_SRITHIK_BOMBARDIER, pos, TEMPSUMMON_MANUAL_DESPAWN);
 					break;
 				}
 
