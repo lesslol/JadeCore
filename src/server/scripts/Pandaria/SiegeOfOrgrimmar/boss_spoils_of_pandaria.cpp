@@ -9,7 +9,7 @@ enum eSpells
     SPELL_UNSTABLE_DEFENSE_SYSTEME                  = 145685,
 
 	// Animated Stone Mogu
-	SPELL_HARDEN_FLESH                              = 145218,
+	SPELL_HARDEN_FLESH                              = 144922,
 	SPELL_EARTHEN_SHARD                             = 144923,
 
 	// Burial Urn - Sparks of Life
@@ -24,7 +24,7 @@ enum eSpells
 	SPELL_CRIMSON_RECONSTITUTION                    = 145271,
 
 	// Mogu Shadow Ritualist
-	SPELL_TORMENT                                   = 142942,
+	SPELL_TORMENT                                   = 142934,
 	SPELL_FORBIDDEN_MAGIC                           = 145240,
 	SPELL_MOGU_RUNE_OF_POWER                        = 145460,
 
@@ -79,6 +79,56 @@ enum eSpells
 
 enum eEvents
 {
+	EVENT_HARDEN_FLESH     = 1,
+	EVENT_EARTHEN_SHARD    = 2,
+
+	EVENT_PULSE            = 3,
+	EVENT_NOVA             = 4,
+	EVENT_SUMMON_SPARK     = 5,
+
+	EVENT_CARNIVOROUS_BITE = 6,
+
+	EVENT_MATTER_SCRAMBLE  = 7,
+	EVENT_CRIMSON_RECONSTITUTION = 8,
+
+	EVENT_TORMENT                = 9,
+	EVENT_FORBIDDEN_MAGIC        = 10,
+	EVENT_MOGU_RUNE_OF_POWER     = 11,
+
+	EVENT_SHADOW_VOLLEY          = 12,
+
+	EVENT_MOLTEN_FIST            = 13,
+
+	EVENT_JADE_TEMPEST           = 14,
+
+	EVENT_FRACTURE               = 15,
+
+	EVENT_GUSTING_BOMB           = 16,
+	EVENT_THROW_EXPLOSIVES       = 17,
+
+	EVENT_ENCAPSULDER_PHEROMONES = 18,
+
+	EVENT_ENRAGE                 = 19,
+
+	EVENT_MANTID_SWARM           = 20,
+	EVENT_RESIDUE                = 21,
+
+	EVENT_WINDSTORM              = 22,
+	EVENT_RAGE_OF_THE_EMPRESS    = 23,
+
+	EVENT_SET_TO_BLOW            = 24,
+	EVENT_PHEROMONE_CLOUD        = 25,
+
+	EVENT_KEG_TOSS               = 26,
+	EVENT_BREATH_OF_FIRE         = 27,
+	EVENT_BLADE_OF_THE_HUNDRED_STEPS = 28,
+
+	EVENT_GUSTING_CRANE_KICK     = 29,
+	EVENT_EMINENCE               = 30,
+	EVENT_STAFF_OF_RESONATING_WATER = 31,
+
+	EVENT_PATH_OF_BLOSSOMS       = 32,
+	EVENT_CLAW_OF_BURNING_ANGER  = 33,
 };
 
 enum eSays
@@ -90,6 +140,7 @@ enum eCreatures
 	// Ligthweight Crates - Mogu
 	CREATURE_ANIMATED_STONE_MOGU        = 71380,
 	CREATURE_BURIAL_URN                 = 71382,
+	CREATURE_SPARK_OF_LIFE              = 71433,
 	CREATURE_QUILLEN_GUARDIAN           = 71378,
 
 	// Stout Crates - Mogu
@@ -206,7 +257,8 @@ class mob_animated_stone_mogu : public CreatureScript
 
 			void Reset() override
 			{
-				
+				events.ScheduleEvent(EVENT_HARDEN_FLESH, urand(5000, 10000));
+				events.ScheduleEvent(EVENT_EARTHEN_SHARD, urand(7000, 12000));
 			}
 
 			void UpdateAI(const uint32 diff)
@@ -223,9 +275,31 @@ class mob_animated_stone_mogu : public CreatureScript
 				{
 					switch (eventId)
 					{
+						case EVENT_HARDEN_FLESH:
+						{
+							if (Unit* target = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 40.0f, true))
+							{
+								DoCast(target, SPELL_HARDEN_FLESH);
+							}
 
+							events.ScheduleEvent(EVENT_HARDEN_FLESH, urand(5000, 10000));
+							break;
+						}
+
+						case EVENT_EARTHEN_SHARD:
+						{
+							if (Unit* target = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 40.0f, true))
+							{
+								DoCast(target, SPELL_EARTHEN_SHARD);
+							}
+
+							events.ScheduleEvent(EVENT_EARTHEN_SHARD, urand(7000, 12000));
+							break;
+						}
 					}
 				}
+
+				DoMeleeAttackIfReady();
 			}
 		};
 
@@ -251,7 +325,7 @@ class mob_burial_urn : public CreatureScript
 
 			void Reset() override
 			{
-
+				events.ScheduleEvent(EVENT_SUMMON_SPARK, urand(10000, 15000));
 			}
 
 			void UpdateAI(const uint32 diff)
@@ -262,11 +336,23 @@ class mob_burial_urn : public CreatureScript
 				if (me->HasUnitState(UNIT_STATE_CASTING))
 					return;
 
+				events.Update(diff);
+
 				while (uint32 eventId = events.ExecuteEvent())
 				{
 					switch (eventId)
 					{
+						case EVENT_SUMMON_SPARK:
+						{
+							float posX = me->GetPositionX();
+							float posY = me->GetPositionY();
+							float posZ = me->GetPositionZ();
+							float posO = me->GetOrientation();
 
+							me->SummonCreature(CREATURE_SPARK_OF_LIFE, posX, posY, posZ, posO, TEMPSUMMON_MANUAL_DESPAWN);
+							events.ScheduleEvent(EVENT_SUMMON_SPARK, urand(10000, 15000));
+							break;
+						}
 					}
 				}
 			}
@@ -275,6 +361,48 @@ class mob_burial_urn : public CreatureScript
 		CreatureAI* GetAI(Creature* pCreature) const
 		{
 			return new mob_burial_urnAI(pCreature);
+		}
+};
+
+class mob_spark_of_life : public CreatureScript
+{
+	public:
+		mob_spark_of_life() : CreatureScript("mob_spark_of_life") { }
+
+		struct mob_spark_of_lifeAI : public ScriptedAI
+		{
+			mob_spark_of_lifeAI(Creature* creature) : ScriptedAI(creature)
+			{
+				pInstance = creature->GetInstanceScript();
+			}
+
+			InstanceScript* pInstance;
+
+			void Reset() override
+			{
+				DoCast(me, SPELL_PULSE);
+			}
+
+			void JustDied(Unit* /*killer*/)
+			{
+				DoCast(SPELL_NOVA);
+			}
+
+			void UpdateAI(const uint32 diff)
+			{
+				if (!UpdateVictim())
+					return;
+
+				if (me->HasUnitState(UNIT_STATE_CASTING))
+					return;
+
+				DoMeleeAttackIfReady();
+			}
+		};
+
+		CreatureAI* GetAI(Creature* pCreature) const
+		{
+			return new mob_spark_of_lifeAI(pCreature);
 		}
 };
 
@@ -294,7 +422,7 @@ class mob_quilen_gardians : public CreatureScript
 
 			void Reset() override
 			{
-
+				events.ScheduleEvent(EVENT_CARNIVOROUS_BITE, urand(5000, 7000));
 			}
 
 			void UpdateAI(const uint32 diff)
@@ -309,9 +437,17 @@ class mob_quilen_gardians : public CreatureScript
 				{
 					switch (eventId)
 					{
+						case EVENT_CARNIVOROUS_BITE:
+						{
+							DoCastVictim(SPELL_CARNIVOROUS_BITE);
 
+							events.ScheduleEvent(EVENT_CARNIVOROUS_BITE, urand(5000, 7000));
+							break;
+						}
 					}
 				}
+
+				DoMeleeAttackIfReady();
 			}
 		};
 
@@ -389,7 +525,8 @@ class mob_modified_anima_golem : public CreatureScript
 
 			void Reset() override
 			{
-
+				events.ScheduleEvent(EVENT_MATTER_SCRAMBLE, 20000);
+				events.ScheduleEvent(EVENT_CRIMSON_RECONSTITUTION, 15000);
 			}
 
 			void UpdateAI(const uint32 diff)
@@ -404,9 +541,25 @@ class mob_modified_anima_golem : public CreatureScript
 				{
 					switch (eventId)
 					{
+						case EVENT_MATTER_SCRAMBLE:
+						{
+							DoCast(me, SPELL_MATTER_SCRAMBLE);
 
+							events.ScheduleEvent(EVENT_MATTER_SCRAMBLE, 20000);
+							break;
+						}
+
+						case EVENT_CRIMSON_RECONSTITUTION:
+						{
+							DoCast(me, SPELL_CRIMSON_RECONSTITUTION);
+
+							events.ScheduleEvent(EVENT_CRIMSON_RECONSTITUTION, 15000);
+							break;
+						}
 					}
 				}
+
+				DoMeleeAttackIfReady();
 			}
 		};
 
@@ -432,7 +585,9 @@ class mob_mogu_shadow_ritualist : public CreatureScript
 
 			void Reset() override
 			{
-
+				events.ScheduleEvent(EVENT_TORMENT, urand(5000, 10000));
+				events.ScheduleEvent(EVENT_MOGU_RUNE_OF_POWER, 15000);
+				events.ScheduleEvent(EVENT_FORBIDDEN_MAGIC, 10000);
 			}
 
 			void UpdateAI(const uint32 diff)
@@ -447,7 +602,35 @@ class mob_mogu_shadow_ritualist : public CreatureScript
 				{
 					switch (eventId)
 					{
+						case EVENT_TORMENT:
+						{
+							if (Unit* target = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 40.0f, true))
+							{
+								DoCast(target, SPELL_TORMENT);
+							}
 
+							events.ScheduleEvent(EVENT_TORMENT, urand(5000, 10000));
+							break;
+						}
+
+						case EVENT_MOGU_RUNE_OF_POWER:
+						{
+							DoCast(me, SPELL_MOGU_RUNE_OF_POWER);
+
+							events.ScheduleEvent(EVENT_MOGU_RUNE_OF_POWER, 15000);
+							break;
+						}
+
+						case EVENT_FORBIDDEN_MAGIC:
+						{
+							if (Unit* target = SelectTarget(SelectAggroTarget::SELECT_TARGET_RANDOM, 0, 40.0f, true))
+							{
+								DoCast(target, SPELL_FORBIDDEN_MAGIC);
+							}
+
+							events.ScheduleEvent(EVENT_FORBIDDEN_MAGIC, 15000);
+							break;
+						}
 					}
 				}
 			}
@@ -512,7 +695,7 @@ class mob_jun_wei : public CreatureScript
 
 			void Reset() override
 			{
-
+				events.ScheduleEvent(EVENT_SHADOW_VOLLEY, urand(5000, 10000));
 			}
 
 			void UpdateAI(const uint32 diff)
@@ -527,9 +710,17 @@ class mob_jun_wei : public CreatureScript
 				{
 					switch (eventId)
 					{
+						case EVENT_SHADOW_VOLLEY:
+						{
+							DoCast(SPELL_SHADOW_VOLLEY);
 
+							events.ScheduleEvent(EVENT_SHADOW_VOLLEY, urand(5000, 10000));
+							break;
+						}
 					}
 				}
+
+				DoMeleeAttackIfReady();
 			}
 		};
 
@@ -555,7 +746,7 @@ class mob_zu_yin : public CreatureScript
 
 			void Reset() override
 			{
-
+				events.ScheduleEvent(EVENT_MOLTEN_FIST, urand(5000, 10000));
 			}
 
 			void UpdateAI(const uint32 diff)
@@ -570,9 +761,17 @@ class mob_zu_yin : public CreatureScript
 				{
 					switch (eventId)
 					{
+						case EVENT_MOLTEN_FIST:
+						{
+							DoCast(SPELL_MOLTEN_FIST);
 
+							events.ScheduleEvent(EVENT_MOLTEN_FIST, urand(5000, 10000));
+							break;
+						}
 					}
 				}
+
+				DoMeleeAttackIfReady();
 			}
 		};
 
@@ -598,7 +797,7 @@ class mob_xiang_lin : public CreatureScript
 
 			void Reset() override
 			{
-
+				events.ScheduleEvent(EVENT_JADE_TEMPEST, urand(5000, 10000));
 			}
 
 			void UpdateAI(const uint32 diff)
@@ -613,9 +812,17 @@ class mob_xiang_lin : public CreatureScript
 				{
 					switch (eventId)
 					{
+						case EVENT_JADE_TEMPEST:
+						{
+							DoCast(SPELL_JADE_TEMPEST);
 
+							events.ScheduleEvent(EVENT_JADE_TEMPEST, urand(5000, 10000));
+							break;
+						}
 					}
 				}
+
+				DoMeleeAttackIfReady();
 			}
 		};
 
@@ -641,7 +848,7 @@ class mob_kun_da : public CreatureScript
 
 			void Reset() override
 			{
-
+				events.ScheduleEvent(EVENT_FRACTURE, urand(5000, 10000));
 			}
 
 			void UpdateAI(const uint32 diff)
@@ -656,9 +863,17 @@ class mob_kun_da : public CreatureScript
 				{
 					switch (eventId)
 					{
+						case EVENT_FRACTURE:
+						{
+							DoCast(SPELL_FRACTURE);
 
+							events.ScheduleEvent(EVENT_FRACTURE, urand(5000, 10000));
+							break;
+						}
 					}
 				}
+
+				DoMeleeAttackIfReady();
 			}
 		};
 
