@@ -1646,6 +1646,7 @@ void AddSC_spoils_of_pandaria()
 	// Lightweight Crates
 	new mob_animated_stone_mogu();
 	new mob_burial_urn();
+	new mob_spark_of_life();
 	new mob_quilen_gardians();
 	new gob_lightweight_crate_mogu();
 

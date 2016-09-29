@@ -19801,6 +19801,17 @@ void Unit::SetControlled(bool apply, UnitState state)
     }
 }
 
+void Unit::DisableRotate(bool apply)
+{ 
+	if (GetTypeId() != TYPEID_UNIT)
+		return;
+
+	if (apply)
+		SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
+	else if (!HasUnitState(UNIT_STATE_POSSESSED))
+		RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
+}
+
 void Unit::SendLossOfControl(AuraApplication const* aurApp, Mechanics mechanic, SpellEffIndex index)
 {
     if (!ToPlayer())
