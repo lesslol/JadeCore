@@ -130,9 +130,9 @@ public:
         std::string uptime          = secsToTimeString(sWorld->GetUptime());
         uint32 updateTime           = sWorld->GetUpdateTime();
 
-        handler->PSendSysMessage("JadeCore WoW 5.4.7");
-        handler->PSendSysMessage("JadeCore WoW Core: Last Update: 29.09.2016");
-        handler->PSendSysMessage("JadeCore WoW DB: Last Update: 29.09.2016");
+        handler->PSendSysMessage(GitRevision::GetFullVersion());
+        handler->PSendSysMessage(GitRevision::GetFullDatabase());
+        handler->PSendSysMessage(LANG_CONNECTED_PLAYERS, playersNum, maxPlayersNum);
         handler->PSendSysMessage(LANG_CONNECTED_USERS, activeClientsNum, maxActiveClientsNum, queuedClientsNum, maxQueuedClientsNum);
         handler->PSendSysMessage(LANG_UPTIME, uptime.c_str());
         handler->PSendSysMessage("Server delay: %u ms", updateTime);
