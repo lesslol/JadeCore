@@ -324,13 +324,24 @@ int Master::Run()
 
     sLog->outInfo(LOG_FILTER_WORLDSERVER, "%s (worldserver-daemon)", GitRevision::GetFullVersion());
     sLog->outInfo(LOG_FILTER_WORLDSERVER, "<Ctrl-C> to stop.\n");
-
-    sLog->outInfo(LOG_FILTER_WORLDSERVER, "       __          __     ______              ");
-    sLog->outInfo(LOG_FILTER_WORLDSERVER, "      / /___ _____/ /__  / ____/___  ________ ");
-    sLog->outInfo(LOG_FILTER_WORLDSERVER, " __  / / __ `/ __  / _ \\/ /   / __ \\/ ___/ _ \\");
-    sLog->outInfo(LOG_FILTER_WORLDSERVER, "/ /_/ / /_/ / /_/ /  __/ /___/ /_/ / /  /  __/");
-    sLog->outInfo(LOG_FILTER_WORLDSERVER, "\\____/\\__,_/\\__,_/\\___/\\____/\\____/_/   \\___/");
-	sLog->outInfo(LOG_FILTER_WORLDSERVER, "                                                    ");
+	sLog->outInfo(LOG_FILTER_WORLDSERVER, " ");
+	sLog->outInfo(LOG_FILTER_WORLDSERVER, "       ██╗ █████╗ ██████╗ ███████╗");
+	sLog->outInfo(LOG_FILTER_WORLDSERVER, "       ██║██╔══██╗██╔══██╗██╔════╝");
+	sLog->outInfo(LOG_FILTER_WORLDSERVER, "       ██║███████║██║  ██║█████╗");  
+	sLog->outInfo(LOG_FILTER_WORLDSERVER, "  ██   ██║██╔══██║██║  ██║██╔══╝");  
+	sLog->outInfo(LOG_FILTER_WORLDSERVER, "  ╚█████╔╝██║  ██║██████╔╝███████╗");
+	sLog->outInfo(LOG_FILTER_WORLDSERVER, "   ╚════╝ ╚═╝  ╚═╝╚═════╝ ╚══════╝");
+	sLog->outInfo(LOG_FILTER_WORLDSERVER, "   ");                                                        
+	sLog->outInfo(LOG_FILTER_WORLDSERVER, "               ██████╗ ██████╗ ██████╗ ███████╗");             
+	sLog->outInfo(LOG_FILTER_WORLDSERVER, "              ██╔════╝██╔═══██╗██╔══██╗██╔════╝");             
+	sLog->outInfo(LOG_FILTER_WORLDSERVER, "              ██║     ██║   ██║██████╔╝█████╗");               
+	sLog->outInfo(LOG_FILTER_WORLDSERVER, "              ██║     ██║   ██║██╔══██╗██╔══╝");               
+	sLog->outInfo(LOG_FILTER_WORLDSERVER, "              ╚██████╗╚██████╔╝██║  ██║███████╗");             
+	sLog->outInfo(LOG_FILTER_WORLDSERVER, "               ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝"); 
+	sLog->outInfo(LOG_FILTER_WORLDSERVER, "   ");                                                        
+	sLog->outInfo(LOG_FILTER_WORLDSERVER, "  	JadeCore 2016(c) Open-Sourced Game Emulation"); 
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "		       http://www.jadecore.tk ");
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "");                                                   
 
     /// worldserver PID file creation
     std::string pidfile = ConfigMgr::GetStringDefault("PidFile", "");
