@@ -270,6 +270,14 @@ PlayerSave.Stats.MinLevel = 1
 PlayerSave.Stats.SaveOnlyOnLogout = 1
 
 #
+#    mmap.enablePathFinding
+#        Description: Enable/Disable pathfinding using mmaps - recommended.
+#        Default:     0 - (Disabled)
+#                     1 - (Enabled)
+
+mmap.enablePathFinding = 0
+
+#
 #    vmap.enableLOS
 #    vmap.enableHeight
 #        Description: VMmap support for line of sight and height calculation.
