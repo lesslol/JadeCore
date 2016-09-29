@@ -69,56 +69,57 @@ Position YellowEyePositions[8] =
 
 enum Spells
 {
-    SPELL_HARD_STARE = 133765,
-    SPELL_GAZE = 134029,
-    SPELL_FORCE_OF_WILL = 136932,
-    SPELL_FORCE_OF_WILL_KNOCKBACK = 136413,
-    SPELL_LINGERING_GAZE_CAST = 138467,
-    SPELL_LINGERING_GAZE_MARKER = 134626,
-    SPELL_LINGERING_GAZE_DMG = 133792,
-    SPELL_BERSERK_KILLALL = 137747,
-    SPELL_DRAIN_LIFE_STUN = 137727,
-    SPELL_DRAIN_LIFE_CHANNEL = 133795,
-    SPELL_DRAIN_LIFE_DAMAGE = 133798,
-    SPELL_DRAIN_LIFE_HEAL = 133807,
-    SPELL_DESINTEGRATION_BEAM = 133776,
-    SPELL_MIND_DAGGERS = 139107,
+    SPELL_HARD_STARE				= 133765,
+    SPELL_GAZE						= 134029,
+    SPELL_FORCE_OF_WILL				= 136932,
+    SPELL_FORCE_OF_WILL_KNOCKBACK	= 136413,
+    SPELL_LINGERING_GAZE_CAST		= 138467,
+    SPELL_LINGERING_GAZE_MARKER		= 134626,
+    SPELL_LINGERING_GAZE_DMG		= 133792,
+    SPELL_BERSERK_KILLALL			= 137747,
+    SPELL_DRAIN_LIFE_STUN			= 137727,
+    SPELL_DRAIN_LIFE_CHANNEL		= 133795,
+    SPELL_DRAIN_LIFE_DAMAGE			= 133798,
+    SPELL_DRAIN_LIFE_HEAL			= 133807,
+    SPELL_DESINTEGRATION_BEAM		= 133776,
+    SPELL_MIND_DAGGERS				= 139107,
+	SPELL_ARTERIAL_CUT				= 133768,
 
     // Beams
-    SPELL_YELLOW_BEAM = 133740,
-    SPELL_RED_BEAM = 133734,
-    SPELL_BLUE_BEAM = 133672,
-    SPELL_YELLOW_BEAM_DMG = 133738,
-    SPELL_RED_BEAM_DMG = 133732,
-    SPELL_BLUE_BEAM_DMG = 133677,
-    SPELL_YELLOW_BEAM_DMG_TO_ALL = 133739,
-    SPELL_RED_BEAM_DMG_TO_ALL = 133733,
-    SPELL_BLUE_BEAM_DMG_TO_ALL = 133678,
+    SPELL_YELLOW_BEAM				= 133740,
+    SPELL_RED_BEAM					= 133734,
+    SPELL_BLUE_BEAM					= 133672,
+    SPELL_YELLOW_BEAM_DMG			= 133738,
+    SPELL_RED_BEAM_DMG				= 133732,
+    SPELL_BLUE_BEAM_DMG				= 133677,
+    SPELL_YELLOW_BEAM_DMG_TO_ALL	= 133739,
+    SPELL_RED_BEAM_DMG_TO_ALL		= 133733,
+    SPELL_BLUE_BEAM_DMG_TO_ALL		= 133678,
 
-    SPELL_FOG_INVISIBLE = 137092,
+    SPELL_FOG_INVISIBLE				= 137092,
 
-    SPELL_CAUSTIC_SPIKE = 136154,
-    SPELL_ICY_GRASP = 136177,
-    SPELL_CRIMSON_BLOOM = 136122,
-    SPELL_FLASH_FREEZE = 136124,
+    SPELL_CAUSTIC_SPIKE				= 136154,
+    SPELL_ICY_GRASP					= 136177,
+    SPELL_CRIMSON_BLOOM				= 136122,
+    SPELL_FLASH_FREEZE				= 136124,
 };
 
-enum NpcEntry
+enum Creatures
 {
     // Beam phase eyes
-    YELLOW_EYE = 67856, // for yellow beam
-    BLUE_EYE   = 67854, // for blue beam
-    RED_EYE    = 67855, // for red beam
-    YELLOW_EYE_MOVER = 67829, // yellow eye not work with player, just with invisible
+    CREATURE_YELLOW_EYE			= 67856, // for yellow beam
+	CREATURE_BLUE_EYE			= 67854, // for blue beam
+	CREATURE_RED_EYE			= 67855, // for red beam
+	CREATURE_YELLOW_EYE_MOVER	= 67829, // yellow eye not work with player, just with invisible
 
     // Durumu eyes
-    MIND_EYE   = 67875,
-    HUNGRY_EYE = 67859,
-    APPRAYISYING_EYE = 67858,
+	CREATURE_MIND_EYE			= 67875,
+	CREATURE_HUNGRY_EYE			= 67859,
+	CREATURE_APPRAYISYING_EYE	= 67858,
 
     // fogs
-    RED_FOG    = 69050,
-    BLUE_FOG   = 69052,
+	CREATURE_RED_FOG			= 69050,
+	CREATURE_BLUE_FOG			= 69052,
 };
 
 enum Events
@@ -364,17 +365,17 @@ class boss_durumu : public CreatureScript
             void SendMazeToEyes(bool start)
             {
                 std::list<Creature*> eyesList;
-                GetCreatureListWithEntryInGrid(eyesList, me, MIND_EYE, 200.0f);
-                GetCreatureListWithEntryInGrid(eyesList, me, HUNGRY_EYE, 200.0f);
-                GetCreatureListWithEntryInGrid(eyesList, me, APPRAYISYING_EYE, 200.0f);
+                GetCreatureListWithEntryInGrid(eyesList, me, CREATURE_MIND_EYE, 200.0f);
+                GetCreatureListWithEntryInGrid(eyesList, me, CREATURE_HUNGRY_EYE, 200.0f);
+                GetCreatureListWithEntryInGrid(eyesList, me, CREATURE_APPRAYISYING_EYE, 200.0f);
                 for (auto eye : eyesList)
                     eye->AI()->DoAction(start == true ? ACTION_MAZE_START : ACTION_MAZE_END);
             }
 
             void SummonBeamsEye()
             {
-                if (Creature * eyeDontMover = me->SummonCreature(YELLOW_EYE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ())) // Yellow eye
-                    if (Creature * tarMover = me->SummonCreature(YELLOW_EYE_MOVER, YellowEyePositions[0])) // Eyebeam target(mover)
+                if (Creature * eyeDontMover = me->SummonCreature(CREATURE_YELLOW_EYE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ())) // Yellow eye
+                    if (Creature * tarMover = me->SummonCreature(CREATURE_YELLOW_EYE_MOVER, YellowEyePositions[0])) // Eyebeam target(mover)
                         eyeDontMover->CastSpell(tarMover, SPELL_YELLOW_BEAM, true);
                 
                 // We must use one list for two beams coz not get problem with one player for two beams
@@ -382,7 +383,7 @@ class boss_durumu : public CreatureScript
                 GetPlayerListInGrid(PlayerList, me, 100.0f);
 
                 if (!PlayerList.empty())
-                    if (Creature * eyeDontMover = me->SummonCreature(RED_EYE,me->GetPositionX(), me->GetPositionY(),me->GetPositionZ()))
+                    if (Creature * eyeDontMover = me->SummonCreature(CREATURE_RED_EYE,me->GetPositionX(), me->GetPositionY(),me->GetPositionZ()))
                         if (Player *target = JadeCore::Containers::SelectRandomContainerElement(PlayerList))
                         {
                             eyeDontMover->CastSpell(target, SPELL_RED_BEAM, true);
@@ -390,16 +391,16 @@ class boss_durumu : public CreatureScript
                         }
                         
                 if (!PlayerList.empty()) // Check again coz we change player list before
-                    if (Creature * eyeDontMover = me->SummonCreature(BLUE_EYE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ()))
+                    if (Creature * eyeDontMover = me->SummonCreature(CREATURE_BLUE_EYE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ()))
                         if (Player *target = JadeCore::Containers::SelectRandomContainerElement(PlayerList))
                             eyeDontMover->CastSpell(target, SPELL_BLUE_BEAM, true);
             }
 
             void SummonEyes()
             {
-                me->SummonCreature(MIND_EYE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ());
-                me->SummonCreature(HUNGRY_EYE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ());
-                me->SummonCreature(APPRAYISYING_EYE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ());
+                me->SummonCreature(CREATURE_MIND_EYE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ());
+                me->SummonCreature(CREATURE_HUNGRY_EYE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ());
+                me->SummonCreature(CREATURE_APPRAYISYING_EYE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ());
             }
 
             void SummonSomeCreatures(uint32 entry, uint8 num, float minDist)
@@ -419,7 +420,7 @@ class boss_durumu : public CreatureScript
                 GetCreatureListWithEntryInGrid(creatureList, me, entry, 80.0f);
                 for (auto NowCreature : creatureList)
                 {
-                    if (NowCreature->GetEntry() == BLUE_FOG && NowCreature->GetDisplayId() == NowCreature->GetNativeDisplayId()) // if blue fog was been activated not despawn him
+                    if (NowCreature->GetEntry() == CREATURE_BLUE_FOG && NowCreature->GetDisplayId() == NowCreature->GetNativeDisplayId()) // if blue fog was been activated not despawn him
                         continue;
                     NowCreature->DespawnOrUnsummon();
                 }
@@ -472,8 +473,8 @@ class boss_durumu : public CreatureScript
                     case EVENT_LIGHT_SPECTRUM_SAY_SUMMON:
                         FogKilled = 0;
                         me->AI()->Talk(SAY_SUMMON_SPECTRUM);
-                        SummonSomeCreatures(RED_FOG, 3, 10.0f); // 3 red fog
-                        SummonSomeCreatures(BLUE_FOG, 1, 10.0f); // 1 blue fog
+                        SummonSomeCreatures(CREATURE_RED_FOG, 3, 10.0f); // 3 red fog
+                        SummonSomeCreatures(CREATURE_BLUE_FOG, 1, 10.0f); // 1 blue fog
                         events.ScheduleEvent(EVENT_LIGHT_SPECTRUM, 3000);
                         break;
                     case EVENT_LIGHT_SPECTRUM:
@@ -521,7 +522,7 @@ class boss_durumu : public CreatureScript
 
                 if (!start)
                 {
-                    DespawnCreature(YELLOW_EYE_MOVER);
+                    DespawnCreature(CREATURE_YELLOW_EYE_MOVER);
 
                     events.CancelEvent(EVENT_MIND_DAGGERS);
                     events.CancelEvent(EVENT_MAZE_ORIENTATION);
@@ -531,7 +532,7 @@ class boss_durumu : public CreatureScript
                 else
                 {
                     me->SetOrientation(6.272f);
-                    if (Creature * tarMover = me->SummonCreature(YELLOW_EYE_MOVER,YellowEyePositions[0]))
+                    if (Creature * tarMover = me->SummonCreature(CREATURE_YELLOW_EYE_MOVER,YellowEyePositions[0]))
                         me->CastSpell(tarMover,SPELL_DESINTEGRATION_BEAM,true);
                 }
             }
@@ -540,7 +541,7 @@ class boss_durumu : public CreatureScript
             {
                 std::list<Creature*> beamTarList;
                 uint64 tarGuid = 0;
-                GetCreatureListWithEntryInGrid(beamTarList, me, YELLOW_EYE_MOVER, 200.0f);
+                GetCreatureListWithEntryInGrid(beamTarList, me, CREATURE_YELLOW_EYE_MOVER, 200.0f);
                 for (auto Beam : beamTarList)
                     tarGuid = Beam->GetGUID();
 
@@ -571,14 +572,14 @@ class boss_durumu : public CreatureScript
                 }
 
                 // Despawn creatures from phase
-                DespawnCreature(RED_EYE);
-                DespawnCreature(BLUE_EYE);
-                DespawnCreature(YELLOW_EYE);
-                DespawnCreature(YELLOW_EYE_MOVER);
-                DespawnCreature(BLUE_FOG);
+                DespawnCreature(CREATURE_RED_EYE);
+                DespawnCreature(CREATURE_BLUE_EYE);
+                DespawnCreature(CREATURE_YELLOW_EYE);
+                DespawnCreature(CREATURE_YELLOW_EYE_MOVER);
+                DespawnCreature(CREATURE_BLUE_FOG);
                 
                 std::list<Creature*> hungryList;
-                GetCreatureListWithEntryInGrid(hungryList, me, HUNGRY_EYE, 80.0f); 
+                GetCreatureListWithEntryInGrid(hungryList, me, CREATURE_HUNGRY_EYE, 80.0f);
                 for (auto eye : hungryList)
                     eye->GetAI()->DoAction(ACTION_EYE_DRAIN_LIFE); // find hungry eye to start drain life
 
@@ -590,7 +591,7 @@ class boss_durumu : public CreatureScript
                 switch (action)
                 {
                     case ACTION_SUMMON_BLUE_FOG:
-                        SummonSomeCreatures(BLUE_FOG, 1, 10.0f); // 1 blue fog
+                        SummonSomeCreatures(CREATURE_BLUE_FOG, 1, 10.0f); // 1 blue fog
                         break;
                     case ACTION_ROAMING_DIE: // When players kill roaming
                         ++RoamingKilled;
@@ -644,7 +645,7 @@ class npc_durumu_fog : public CreatureScript
 
             void IsSummonedBy(Unit* summoner)
             {
-                if (me->GetEntry() == RED_FOG)
+                if (me->GetEntry() == CREATURE_RED_FOG)
                     events.ScheduleEvent(EVENT_RED_FOG_WIND, 2000);
                 events.ScheduleEvent(EVENT_FOG_CAST, 3000);
             }
@@ -665,9 +666,9 @@ class npc_durumu_fog : public CreatureScript
                     case EVENT_FOG_CAST:
                         if (activate)
                             if (IsMeInFrontOfBeam())
-                                DoCast(me->GetEntry() != BLUE_FOG ? SPELL_CAUSTIC_SPIKE : SPELL_ICY_GRASP);
+                                DoCast(me->GetEntry() != CREATURE_BLUE_FOG ? SPELL_CAUSTIC_SPIKE : SPELL_ICY_GRASP);
                             else
-                                DoCast(me->GetEntry() != BLUE_FOG ? SPELL_CRIMSON_BLOOM : SPELL_FLASH_FREEZE);
+                                DoCast(me->GetEntry() != CREATURE_BLUE_FOG ? SPELL_CRIMSON_BLOOM : SPELL_FLASH_FREEZE);
                         events.ScheduleEvent(EVENT_FOG_CAST, 3000);
                         break;
                 }
@@ -676,7 +677,7 @@ class npc_durumu_fog : public CreatureScript
             bool IsMeInFrontOfBeam()
             {
                 std::list<Creature*> beam;
-                GetCreatureListWithEntryInGrid(beam, me, me->GetEntry() == BLUE_FOG ? BLUE_EYE : RED_EYE, 200.0f);
+                GetCreatureListWithEntryInGrid(beam, me, me->GetEntry() == CREATURE_BLUE_FOG ? CREATURE_BLUE_EYE : CREATURE_RED_EYE, 200.0f);
                 for (auto beamEye : beam)
                     if (beamEye->isInFront(me, M_PI/7))
                         return true;
@@ -688,13 +689,13 @@ class npc_durumu_fog : public CreatureScript
             {
                 if (Creature* durumu = ObjectAccessor::GetCreature(*me, FindDurumuGUID(me)))
                 {
-                    if (me->GetEntry() == BLUE_FOG) // blue fog when die cast aoe and summon blue fog in another place
+                    if (me->GetEntry() == CREATURE_BLUE_FOG) // blue fog when die cast aoe and summon blue fog in another place
                     {
                         DoCast(SPELL_FLASH_FREEZE);
                         durumu->GetAI()->DoAction(ACTION_SUMMON_BLUE_FOG);
                     }
 
-                    if (me->GetEntry() == RED_FOG)
+                    if (me->GetEntry() == CREATURE_RED_FOG)
                         durumu->GetAI()->DoAction(ACTION_FOG_KILLED); // need 3 red fog killed for end phase
                 }
             }
@@ -814,21 +815,21 @@ class npc_durumu_eye : public CreatureScript
             {
                 switch (me->GetEntry())
                 {
-                   case MIND_EYE:
+                   case CREATURE_MIND_EYE:
                        events.ScheduleEvent(EVENT_MOVE_RANDOM, 2000);
                        events.ScheduleEvent(EVENT_FORCE_OF_WILL, 32000);
                        break;
-                   case HUNGRY_EYE:
+                   case CREATURE_HUNGRY_EYE:
                        events.ScheduleEvent(EVENT_MOVE_RANDOM, 2000);
                        events.ScheduleEvent(EVENT_DRAIN_LIFE_TAR_CHECK, 1500);
                        break;
-                   case APPRAYISYING_EYE:
+                   case CREATURE_APPRAYISYING_EYE:
                        events.ScheduleEvent(EVENT_MOVE_RANDOM, 2000);
                        events.ScheduleEvent(EVENT_LINGERING_GAZE, 15000);
                        break;
-                   case YELLOW_EYE:
-                   case BLUE_EYE:
-                   case RED_EYE: 
+                   case CREATURE_YELLOW_EYE:
+                   case CREATURE_BLUE_EYE:
+                   case CREATURE_RED_EYE:
                        events.ScheduleEvent(EVENT_EYES_ORIENTATION, 1000);
                        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
                        break;
@@ -878,10 +879,10 @@ class npc_durumu_eye : public CreatureScript
 
             uint64 SelectBeamTargetGuid()
             {
-                if (me->GetEntry() == YELLOW_EYE)
+                if (me->GetEntry() == CREATURE_YELLOW_EYE)
                 {
                     std::list<Creature*> beamTarList;
-                    GetCreatureListWithEntryInGrid(beamTarList, me, YELLOW_EYE_MOVER, 80.0f);
+                    GetCreatureListWithEntryInGrid(beamTarList, me, CREATURE_YELLOW_EYE_MOVER, 80.0f);
                     for (auto Beam : beamTarList)
                         return Beam->GetGUID();
                 }
@@ -891,7 +892,7 @@ class npc_durumu_eye : public CreatureScript
                     GetPlayerListInGrid(PlayerList, me, 80.0f);
 
                     for (auto itr : PlayerList)
-                        if (itr->HasAura(me->GetEntry() == RED_EYE ?  SPELL_RED_BEAM : SPELL_BLUE_BEAM))
+                        if (itr->HasAura(me->GetEntry() == CREATURE_RED_EYE ?  SPELL_RED_BEAM : SPELL_BLUE_BEAM))
                             return itr->GetGUID();
                 }
                 return 0;
@@ -900,7 +901,7 @@ class npc_durumu_eye : public CreatureScript
             void TrySearchFogs()
             {
                 std::list<Creature*> fogList;
-                GetCreatureListWithEntryInGrid(fogList, me, me->GetEntry() == RED_EYE ? RED_FOG : BLUE_FOG, 80.0f);
+                GetCreatureListWithEntryInGrid(fogList, me, me->GetEntry() == CREATURE_RED_EYE ? CREATURE_RED_FOG : CREATURE_BLUE_FOG, 80.0f);
                 for (auto fog : fogList)
                     if (me->isInFront(fog,M_PI/7)) // if fog is front
                         fog->GetAI()->DoAction(ACTION_FOG_ACTIVATE);
@@ -951,7 +952,7 @@ class npc_durumu_eye : public CreatureScript
                         if (Unit* target = ObjectAccessor::GetUnit(*me, SelectBeamTargetGuid()))
                             me->SetFacingToObject(target);
 
-                       if (me->GetEntry() != YELLOW_EYE)
+                       if (me->GetEntry() != CREATURE_YELLOW_EYE)
                            TrySearchFogs();
 
                        events.ScheduleEvent(EVENT_EYES_ORIENTATION, 200);
@@ -976,10 +977,10 @@ class npc_durumu_eye : public CreatureScript
                     case ACTION_MAZE_END:
                         switch (me->GetEntry())
                         {
-                           case MIND_EYE:
+                           case CREATURE_MIND_EYE:
                               events.ScheduleEvent(EVENT_FORCE_OF_WILL, 25000);
                                break;
-                           case APPRAYISYING_EYE:
+                           case CREATURE_APPRAYISYING_EYE:
                               events.ScheduleEvent(EVENT_LINGERING_GAZE, 19000);
                                break;
                            default:
@@ -1010,10 +1011,10 @@ class spell_arterial_cut : public SpellScriptLoader
 
             void OnTick(constAuraEffectPtr aurEff)
             {
-                if (GetTarget())
-                    if (GetTarget()->GetHealth() >= GetTarget()->GetMaxHealth())
-                        if (GetTarget()->HasAura(GetId()))
-                            GetTarget()->RemoveAura(GetId());
+                if (Unit* target = GetTarget())
+                    if (target->GetHealth() >= target->GetMaxHealth())
+                        if (target->HasAura(SPELL_ARTERIAL_CUT))
+                            target->RemoveAura(SPELL_ARTERIAL_CUT);
             }
 
             void Register()
@@ -1114,7 +1115,7 @@ class spell_lingering_gaze : public SpellScriptLoader
                 if (!GetTarget() || !GetCaster())
                     return;
 
-                GetCaster()->CastSpell(GetTarget(),SPELL_LINGERING_GAZE_DMG,true);
+                GetCaster()->CastSpell(GetTarget(), SPELL_LINGERING_GAZE_DMG, true);
             }
 
             void Register()

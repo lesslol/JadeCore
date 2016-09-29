@@ -25,21 +25,21 @@ enum eSpells
 
 enum eEvents
 {
-	EVENT_ARCING_SMASH_FIRST		= 1,
-	EVENT_ARCING_SMASH_SECOND		= 2,
-	EVENT_ARCING_SMASH_THIRD		= 3,
-	EVENT_ARCING_SMASH_DISABLE_ROOT	= 4,
-	EVENT_DESPAWN_ARCING_SMASH		= 5,
-	EVENT_SEISMIC_SLAM				= 6,
-	EVENT_DISPLACED_ENERGY			= 7,
-	EVENT_ERADICATE					= 8,
-	EVENT_BREATH_OF_YSHARRJ			= 9,
-	EVENT_EXPEL_MIASMA				= 10,
-	EVENT_AGRESSIVE					= 11,
-	EVENT_BLOOD_RAGE				= 12,
-	EVENT_PHASE_ONE					= 13,
-	EVENT_IMPLODING_ENERGY			= 14,
-	EVENT_PHASE_TWO					= 15,
+	EVENT_ARCING_SMASH_FIRST   = 1,
+	EVENT_ARCING_SMASH_SECOND  = 2,
+	EVENT_ARCING_SMASH_THIRD   = 3,
+	EVENT_ARCING_SMASH_ROOT	   = 4,
+	EVENT_DESPAWN_ARCING_SMASH = 5,
+	EVENT_SEISMIC_SLAM         = 6,
+	EVENT_DISPLACED_ENERGY     = 7,
+	EVENT_ERADICATE            = 8,
+	EVENT_BREATH_OF_YSHARRJ    = 9,
+	EVENT_EXPEL_MIASMA         = 10,
+	EVENT_AGRESSIVE            = 11,
+	EVENT_BLOOD_RAGE           = 12,
+	EVENT_PHASE_ONE            = 13,
+	EVENT_IMPLODING_ENERGY     = 14,
+	EVENT_PHASE_TWO            = 15,
 };
 
 enum Phases
@@ -148,7 +148,7 @@ class boss_malkorok : public CreatureScript
 						break;
 					}
 
-					case EVENT_ARCING_SMASH_DISABLE_ROOT:
+					case EVENT_ARCING_SMASH_ROOT:
 					{
 						me->SetControlled(false, UNIT_STATE_ROOT);
 						me->DisableRotate(false);
@@ -176,7 +176,7 @@ class boss_malkorok : public CreatureScript
 							}
 						}
 
-						events.ScheduleEvent(EVENT_ARCING_SMASH_DISABLE_ROOT, 0, 0, PHASE_ONE);
+						events.ScheduleEvent(EVENT_ARCING_SMASH_ROOT, 0, 0, PHASE_ONE);
 						events.ScheduleEvent(EVENT_ARCING_SMASH_SECOND, 1000, 0, PHASE_ONE);
 						break;
 					}
@@ -202,7 +202,7 @@ class boss_malkorok : public CreatureScript
 							}
 						}
 
-						events.ScheduleEvent(EVENT_ARCING_SMASH_DISABLE_ROOT, 0, 0, PHASE_ONE);
+						events.ScheduleEvent(EVENT_ARCING_SMASH_ROOT, 0, 0, PHASE_ONE);
 						events.ScheduleEvent(EVENT_ARCING_SMASH_THIRD, 1000, 0, PHASE_ONE);
 						break;
 					}
@@ -228,7 +228,7 @@ class boss_malkorok : public CreatureScript
 							}
 						}
 
-						events.ScheduleEvent(EVENT_ARCING_SMASH_DISABLE_ROOT, 0, 0, PHASE_ONE);
+						events.ScheduleEvent(EVENT_ARCING_SMASH_ROOT, 0, 0, PHASE_ONE);
 						events.ScheduleEvent(EVENT_BREATH_OF_YSHARRJ, 10000, 0, PHASE_ONE);
 						break;
 					}

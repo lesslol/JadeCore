@@ -87,6 +87,7 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
 			uint64 entrynazgrimGuid;
 
 			// Malkorok
+			uint64 MalkorokGuid;
 
 			// Spoils of Pandaria
 
@@ -156,6 +157,7 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
 				entrynazgrimGuid                    = 0;
 
 				// Malkorok
+				MalkorokGuid                        = 0;
 
 				// Spoils of Pandaria
 
@@ -246,12 +248,16 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
 					case BOSS_WAVEBINDER_KARDRIS:
 						KardrisGuid = creature->GetGUID();
 						break;
+
 					// General Nazgrim
 					case BOSS_GENERAL_NAZGRIM:
 						NazgrimGuid = creature->GetGUID();
 						break;
-					// Malkorok
 
+					// Malkorok
+					case BOSS_MALKOROK:
+						MalkorokGuid = creature->GetGUID();
+						break;
 					// Spoils of Pandaria
 
 					// Thok the Bloodthirsty
@@ -562,6 +568,9 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
 						break;
 
 					// Malkorok
+					case DATA_MALKOROK:
+						return MalkorokGuid;
+						break;
 
 					// Spoils of Pandaria
 

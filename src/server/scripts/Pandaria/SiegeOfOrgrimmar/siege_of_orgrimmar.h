@@ -159,6 +159,9 @@ enum eCreaturesLocal
 	// General Nazgrim
 	BOSS_GENERAL_NAZGRIM				= 71515,
 
+	// Malkorok
+	BOSS_MALKOROK                       = 71454,
+
 	// Garrosh Hellscream
     BOSS_GARROSH_HELLSCREAM				= 71865,
     CREATURE_THRALL						= 73483,
