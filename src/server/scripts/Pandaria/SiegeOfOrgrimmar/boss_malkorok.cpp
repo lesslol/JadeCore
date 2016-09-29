@@ -28,7 +28,7 @@ enum eEvents
 	EVENT_ARCING_SMASH_FIRST		= 1,
 	EVENT_ARCING_SMASH_SECOND		= 2,
 	EVENT_ARCING_SMASH_THIRD		= 3,
-	EVENT_ARCING_SMASH_DAMAGE		= 4,
+	EVENT_ARCING_SMASH_DISABLE_ROOT	= 4,
 	EVENT_DESPAWN_ARCING_SMASH		= 5,
 	EVENT_SEISMIC_SLAM				= 6,
 	EVENT_DISPLACED_ENERGY			= 7,
@@ -148,103 +148,87 @@ class boss_malkorok : public CreatureScript
 						break;
 					}
 
-					case EVENT_ARCING_SMASH_DAMAGE:
+					case EVENT_ARCING_SMASH_DISABLE_ROOT:
 					{
-						me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
-						me->RemoveUnitMovementFlag(MOVEMENTFLAG_ROOT);
-						if (Unit* target = me->FindNearestCreature(CREATURE_ARCING_SMASH, 50.00f, true))
-						{
-							DoCast(target, SPELL_ARCING_SMASH);
-						}
-
-						if (arcingSmashController == 1)
-						{
-							events.ScheduleEvent(EVENT_ARCING_SMASH_SECOND, 15000, 0, PHASE_ONE);
-						}
-					
-						if (arcingSmashController == 2)
-						{
-							events.ScheduleEvent(EVENT_ARCING_SMASH_THIRD, 15000, 0, PHASE_ONE);
-						}
-
-						if (arcingSmashController == 3)
-						{
-							events.ScheduleEvent(EVENT_ARCING_SMASH_FIRST, 25000, 0, PHASE_ONE);
-						}
-
+						me->SetControlled(false, UNIT_STATE_ROOT);
+						me->DisableRotate(false);
 						break;
 					}
 
 					case EVENT_ARCING_SMASH_FIRST:
 					{
-						me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
-						me->AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
-						Talk(MALKOROK_ARCING_SMASH);
-						arcingSmashController = 1;
 						float homeX = me->GetHomePosition().GetPositionX();
 						float homeY = me->GetHomePosition().GetPositionY();
 						float homeZ = me->GetHomePosition().GetPositionZ();
 						me->GetMotionMaster()->MoveJump(homeX, homeY, homeZ, 40.0f, 40.0f);
 
-						if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM))
+						if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, NonTankTargetSelector(me)))
 						{
-							float posX = target->GetPositionX();
-							float posY = target->GetPositionY();
-							float posZ = target->GetPositionZ();
-							float posO = target->GetOrientation();
-
-							me->SummonCreature(CREATURE_ARCING_SMASH, posX, posY, posZ, posO, TEMPSUMMON_TIMED_DESPAWN, 5000);
+							if (Creature* summArcingSmash = me->SummonCreature(CREATURE_ARCING_SMASH, *target, TEMPSUMMON_MANUAL_DESPAWN))
+							{
+								me->SetOrientation(me->GetAngle(summArcingSmash));
+								me->SetControlled(true, UNIT_STATE_ROOT);
+								me->DisableRotate(true);
+								me->SetFacingTo(me->GetAngle(summArcingSmash));
+								me->SendMovementFlagUpdate();
+								Talk(MALKOROK_ARCING_SMASH);
+								DoCast(summArcingSmash, SPELL_ARCING_SMASH);
+							}
 						}
 
-						events.ScheduleEvent(EVENT_ARCING_SMASH_DAMAGE, 1000, 0, PHASE_ONE);
+						events.ScheduleEvent(EVENT_ARCING_SMASH_DISABLE_ROOT, 0, 0, PHASE_ONE);
+						events.ScheduleEvent(EVENT_ARCING_SMASH_SECOND, 1000, 0, PHASE_ONE);
 						break;
 					}
 
 					case EVENT_ARCING_SMASH_SECOND:
 					{
-						me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
-						me->AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
-						arcingSmashController = 2;
 						float homeX = me->GetHomePosition().GetPositionX();
 						float homeY = me->GetHomePosition().GetPositionY();
 						float homeZ = me->GetHomePosition().GetPositionZ();
 						me->GetMotionMaster()->MoveJump(homeX, homeY, homeZ, 40.0f, 40.0f);
 
-						if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM))
+						if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, NonTankTargetSelector(me)))
 						{
-							float posX = target->GetPositionX();
-							float posY = target->GetPositionY();
-							float posZ = target->GetPositionZ();
-							float posO = target->GetOrientation();
-
-							me->SummonCreature(CREATURE_ARCING_SMASH, posX, posY, posZ, posO, TEMPSUMMON_TIMED_DESPAWN, 5000);
+							if (Creature* summArcingSmash = me->SummonCreature(CREATURE_ARCING_SMASH, *target, TEMPSUMMON_MANUAL_DESPAWN))
+							{
+								me->SetOrientation(me->GetAngle(summArcingSmash));
+								me->SetControlled(true, UNIT_STATE_ROOT);
+								me->DisableRotate(true);
+								me->SetFacingTo(me->GetAngle(summArcingSmash));
+								me->SendMovementFlagUpdate();
+								Talk(MALKOROK_ARCING_SMASH);
+								DoCast(summArcingSmash, SPELL_ARCING_SMASH);
+							}
 						}
 
-						events.ScheduleEvent(EVENT_ARCING_SMASH_DAMAGE, 1000, 0, PHASE_ONE);
+						events.ScheduleEvent(EVENT_ARCING_SMASH_DISABLE_ROOT, 0, 0, PHASE_ONE);
+						events.ScheduleEvent(EVENT_ARCING_SMASH_THIRD, 1000, 0, PHASE_ONE);
 						break;
 					}
 
 					case EVENT_ARCING_SMASH_THIRD:
 					{
-						me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
-						me->AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
-						arcingSmashController = 3;
 						float homeX = me->GetHomePosition().GetPositionX();
 						float homeY = me->GetHomePosition().GetPositionY();
 						float homeZ = me->GetHomePosition().GetPositionZ();
 						me->GetMotionMaster()->MoveJump(homeX, homeY, homeZ, 40.0f, 40.0f);
 
-						if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM))
+						if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, NonTankTargetSelector(me)))
 						{
-							float posX = target->GetPositionX();
-							float posY = target->GetPositionY();
-							float posZ = target->GetPositionZ();
-							float posO = target->GetOrientation();
-
-							me->SummonCreature(CREATURE_ARCING_SMASH, posX, posY, posZ, posO, TEMPSUMMON_MANUAL_DESPAWN);
+							if (Creature* summArcingSmash = me->SummonCreature(CREATURE_ARCING_SMASH, *target, TEMPSUMMON_MANUAL_DESPAWN))
+							{
+								me->SetOrientation(me->GetAngle(summArcingSmash));
+								me->SetControlled(true, UNIT_STATE_ROOT);
+								me->DisableRotate(true);
+								me->SetFacingTo(me->GetAngle(summArcingSmash));
+								me->SendMovementFlagUpdate();
+								Talk(MALKOROK_ARCING_SMASH);
+								DoCast(summArcingSmash, SPELL_ARCING_SMASH);
+							}
 						}
 
-						events.ScheduleEvent(EVENT_ARCING_SMASH_DAMAGE, 1000, 0, PHASE_ONE);
+						events.ScheduleEvent(EVENT_ARCING_SMASH_DISABLE_ROOT, 0, 0, PHASE_ONE);
 						events.ScheduleEvent(EVENT_BREATH_OF_YSHARRJ, 10000, 0, PHASE_ONE);
 						break;
 					}
@@ -253,21 +237,7 @@ class boss_malkorok : public CreatureScript
 					{
 						DoCast(SPELL_BREATH_OF_YSHAARJ);
 
-						events.ScheduleEvent(EVENT_DESPAWN_ARCING_SMASH, 2500, 0, PHASE_ONE);
-						break;
-					}
-
-					case EVENT_DESPAWN_ARCING_SMASH:
-					{
-						std::list<Creature*> creatures;
-						me->GetCreatureListWithEntryInGrid(creatures, CREATURE_ARCING_SMASH, 500.0f);
-
-						for (auto itr : creatures)
-						{
-							DoCast(itr, SPELL_BREATH_DAMAGE);
-							itr->DespawnOrUnsummon();
-						}
-					
+						events.ScheduleEvent(EVENT_ARCING_SMASH_FIRST, 15000, 0, PHASE_ONE);
 						break;
 					}
 
@@ -285,7 +255,7 @@ class boss_malkorok : public CreatureScript
 							DoCast(target, SPELL_SEISMIC_SLAM);
 						}
 
-						events.ScheduleEvent(EVENT_SEISMIC_SLAM, 19500, PHASE_ONE);
+						events.ScheduleEvent(EVENT_SEISMIC_SLAM, urand(13000, 17000), 0, PHASE_ONE);
 						break;
 					}
 
@@ -461,6 +431,42 @@ class spell_ancient_barrier : public SpellScriptLoader
 		}
 };
 
+class spell_breath_of_yshaarj : public SpellScriptLoader
+{
+	public:
+		spell_breath_of_yshaarj() : SpellScriptLoader("spell_breath_of_yshaarj") { }
+
+		class spell_breath_of_yshaarj_SpellScript : public SpellScript
+		{
+			PrepareSpellScript(spell_breath_of_yshaarj_SpellScript);
+
+			void HandleAfterCast()
+			{
+				if (InstanceScript* m_Instance = GetCaster()->GetInstanceScript())
+					if (Creature * malkorok = m_Instance->instance->GetCreature(m_Instance->GetData64(eData::DATA_MALKOROK)))
+					{
+						std::list<Creature*> npc_list;
+						malkorok->GetCreatureListWithEntryInGrid(npc_list, CREATURE_ARCING_SMASH, 100.0f);
+						for (auto itr : npc_list)
+						{
+							malkorok->CastSpell(itr, SPELL_BREATH_DAMAGE);
+							itr->DespawnOrUnsummon(0);
+						}
+					}
+			}
+
+			void Register()
+			{
+				AfterCast += SpellCastFn(spell_breath_of_yshaarj_SpellScript::HandleAfterCast);
+			}
+		};
+
+		SpellScript* GetSpellScript() const
+		{
+			return new spell_breath_of_yshaarj_SpellScript();
+		}
+};
+
 void AddSC_boss_malkorok()
 {
 	new boss_malkorok();
@@ -468,6 +474,7 @@ void AddSC_boss_malkorok()
 	new spell_displaced_energy();
 	new spell_blood_rage();
 	new spell_ancient_barrier();
+	new spell_breath_of_yshaarj();
 }
 
 /*
