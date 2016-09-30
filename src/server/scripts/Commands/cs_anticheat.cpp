@@ -262,4 +262,4 @@ public:
 void AddSC_anticheat_commandscript()
 {
     new anticheat_commandscript();
-} 
+}

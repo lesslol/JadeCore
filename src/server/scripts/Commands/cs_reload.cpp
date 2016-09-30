@@ -1339,4 +1339,4 @@ public:
 void AddSC_reload_commandscript()
 {
     new reload_commandscript();
-} 
+}
