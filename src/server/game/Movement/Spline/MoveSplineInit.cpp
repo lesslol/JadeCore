@@ -112,10 +112,10 @@ namespace Movement
         //data.append<Vector3>(&spline.getPoint(1), count);
     }
 
-    int32 MoveSplineInit::Launch()
+    void MoveSplineInit::Launch()
     {
         if (&unit == nullptr)
-            return 0;
+            return;
 
         MoveSpline& move_spline = *unit.movespline;
 
@@ -137,7 +137,7 @@ namespace Movement
 
         // should i do the things that user should do? - no.
         if (args.path.empty())
-            return 0;
+            return;
 
         // correct first vertex
         args.path[0] = real_position;
@@ -341,8 +341,6 @@ namespace Movement
         data.WriteByteSeq(moverGUID[4]);
 
         unit.SendMessageToSet(&data, true);
-
-        return move_spline.Duration();
     }
 
     void MoveSplineInit::Stop(bool force)
@@ -408,6 +406,14 @@ namespace Movement
 
         args.facing.angle = G3D::wrap(angle, 0.f, (float)G3D::twoPi());
         args.flags.EnableFacingAngle();
+    }
+
+    void MoveSplineInit::MoveTo(Vector3 const& dest)
+    {
+        args.path_Idx_offset = 0;
+        args.path.resize(2);
+        TransportPathTransform transform(unit, args.TransformForTransport);
+        args.path[1] = transform(dest);
     }
 
     void MoveSplineInit::SetFall()

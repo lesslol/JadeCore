@@ -20,7 +20,6 @@
 #define TRINITYSERVER_MOVESPLINEINIT_H
 
 #include "MoveSplineInitArgs.h"
-#include "PathGenerator.h"
 
 class Unit;
 
@@ -57,7 +56,7 @@ namespace Movement
 
         /*  Final pass of initialization that launches spline movement.
          */
-        int32 Launch();
+        void Launch();
 
         /*  Final pass of initialization that stops movement.
          */
@@ -90,8 +89,8 @@ namespace Movement
 
         /* Initializes simple A to B mition, A is current unit's position, B is destination
          */
-        void MoveTo(const Vector3& destination, bool generatePath = false, bool forceDestination = false);
-        void MoveTo(float x, float y, float z, bool generatePath = true, bool forceDestination = false);
+        void MoveTo(const Vector3& destination);
+        void MoveTo(float x, float y, float z);
 
         /* Sets Id of fisrt point of the path. When N-th path point will be done ILisener will notify that pointId + N done
          * Needed for waypoint movement where path splitten into parts
@@ -166,26 +165,10 @@ namespace Movement
         std::transform(controls.begin(), controls.end(), args.path.begin(), TransportPathTransform(unit, args.TransformForTransport));
     }
 
-    inline void MoveSplineInit::MoveTo(float x, float y, float z, bool generatePath, bool forceDestination)
+    inline void MoveSplineInit::MoveTo(float x, float y, float z)
     {
         Vector3 v(x, y, z);
-        MoveTo(v, generatePath, forceDestination);
-    }
-
-    inline void MoveSplineInit::MoveTo(const Vector3& dest, bool generatePath, bool forceDestination)
-    {
-        if (generatePath)
-        {
-            PathGenerator path(&unit);
-            path.calculate(dest.x, dest.y, dest.z, forceDestination);
-            MovebyPath(path.getPath());
-        }
-        else
-        {
-            args.path_Idx_offset = 0;
-            args.path.resize(2);
-            args.path[1] = dest;
-        }
+        MoveTo(v);
     }
 
     inline void MoveSplineInit::SetParabolic(float amplitude, float time_shift)
