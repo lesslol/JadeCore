@@ -325,3 +325,4 @@ void AddSC_gm_commandscript()
 {
     new gm_commandscript();
 }
+ 

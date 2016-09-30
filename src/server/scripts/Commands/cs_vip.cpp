@@ -119,3 +119,4 @@ void AddSC_vip_commandscript()
 {
     new vip_commandscript();
 }
+ 

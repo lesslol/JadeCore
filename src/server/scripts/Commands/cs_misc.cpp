@@ -2130,13 +2130,13 @@ public:
     static bool HandleSetArchCommand(ChatHandler* handler, char const* args)
     {
         char* str = strtok((char*)args, " ");
-		if (!str)
-			return false;
+        if (!str)
+            return false;
 
         uint32 field = atoi(str);
         char* str2 = strtok(NULL, " ");
-		if (!str2)
-			return false;
+        if (!str2)
+            return false;
         uint32 value = atoi(str);
         handler->GetSession()->GetPlayer()->SetDynamicUInt32Value(PLAYER_DYNAMIC_RESEARCH_SITES, field, value);
         return true;
@@ -3112,3 +3112,4 @@ void AddSC_misc_commandscript()
 {
     new misc_commandscript();
 }
+ 

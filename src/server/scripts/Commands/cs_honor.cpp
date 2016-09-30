@@ -118,3 +118,4 @@ void AddSC_honor_commandscript()
 {
     new honor_commandscript();
 }
+ 

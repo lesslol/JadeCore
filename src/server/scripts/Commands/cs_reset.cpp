@@ -263,3 +263,4 @@ void AddSC_reset_commandscript()
 {
     new reset_commandscript();
 }
+ 

@@ -1167,3 +1167,4 @@ void AddSC_wp_commandscript()
 {
     new wp_commandscript();
 }
+ 

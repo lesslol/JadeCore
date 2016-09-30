@@ -682,3 +682,4 @@ void AddSC_go_commandscript()
 {
     new go_commandscript();
 }
+ 

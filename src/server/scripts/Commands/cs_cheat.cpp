@@ -324,4 +324,4 @@ class cheat_commandscript : public CommandScript
 void AddSC_cheat_commandscript()
 {
     new cheat_commandscript();
-}
+} 

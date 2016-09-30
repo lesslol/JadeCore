@@ -78,3 +78,4 @@ void AddSC_achievement_commandscript()
 {
     new achievement_commandscript();
 }
+ 

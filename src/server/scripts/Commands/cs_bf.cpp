@@ -178,3 +178,4 @@ void AddSC_bf_commandscript()
 {
     new bf_commandscript();
 }
+ 

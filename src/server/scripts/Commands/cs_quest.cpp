@@ -297,3 +297,4 @@ void AddSC_quest_commandscript()
 {
     new quest_commandscript();
 }
+ 

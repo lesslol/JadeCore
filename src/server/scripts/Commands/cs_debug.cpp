@@ -1773,3 +1773,4 @@ void AddSC_debug_commandscript()
 {
     new debug_commandscript();
 }
+ 

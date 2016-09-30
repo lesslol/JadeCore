@@ -343,3 +343,4 @@ void AddSC_tele_commandscript()
 {
     new tele_commandscript();
 }
+ 
