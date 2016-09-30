@@ -102,3 +102,4 @@ class SystemMgr
 #define sScriptSystemMgr ACE_Singleton<SystemMgr, ACE_Null_Mutex>::instance()
 
 #endif
+ 

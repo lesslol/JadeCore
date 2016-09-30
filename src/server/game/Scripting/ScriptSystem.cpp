@@ -203,3 +203,4 @@ void SystemMgr::LoadScriptWaypoints()
 
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Loaded %u Script Waypoint nodes in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
 }
+ 
