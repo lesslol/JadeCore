@@ -334,7 +334,10 @@ class boss_earthbreaker_haromm : public CreatureScript
 
 			void DamageTaken(Unit* attacker, uint32& damage)
 			{
-				
+				if (Creature* kardris = m_Instance->instance->GetCreature(m_Instance->GetData64(DATA_WAVEBINDER_KARDRIS)))
+					me->DealDamage(kardris, damage);
+				else
+					me->LowerPlayerDamageReq(damage);
 			}
 
 			void JustReachedHome()
@@ -712,7 +715,10 @@ class boss_wavebinder_kardris : public CreatureScript
 
 			void DamageTaken(Unit* attacker, uint32& damage)
 			{
-				
+				if (Creature* haromm = m_Instance->instance->GetCreature(m_Instance->GetData64(DATA_EARTHBREAKER_HAROMM)))
+					me->DealDamage(haromm, damage);
+				else
+					me->LowerPlayerDamageReq(damage);
 			}
 
 			void JustReachedHome()
