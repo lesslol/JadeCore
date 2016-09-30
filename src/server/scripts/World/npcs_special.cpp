@@ -57,6 +57,7 @@ EndContentData */
 #include "Cell.h"
 #include "CellImpl.h"
 #include "SpellAuras.h"
+#include "SpellScript.h"
 #include "Vehicle.h"
 #include "Player.h"
 #include "MoveSplineInit.h"

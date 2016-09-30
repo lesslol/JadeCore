@@ -19,6 +19,7 @@
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "Vehicle.h"
+#include "ScriptedGossip.h"
 
 /*######
 ## npc_aradne

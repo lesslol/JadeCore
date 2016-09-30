@@ -35,6 +35,7 @@ EndContentData */
 #include "Spell.h"
 #include "GuildMgr.h"
 #include "Guild.h"
+#include "Chat.h"
 
 /*#####
 # item_only_for_flight

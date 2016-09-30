@@ -1,6 +1,7 @@
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "scarlet_monastery.h"
+#include "SpellScript.h"
 
 // Firestormcharge should be work better | scorched earth will be done soon
 

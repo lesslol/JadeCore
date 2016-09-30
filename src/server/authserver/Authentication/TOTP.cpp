@@ -16,6 +16,7 @@
 */
 
 #include "TOTP.h"
+#include <string.h>
 
 int base32_decode(const char* encoded, char* result, int bufSize)
 {

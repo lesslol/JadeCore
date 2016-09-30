@@ -19,6 +19,7 @@
 #define ICECROWN_CITADEL_H_
 
 #include "SpellScript.h"
+#include "ScriptMgr.h"
 #include "Map.h"
 #include "Creature.h"
 

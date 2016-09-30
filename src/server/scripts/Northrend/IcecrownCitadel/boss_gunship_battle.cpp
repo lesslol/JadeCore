@@ -21,6 +21,9 @@
 #include "Transport.h"
 #include "Vehicle.h"
 #include "Group.h"
+#include "ScriptedCreature.h"
+#include "ScriptedGossip.h"
+#include "GridNotifiers.h"
 
 enum Achievements
 {

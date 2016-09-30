@@ -1,6 +1,7 @@
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "scarlet_halls.h"
+#include "GridNotifiers.h"
 
 enum Spells
 {
