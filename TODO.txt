@@ -65,7 +65,6 @@ Pandaria Dungeons:
 
 -- Gate of the Setting Sun
 -- Mogu'shan Palace
--- Scarlet Halls
 -- Scarlet Monastery
 -- Scholomance
 -- Shado-Pan Monastery
