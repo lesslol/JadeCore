@@ -62,4 +62,4 @@ public:
 void AddSC_mmaps_commandscript()
 {
     new mmaps_commandscript();
-} 
+}
