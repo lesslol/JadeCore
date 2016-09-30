@@ -34,15 +34,15 @@ Log::Log() : worker(NULL)
     SetRealmID(0);
     m_logsTimestamp = "_" + GetTimestampStr();
     LoadFromConfig();
-    pandashanLog = fopen(std::string(m_logsDir).append("pandashan.log").c_str(), "a");
+    jadecoreLog = fopen(std::string(m_logsDir).append("jadecore.log").c_str(), "a");
 }
 
 Log::~Log()
 {
     Close();
 
-    fclose(pandashanLog);
-    pandashanLog = NULL;
+    fclose(jadecoreLog);
+    jadecoreLog = NULL;
 }
 
 uint8 Log::NextAppenderId()
@@ -562,7 +562,7 @@ void Log::outArena(const char * str, ...)
     log->str = query;
 }
 
-void Log::OutPandashan(const char* str, ...)
+void Log::OutJadeCore(const char* str, ...)
 {
     if (!str)
         return;
@@ -575,6 +575,6 @@ void Log::OutPandashan(const char* str, ...)
     va_end(ap);
 
     std::string date = GetTimestampStr();
-    fprintf(pandashanLog, "[%s] Pandashan LOG : %s\n", date.c_str(), result);
-    fflush(pandashanLog);
+    fprintf(jadecoreLog, "[%s] JadeCore LOG : %s\n", date.c_str(), result);
+    fflush(jadecoreLog);
 }

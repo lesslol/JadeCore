@@ -23,7 +23,7 @@
 #include <ace/Sig_Handler.h>
 
 #include "Common.h"
-#include "SystemConfig.h"
+#include "GitRevision.h"
 #include "SignalHandler.h"
 #include "World.h"
 #include "WorldRunnable.h"
@@ -322,15 +322,26 @@ int Master::Run()
     BigNumber seed1;
     seed1.SetRand(16 * 8);
 
-    sLog->outInfo(LOG_FILTER_WORLDSERVER, "%s (worldserver-daemon)", _FULLVERSION);
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "%s (worldserver-daemon)", GitRevision::GetFullVersion());
     sLog->outInfo(LOG_FILTER_WORLDSERVER, "<Ctrl-C> to stop.\n");
-
-    sLog->outInfo(LOG_FILTER_WORLDSERVER, "       __          __     ______              ");
-    sLog->outInfo(LOG_FILTER_WORLDSERVER, "      / /___ _____/ /__  / ____/___  ________ ");
-    sLog->outInfo(LOG_FILTER_WORLDSERVER, " __  / / __ `/ __  / _ \\/ /   / __ \\/ ___/ _ \\");
-    sLog->outInfo(LOG_FILTER_WORLDSERVER, "/ /_/ / /_/ / /_/ /  __/ /___/ /_/ / /  /  __/");
-    sLog->outInfo(LOG_FILTER_WORLDSERVER, "\\____/\\__,_/\\__,_/\\___/\\____/\\____/_/   \\___/");
-	sLog->outInfo(LOG_FILTER_WORLDSERVER, "                                                    ");
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, " ");
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "       ██╗ █████╗ ██████╗ ███████╗");
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "       ██║██╔══██╗██╔══██╗██╔════╝");
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "       ██║███████║██║  ██║█████╗");  
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "  ██   ██║██╔══██║██║  ██║██╔══╝");  
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "  ╚█████╔╝██║  ██║██████╔╝███████╗");
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "   ╚════╝ ╚═╝  ╚═╝╚═════╝ ╚══════╝");
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "   ");                                                        
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "               ██████╗ ██████╗ ██████╗ ███████╗");             
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "              ██╔════╝██╔═══██╗██╔══██╗██╔════╝");             
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "              ██║     ██║   ██║██████╔╝█████╗");               
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "              ██║     ██║   ██║██╔══██╗██╔══╝");               
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "              ╚██████╗╚██████╔╝██║  ██║███████╗");             
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "               ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝"); 
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "   ");                                                        
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "  	JadeCore 2016(c) Open-Sourced Game Emulation"); 
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "		       https://www.jadecore.tk ");
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "");                                                   
 
     /// worldserver PID file creation
     std::string pidfile = ConfigMgr::GetStringDefault("PidFile", "");
@@ -458,7 +469,7 @@ int Master::Run()
         // go down and shutdown the server
     }
 
-    sLog->outInfo(LOG_FILTER_WORLDSERVER, "%s (worldserver-daemon) ready...", _FULLVERSION);
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "%s (worldserver-daemon) ready...", GitRevision::GetFullVersion());
 
     // when the main thread closes the singletons get unloaded
     // since worldrunnable uses them, it will crash if unloaded after master
@@ -632,7 +643,7 @@ bool Master::_StartDB()
     ClearOnlineAccounts();
 
     ///- Insert version info into DB
-    WorldDatabase.PExecute("UPDATE version SET core_version = '%s', core_revision = '%s'", _FULLVERSION, _HASH);        // One-time query
+    WorldDatabase.PExecute("UPDATE version SET core_version = '%s', core_revision = '%s'", GitRevision::GetFullVersion(), GitRevision::GetHash());        // One-time query
 
     sWorld->LoadDBVersion();
 

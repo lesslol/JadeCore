@@ -2212,6 +2212,7 @@ class Unit : public WorldObject
         }
 
         void SetControlled(bool apply, UnitState state);
+		void DisableRotate(bool apply);
         void SendLossOfControl(AuraApplication const* aurApp, Mechanics mechanic, SpellEffIndex index);
 
         void AddComboPointHolder(uint32 lowguid) { m_ComboPointHolders.insert(lowguid); }

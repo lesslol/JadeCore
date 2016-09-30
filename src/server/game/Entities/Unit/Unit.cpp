@@ -654,7 +654,7 @@ uint32 Unit::DealDamage(Unit* victim, uint32 damage, CleanDamage const* cleanDam
 
     // Log damage > 1 000 000 on worldboss
     if (damage > 1000000 && GetTypeId() == TYPEID_PLAYER && victim->GetTypeId() == TYPEID_UNIT && victim->ToCreature()->GetCreatureTemplate()->rank)
-        sLog->OutPandashan("World Boss %u [%s] take more than 1M damage (%u) by player %u [%s] with spell %u", victim->GetEntry(), victim->GetName(), damage, GetGUIDLow(), GetName(), spellProto ? spellProto->Id : 0);
+        sLog->OutJadeCore("World Boss %u [%s] take more than 1M damage (%u) by player %u [%s] with spell %u", victim->GetEntry(), victim->GetName(), damage, GetGUIDLow(), GetName(), spellProto ? spellProto->Id : 0);
 
     // need for operations with Player class
     Player* plr = victim->ToPlayer();
@@ -19801,6 +19801,17 @@ void Unit::SetControlled(bool apply, UnitState state)
     }
 }
 
+void Unit::DisableRotate(bool apply)
+{ 
+	if (GetTypeId() != TYPEID_UNIT)
+		return;
+
+	if (apply)
+		SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
+	else if (!HasUnitState(UNIT_STATE_POSSESSED))
+		RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
+}
+
 void Unit::SendLossOfControl(AuraApplication const* aurApp, Mechanics mechanic, SpellEffIndex index)
 {
     if (!ToPlayer())
@@ -21732,7 +21743,7 @@ bool Unit::HandleSpellClick(Unit* clicker, int8 seatId)
         // if (!spellEntry) should be checked at npc_spellclick load
         if (!spellEntry)
         {
-            sLog->OutPandashan("HandleSpellClick: spellEntry pointer is NULL!!");
+            sLog->OutJadeCore("HandleSpellClick: spellEntry pointer is NULL!!");
             return false;
         }
 

@@ -35,8 +35,8 @@
     - Need to rewrite Norushen
     - Need to finish Galakras script
     - Need to finish Iron Juggernaut script
-    - Need to add script for Malkorok
-    - Need to add script for Spoils of Pandaria
+    - Need to finish Malkorok script
+    - Need to finish Spoils of Pandaria script
     - Need to add script for Thok the Bloodthirsty
     - Need to add script for Siegecrafter Blakcfuse
     - Need to add script for Paragons of the Klaxxi 
@@ -101,6 +101,7 @@ Mists of Pandaria Start Zones Quests ( 1-5 lvl ) TODO:
 
 Mists of Pandaria Misc TODO:
 
+-- Mmaps
 -- Character Boost 90 lvl
 -- BattlePet
 -- BattleShop

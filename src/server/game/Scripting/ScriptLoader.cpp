@@ -272,6 +272,7 @@ void AddSC_stormwind_city();
 void AddSC_stranglethorn_vale();
 void AddSC_swamp_of_sorrows();
 void AddSC_tirisfal_glades();
+void AddSC_twilight_highlands();
 void AddSC_undercity();
 void AddSC_western_plaguelands();
 void AddSC_westfall();
@@ -286,7 +287,9 @@ void AddSC_durotar();
 void AddSC_dustwallow_marsh();
 void AddSC_felwood();
 void AddSC_feralas();
+void AddSC_molten_front();
 void AddSC_moonglade();
+void AddSC_mount_hyjal();
 void AddSC_mulgore();
 void AddSC_orgrimmar();
 void AddSC_silithus();
@@ -297,6 +300,7 @@ void AddSC_teldrassil();
 void AddSC_the_barrens();
 void AddSC_thousand_needles();
 void AddSC_thunder_bluff();
+void AddSC_uldum();
 void AddSC_ungoro_crater();
 void AddSC_winterspring();
 
@@ -774,6 +778,9 @@ void AddSC_boss_halion();
 
 // Cataclys Zones
 void AddSC_gilneas();
+void AddSC_kezan();
+void AddSC_lost_isle();
+void AddSC_deepholm();
 
 // Cataclysm dungeons - Throne of the Tides
 void AddSC_instance_throne_of_the_tides(); 
@@ -1191,6 +1198,7 @@ void AddEasternKingdomsScripts()
 	AddSC_stranglethorn_vale();
 	AddSC_swamp_of_sorrows();
 	AddSC_tirisfal_glades();
+    AddSC_twilight_highlands();
 	AddSC_undercity();
 	AddSC_western_plaguelands();
 	AddSC_westfall();
@@ -1340,6 +1348,9 @@ void AddEasternKingdomsScripts()
 
 	// Cataclysm Zones
 	AddSC_gilneas();
+    AddSC_kezan();
+    AddSC_lost_isle();
+    AddSC_deepholm();
 
 	// Cataclysm Dungeons - Zul'aman
 	AddSC_boss_akilzon();
@@ -1456,7 +1467,9 @@ void AddKalimdorScripts()
 	AddSC_dustwallow_marsh();
 	AddSC_felwood();
 	AddSC_feralas();
+    AddSC_molten_front();
 	AddSC_moonglade();
+    AddSC_mount_hyjal();
 	AddSC_mulgore();
 	AddSC_orgrimmar();
 	AddSC_silithus();
@@ -1467,6 +1480,7 @@ void AddKalimdorScripts()
 	AddSC_the_barrens();
 	AddSC_thousand_needles();
 	AddSC_thunder_bluff();
+    AddSC_uldum();
 	AddSC_ungoro_crater();
 	AddSC_winterspring();
 

@@ -31,7 +31,13 @@ enum DisableType
     DISABLE_TYPE_BATTLEGROUND           = 3,
     DISABLE_TYPE_ACHIEVEMENT_CRITERIA   = 4,
     DISABLE_TYPE_OUTDOORPVP             = 5,
-    DISABLE_TYPE_VMAP                   = 6
+    DISABLE_TYPE_VMAP                   = 6,
+    DISABLE_TYPE_MMAP                   = 7
+};
+
+enum MMapDisableTypes
+{
+    MMAP_DISABLE_PATHFINDING = 0x0
 };
 
 enum SpellDisableTypes

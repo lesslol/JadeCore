@@ -24,10 +24,10 @@
 #include <openssl/crypto.h>
 
 #include "Common.h"
+#include "GitRevision.h"
 #include "Database/DatabaseEnv.h"
 #include "Configuration/Config.h"
 #include "Log.h"
-#include "SystemConfig.h"
 #include "Util.h"
 #include "SignalHandler.h"
 #include "RealmList.h"
@@ -97,7 +97,7 @@ extern int main(int argc, char **argv)
         return 1;
     }
 
-    sLog->outInfo(LOG_FILTER_AUTHSERVER, "%s (authserver)", _FULLVERSION);
+    sLog->outInfo(LOG_FILTER_AUTHSERVER, "%s (authserver)", GitRevision::GetFullVersion());
     sLog->outInfo(LOG_FILTER_AUTHSERVER, "<Ctrl-C> to stop.\n");
     sLog->outInfo(LOG_FILTER_AUTHSERVER, "Using configuration file %s.", cfg_file);
 
