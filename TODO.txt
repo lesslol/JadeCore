@@ -105,8 +105,3 @@ Mists of Pandaria Misc TODO:
 -- BattlePet
 -- BattleShop
 -- Items: 109013, 112327, 112326
-
-Core Related:
--- Port MMAPS from TC gradually
--- Add Boost support (so we can say good bye to ACE)
--- Port TC Database Updater
