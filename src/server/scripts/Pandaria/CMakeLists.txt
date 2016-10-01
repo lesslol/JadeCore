@@ -10,11 +10,6 @@
 
 set(scripts_STAT_SRCS
   ${scripts_STAT_SRCS}
-  Pandaria/boss_sha_of_anger.cpp
-  Pandaria/boss_galion.cpp
-  Pandaria/boss_nalak.cpp
-  Pandaria/boss_chi_ji.cpp
-  Pandaria/boss_ordos.cpp
 
   Pandaria/MogushanPalace/instance_mogu_shan_palace.cpp
   Pandaria/MogushanPalace/boss_trial_of_the_king.cpp
@@ -61,7 +56,7 @@ set(scripts_STAT_SRCS
   Pandaria/MogushanVault/boss_elegon.cpp
   Pandaria/MogushanVault/boss_will_of_emperor.cpp
 
-Pandaria/HeartOfFear/heart_of_fear.cpp
+  Pandaria/HeartOfFear/heart_of_fear.cpp
   Pandaria/HeartOfFear/Imperial_Zorlok.cpp
   Pandaria/HeartOfFear/Blade_Lord_Tayak.cpp  
   Pandaria/HeartOfFear/Wind_Lord_Meljarak.cpp
@@ -89,14 +84,6 @@ Pandaria/HeartOfFear/heart_of_fear.cpp
   Pandaria/WanderingIsland/WanderingIsland_East.cpp
   Pandaria/WanderingIsland/WanderingIsland_West.cpp
   Pandaria/WanderingIsland/WanderingIsland_South.cpp
-
-  Pandaria/townlong_steppes.cpp
-  Pandaria/dread_wastes.cpp
-  Pandaria/valley_of_the_four_winds.cpp
-  Pandaria/krasarang_wilds.cpp
-  Pandaria/kun_lai_summit.cpp
-  Pandaria/jade_forest.cpp
-  Pandaria/vale_of_eternal_blossoms.cpp
 
   Pandaria/ThroneOfThunder/instance_throne_of_thunder.cpp
   Pandaria/ThroneOfThunder/boss_horridon.cpp
@@ -131,7 +118,19 @@ Pandaria/HeartOfFear/heart_of_fear.cpp
   Pandaria/TimelessIsle/timeless_isle.h
   Pandaria/TimelessIsle/zone_timeless_isle.cpp
 
+  Pandaria/Zones/WorldBosses/boss_chi_ji.cpp
+  Pandaria/Zones/WorldBosses/boss_galion.cpp
+  Pandaria/Zones/WorldBosses/boss_nalak.cpp
+  Pandaria/Zones/WorldBosses/boss_ordos.cpp
+  Pandaria/Zones/WorldBosses/boss_sha_of_anger.cpp
 
+  Pandaria/Zones/zone_dread_wastes.cpp
+  Pandaria/Zones/zone_jade_forest.cpp
+  Pandaria/Zones/zone_krasarang_wilds.cpp
+  Pandaria/Zones/zone_kun_lai_summit.cpp
+  Pandaria/Zones/zone_townlong_steppes.cpp
+  Pandaria/Zones/zone_vale_of_eternal_blossoms.cpp
+  Pandaria/Zones/zone_valley_of_the_four_winds.cpp
 )
 
 message("  -> Prepared: Pandaria")
