@@ -68,7 +68,6 @@ Pandaria Dungeons:
 -- Scarlet Monastery
 -- Scholomance
 -- Shado-Pan Monastery
--- Siege of Niuzao Temple
 -- Stormstout Brewery
 -- Temple of the Jade Serpent
 
