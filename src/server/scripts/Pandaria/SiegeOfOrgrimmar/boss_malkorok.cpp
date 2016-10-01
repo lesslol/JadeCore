@@ -470,7 +470,7 @@ class spell_ancient_barrier : public SpellScriptLoader
 						}
 
 						// If the remaining absorb + the new absorb is between 15% and 85% health cast visual for medium strenght shield
-						if (remainingAbsorb + absorb >= health * 15 / 100 && remainingAbsorb + absorb < health * 85 / 100)
+						if (newAbsorb >= health * 15 / 100 && newAbsorb < health * 85 / 100)
 						{
 							if (player->HasAura(SPELL_ANCIENT_BARRIER_L))
 							{
@@ -492,7 +492,7 @@ class spell_ancient_barrier : public SpellScriptLoader
 						}
 
 						// If the remaining absorb + the new absorb is lower than 15% health cast visual for low strenght shield
-						if (remainingAbsorb + absorb < health * 15 / 100 && remainingAbsorb + absorb >= 0)
+						if (newAbsorb < health * 15 / 100 && newAbsorb >= 0)
 						{
 							if (player->HasAura(SPELL_ANCIENT_BARRIER_L))
 							{
@@ -514,7 +514,7 @@ class spell_ancient_barrier : public SpellScriptLoader
 						}
 
 						// If the remaining absorb + the new absorb is lower or equal to max health and bigger than 85% health cast visual for high strenght shield
-						if (remainingAbsorb + absorb >= health * 85 / 100 && remainingAbsorb + absorb <= health)
+						if (newAbsorb >= health * 85 / 100 && newAbsorb <= health)
 						{
 							if (player->HasAura(SPELL_ANCIENT_BARRIER_L))
 							{
@@ -535,7 +535,7 @@ class spell_ancient_barrier : public SpellScriptLoader
 							}
 						}
 						// If the remaining absorb + the new absorb is bigger than max health set it to be equal to the max health
-						if (remainingAbsorb+absorb > health)
+						if (newAbsorb > health)
 						{
 							newAbsorb = health;
 							
