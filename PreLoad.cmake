@@ -1,4 +1,5 @@
 # Copyright (C) 2005-2012 Trinity <http://www.trinitycore.org/>
+# Copyright (C) 2016-20XX JadeCore <https://www.jadecore.tk/>
 #
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without

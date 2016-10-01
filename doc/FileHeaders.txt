@@ -55,4 +55,4 @@ WILL need to expand the copyright headers accordingly.
 Thank you for using these headers when you add new files/modify already existing
 files!
 
- - The TrinityCore developers
+ - The JadeCore developers
