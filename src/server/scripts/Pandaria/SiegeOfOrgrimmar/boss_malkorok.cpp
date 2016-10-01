@@ -434,20 +434,19 @@ class spell_ancient_barrier : public SpellScriptLoader
 		{
 			PrepareAuraScript(spell_ancient_barrier_AuraScript);
 
-			void HandleDummy(AuraEffectPtr /*aurEff*/, DamageInfo & dmgInfo, uint32 & absorbAmount)
+			void OnUpdate(uint32 diff)
 			{
 				if (Unit* caster = GetCaster())
 					if (Unit* player = GetTarget())
 					{
 						int32 absorb = player->GetHealingTakenInPastSecs(1);
-						absorb = absorb + absorb;
 						caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER, &absorb, NULL, NULL, true);
 					}
 			}
 
 			void Register()
 			{
-				OnEffectAbsorb += AuraEffectAbsorbFn(spell_ancient_barrier_AuraScript::HandleDummy, EFFECT_0);
+				OnAuraUpdate += AuraUpdateFn(spell_ancient_barrier_AuraScript::OnUpdate);
 			}
 		};
 
