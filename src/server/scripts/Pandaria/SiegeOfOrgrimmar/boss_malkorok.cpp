@@ -18,7 +18,9 @@ enum eSpells
 	SPELL_BREATH_DAMAGE      = 142816,
 	SPELL_DISPLACED_ENERGY_D = 142928,
 	SPELL_BLOOD_RAGE_DAMAGE  = 142890,
-	SPELL_ANCIENT_BARRIER    = 142864,
+	SPELL_ANCIENT_BARRIER_L  = 142864,
+	SPELL_ANCIENT_BARRIER_M  = 142865,
+	SPELL_ANCIENT_BARRIER_H  = 142866,
 	SPELL_ANCIENT_MIASMA_VIS = 143018,
 	SPELL_ANCIENT_MIASMA_DMG = 142906,
 };
@@ -444,12 +446,19 @@ class spell_ancient_barrier : public SpellScriptLoader
 						if (absorb >= player->GetMaxHealth())
 						{
 							absorb = player->GetMaxHealth();
-							caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER, &absorb, NULL, NULL, true);
+							caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &absorb, NULL, NULL, true);
 						}
 
 						if (absorb < player->GetMaxHealth() && absorb >= 0)
 						{
-							caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER, &absorb, NULL, NULL, true);
+							if (absorb <= player->GetMaxHealth() * 15/100)
+								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_L, &absorb, NULL, NULL, true);
+
+							if (absorb > player->GetMaxHealth() * 15/100 && absorb <= player->GetMaxHealth() * 85/100)
+								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_M, &absorb, NULL, NULL, true);
+
+							if (absorb > player->GetMaxHealth() * 85 / 100 && absorb < player->GetMaxHealth())
+								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &absorb, NULL, NULL, true);
 						}
 					}
 			}
