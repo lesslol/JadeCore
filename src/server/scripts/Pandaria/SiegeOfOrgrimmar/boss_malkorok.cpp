@@ -139,6 +139,10 @@ class boss_malkorok : public CreatureScript
 					case EVENT_PHASE_ONE:
 					{
 						DoCast(me, SPELL_RELENTLESS_ASSAULT);
+						float homeX = me->GetHomePosition().GetPositionX();
+						float homeY = me->GetHomePosition().GetPositionY();
+						float homeZ = me->GetHomePosition().GetPositionZ();
+						me->SummonCreature(CREATURE_ANCIENT_MIASMA, homeX, homeY, homeZ, 5.0f, TEMPSUMMON_MANUAL_DESPAWN);
 
 						events.SetPhase(PHASE_ONE);
 						events.ScheduleEvent(EVENT_SEISMIC_SLAM, urand(13000, 17000), 0, PHASE_ONE);
@@ -263,6 +267,7 @@ class boss_malkorok : public CreatureScript
 					{
 						events.Reset();
 						events.SetPhase(PHASE_TWO);
+						me->DespawnCreaturesInArea(CREATURE_ANCIENT_MIASMA);
 
 						DoCast(SPELL_BLOOD_RAGE);
 						events.ScheduleEvent(EVENT_BLOOD_RAGE, 1000, 0, PHASE_TWO);
@@ -314,12 +319,23 @@ class mob_ancient_miasma : public CreatureScript
 			}
 
 			InstanceScript* pInstance;
+			EventMap events;
 
 			void Reset() override
 			{
 				me->SetInCombatWithZone();
 				DoCast(SPELL_ANCIENT_MIASMA_VIS);
-				DoCast(SPELL_ANCIENT_MIASMA_DMG);
+				std::list<Player*> pl_list;
+				me->GetPlayerListInGrid(pl_list, 100.0f);
+				for (auto itr : pl_list)
+				{
+					if (!itr->HasAura(SPELL_ANCIENT_MIASMA_DMG))
+						me->AddAura(SPELL_ANCIENT_MIASMA_DMG, itr);
+
+					if (!itr->HasAura(SPELL_ANCIENT_MIASMA))
+						me->AddAura(SPELL_ANCIENT_MIASMA, itr);
+				}
+
 				me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_NOT_SELECTABLE);
 				me->AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
 			}
