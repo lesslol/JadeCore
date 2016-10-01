@@ -88,7 +88,7 @@ namespace MMAP
         return uint32(x << 16 | y);
     }
 
-    bool MMapManager::loadMap(uint32 mapId, int32 x, int32 y)
+    bool MMapManager::loadMap(const std::string& basePath, uint32 mapId, int32 x, int32 y)
     {
         // make sure the mmap is loaded and ready to load tiles
         if (!loadMapData(mapId))
