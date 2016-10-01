@@ -268,6 +268,16 @@ class boss_malkorok : public CreatureScript
 						events.Reset();
 						events.SetPhase(PHASE_TWO);
 						me->DespawnCreaturesInArea(CREATURE_ANCIENT_MIASMA);
+						std::list<Player*> pl_list;
+						me->GetPlayerListInGrid(pl_list, 100.0f);
+						for (auto itr : pl_list)
+						{
+							if (itr->HasAura(SPELL_ANCIENT_MIASMA_DMG))
+								itr->RemoveAura(SPELL_ANCIENT_MIASMA_DMG);
+
+							if (itr->HasAura(SPELL_ANCIENT_MIASMA))
+								itr->RemoveAura(SPELL_ANCIENT_MIASMA);
+						}
 
 						DoCast(SPELL_BLOOD_RAGE);
 						events.ScheduleEvent(EVENT_BLOOD_RAGE, 1000, 0, PHASE_TWO);
