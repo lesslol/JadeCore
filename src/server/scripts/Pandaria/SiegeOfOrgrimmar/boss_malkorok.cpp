@@ -441,7 +441,7 @@ class spell_ancient_barrier : public SpellScriptLoader
 				if (Unit* caster = GetCaster())
 					if (Unit* player = GetTarget())
 					{
-						int32 absorb = player->GetHealingTakenInPastSecs(1);
+						uint32 absorb = player->GetHealingTakenInPastSecs(1);
 
 						if (absorb >= player->GetMaxHealth())
 						{
