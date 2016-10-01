@@ -447,8 +447,27 @@ class spell_ancient_barrier : public SpellScriptLoader
 						if (!(player->HasAura(SPELL_ANCIENT_BARRIER_L)) && !(player->HasAura(SPELL_ANCIENT_BARRIER_M)) && !(player->HasAura(SPELL_ANCIENT_BARRIER_H)))
 							caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_L, &absorb, NULL, NULL, true);
 
-						int32 remainingAbsorb = player->GetRemainingPeriodicAmount(caster->GetGUID(), SPELL_ANCIENT_BARRIER_L, SPELL_AURA_SCHOOL_ABSORB);
-						int32 newAbsorb = remainingAbsorb + absorb;
+						int32 remainingAbsorb;
+						int32 newAbsorb;
+						uint32 casterGuid = caster->GetGUID();
+
+						if (player->HasAura(SPELL_ANCIENT_BARRIER_L))
+						{
+							remainingAbsorb = player->GetRemainingPeriodicAmount(casterGuid, SPELL_ANCIENT_BARRIER_L, SPELL_AURA_SCHOOL_ABSORB);
+							newAbsorb = remainingAbsorb+absorb;
+						}
+
+						if (player->HasAura(SPELL_ANCIENT_BARRIER_M))
+						{
+							remainingAbsorb = player->GetRemainingPeriodicAmount(casterGuid, SPELL_ANCIENT_BARRIER_M, SPELL_AURA_SCHOOL_ABSORB);
+							newAbsorb = remainingAbsorb + absorb;
+						}
+
+						if (player->HasAura(SPELL_ANCIENT_BARRIER_H))
+						{
+							remainingAbsorb = player->GetRemainingPeriodicAmount(casterGuid, SPELL_ANCIENT_BARRIER_H, SPELL_AURA_SCHOOL_ABSORB);
+							newAbsorb = remainingAbsorb + absorb;
+						}
 
 						// If the remaining absorb + the new absorb is between 15% and 85% health cast visual for medium strenght shield
 						if (remainingAbsorb + absorb >= health * 15 / 100 && remainingAbsorb + absorb < health * 85 / 100)
