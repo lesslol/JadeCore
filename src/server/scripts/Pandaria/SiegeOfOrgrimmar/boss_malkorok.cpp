@@ -18,7 +18,9 @@ enum eSpells
 	SPELL_BREATH_DAMAGE      = 142816,
 	SPELL_DISPLACED_ENERGY_D = 142928,
 	SPELL_BLOOD_RAGE_DAMAGE  = 142890,
-	SPELL_ANCIENT_BARRIER    = 142864,
+	SPELL_ANCIENT_BARRIER_L  = 142864,
+	SPELL_ANCIENT_BARRIER_M  = 142865,
+	SPELL_ANCIENT_BARRIER_H  = 142866,
 	SPELL_ANCIENT_MIASMA_VIS = 143018,
 	SPELL_ANCIENT_MIASMA_DMG = 142906,
 };
@@ -434,20 +436,36 @@ class spell_ancient_barrier : public SpellScriptLoader
 		{
 			PrepareAuraScript(spell_ancient_barrier_AuraScript);
 
-			void HandleDummy(AuraEffectPtr /*aurEff*/, DamageInfo & dmgInfo, uint32 & absorbAmount)
+			void OnUpdate(uint32 diff)
 			{
 				if (Unit* caster = GetCaster())
 					if (Unit* player = GetTarget())
 					{
 						int32 absorb = player->GetHealingTakenInPastSecs(1);
-						absorb = absorb + absorb;
-						caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER, &absorb, NULL, NULL, true);
+
+						if (absorb >= player->GetMaxHealth())
+						{
+							absorb = player->GetMaxHealth();
+							caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &absorb, NULL, NULL, true);
+						}
+
+						if (absorb < player->GetMaxHealth() && absorb >= 0)
+						{
+							if (absorb <= player->GetMaxHealth() * 15/100)
+								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_L, &absorb, NULL, NULL, true);
+
+							if (absorb > player->GetMaxHealth() * 15/100 && absorb <= player->GetMaxHealth() * 85/100)
+								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_M, &absorb, NULL, NULL, true);
+
+							if (absorb > player->GetMaxHealth() * 85 / 100 && absorb < player->GetMaxHealth())
+								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &absorb, NULL, NULL, true);
+						}
 					}
 			}
 
 			void Register()
 			{
-				OnEffectAbsorb += AuraEffectAbsorbFn(spell_ancient_barrier_AuraScript::HandleDummy, EFFECT_0);
+				OnAuraUpdate += AuraUpdateFn(spell_ancient_barrier_AuraScript::OnUpdate);
 			}
 		};
 
