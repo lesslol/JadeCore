@@ -35,7 +35,7 @@ void PointMovementGenerator<T>::Initialize(T &unit)
     unit.AddUnitState(UNIT_STATE_ROAMING|UNIT_STATE_ROAMING_MOVE);
     i_recalculateSpeed = false;
     Movement::MoveSplineInit init(unit);
-    init.MoveTo(i_x, i_y, i_z, m_generatePath);
+    init.MoveTo(i_x, i_y, i_z);
     if (speed > 0.0f)
         init.SetVelocity(speed);
     init.Launch();
@@ -71,8 +71,7 @@ bool PointMovementGenerator<T>::Update(T &unit, const uint32 & /*diff*/)
 template<class T>
 void PointMovementGenerator<T>::Finalize(T &unit)
 {
-    if (unit.HasUnitState(UNIT_STATE_CHARGING))
-        unit.ClearUnitState(UNIT_STATE_ROAMING | UNIT_STATE_ROAMING_MOVE);
+    unit.ClearUnitState(UNIT_STATE_ROAMING|UNIT_STATE_ROAMING_MOVE);
 
     if (unit.movespline->Finalized())
         MovementInform(unit);
@@ -154,7 +153,6 @@ void EffectMovementGenerator::Finalize(Unit &unit)
     MovementInform(unit);
 }
 
-
 void EffectMovementGenerator::MovementInform(Unit &unit)
 {
     if (unit.GetTypeId() == TYPEID_UNIT)
@@ -166,13 +164,5 @@ void EffectMovementGenerator::MovementInform(Unit &unit)
     }
     else if (unit.GetTypeId() == TYPEID_PLAYER)
     {
-    }
-
-    if (unit.isAlive() && !unit.HasUnitState(UNIT_STATE_CONFUSED | UNIT_STATE_FLEEING))
-    {
-        if (Unit* victim = unit.getVictim())
-            unit.GetMotionMaster()->MoveChase(victim);
-        else
-            unit.GetMotionMaster()->Initialize();
     }
 }
