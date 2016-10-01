@@ -42,6 +42,7 @@ namespace MMAP
         public:
             static MMapManager* createOrGetMMapManager();
             static void clear();
+            static void preventPathfindingOnMaps(const char* ignoreMapIds);
             static bool IsPathfindingEnabled(uint32 mapId);
     };
 }
