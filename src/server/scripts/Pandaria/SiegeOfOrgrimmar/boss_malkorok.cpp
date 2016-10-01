@@ -440,7 +440,17 @@ class spell_ancient_barrier : public SpellScriptLoader
 					if (Unit* player = GetTarget())
 					{
 						int32 absorb = player->GetHealingTakenInPastSecs(1);
-						caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER, &absorb, NULL, NULL, true);
+
+						if (absorb >= player->GetMaxHealth())
+						{
+							absorb = player->GetMaxHealth();
+							caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER, &absorb, NULL, NULL, true);
+						}
+
+						if (absorb < player->GetMaxHealth() && absorb >= 0)
+						{
+							caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER, &absorb, NULL, NULL, true);
+						}
 					}
 			}
 
