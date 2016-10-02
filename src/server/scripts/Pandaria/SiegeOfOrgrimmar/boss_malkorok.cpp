@@ -486,104 +486,106 @@ class spell_ancient_barrier : public SpellScriptLoader
 						{
 							remainingAbsorb = player->GetRemainingPeriodicAmount(casterGuid, SPELL_ANCIENT_BARRIER_L, SPELL_AURA_SCHOOL_ABSORB);
 							newAbsorb = remainingAbsorb+absorb;
+
+							// If the remaining absorb + the new absorb is between 15% and 85% health cast visual for medium strenght shield
+							if (newAbsorb >= health * 15 / 100 && newAbsorb < health * 85 / 100)
+							{
+								player->RemoveAura(SPELL_ANCIENT_BARRIER_L); // prevents buggs
+								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_M, &newAbsorb, NULL, NULL, true);
+							}
+
+							// If the remaining absorb + the new absorb is lower than 15% health cast visual for low strenght shield
+							if (newAbsorb < health * 15 / 100 && newAbsorb >= 0)
+							{
+								player->RemoveAura(SPELL_ANCIENT_BARRIER_L); // prevents buggs
+								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_L, &newAbsorb, NULL, NULL, true);
+							}
+
+							// If the remaining absorb + the new absorb is lower or equal to max health and bigger than 85% health cast visual for high strenght shield
+							if (newAbsorb >= health * 85 / 100 && newAbsorb <= health)
+							{
+								player->RemoveAura(SPELL_ANCIENT_BARRIER_L); // prevents buggs
+								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &newAbsorb, NULL, NULL, true);
+							}
+
+							// If the remaining absorb + the new absorb is bigger than max health set it to be equal to the max health
+							if (newAbsorb > health)
+							{
+								newAbsorb = health;
+
+								player->RemoveAura(SPELL_ANCIENT_BARRIER_L); // prevents buggs
+								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &newAbsorb, NULL, NULL, true);
+							}
+
 						}
 
 						if (player->HasAura(SPELL_ANCIENT_BARRIER_M))
 						{
 							remainingAbsorb = player->GetRemainingPeriodicAmount(casterGuid, SPELL_ANCIENT_BARRIER_M, SPELL_AURA_SCHOOL_ABSORB);
 							newAbsorb = remainingAbsorb + absorb;
+
+							// If the remaining absorb + the new absorb is between 15% and 85% health cast visual for medium strenght shield
+							if (newAbsorb >= health * 15 / 100 && newAbsorb < health * 85 / 100)
+							{
+								player->RemoveAura(SPELL_ANCIENT_BARRIER_M); // prevents buggs
+								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_M, &newAbsorb, NULL, NULL, true);
+							}
+
+							// If the remaining absorb + the new absorb is lower than 15% health cast visual for low strenght shield
+							if (newAbsorb < health * 15 / 100 && newAbsorb >= 0)
+							{
+								player->RemoveAura(SPELL_ANCIENT_BARRIER_M); // prevents buggs
+								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_L, &newAbsorb, NULL, NULL, true);
+							}
+
+							// If the remaining absorb + the new absorb is lower or equal to max health and bigger than 85% health cast visual for high strenght shield
+							if (newAbsorb >= health * 85 / 100 && newAbsorb <= health)
+							{
+								player->RemoveAura(SPELL_ANCIENT_BARRIER_M); // prevents buggs
+								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &newAbsorb, NULL, NULL, true);
+							}
+
+							// If the remaining absorb + the new absorb is bigger than max health set it to be equal to the max health
+							if (newAbsorb > health)
+							{
+								newAbsorb = health;
+
+								player->RemoveAura(SPELL_ANCIENT_BARRIER_M); // prevents buggs
+								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &newAbsorb, NULL, NULL, true);
+							}
 						}
 
 						if (player->HasAura(SPELL_ANCIENT_BARRIER_H))
 						{
 							remainingAbsorb = player->GetRemainingPeriodicAmount(casterGuid, SPELL_ANCIENT_BARRIER_H, SPELL_AURA_SCHOOL_ABSORB);
 							newAbsorb = remainingAbsorb + absorb;
-						}
 
-						// If the remaining absorb + the new absorb is between 15% and 85% health cast visual for medium strenght shield
-						if (newAbsorb >= health * 15 / 100 && newAbsorb < health * 85 / 100)
-						{
-							if (player->HasAura(SPELL_ANCIENT_BARRIER_L))
-							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_L); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_M, &newAbsorb, NULL, NULL, true);
-							}
-
-							if (player->HasAura(SPELL_ANCIENT_BARRIER_M))
-							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_M); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_M, &newAbsorb, NULL, NULL, true);
-							}
-
-							if (player->HasAura(SPELL_ANCIENT_BARRIER_H))
+							// If the remaining absorb + the new absorb is between 15% and 85% health cast visual for medium strenght shield
+							if (newAbsorb >= health * 15 / 100 && newAbsorb < health * 85 / 100)
 							{
 								player->RemoveAura(SPELL_ANCIENT_BARRIER_H); // prevents buggs
 								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_M, &newAbsorb, NULL, NULL, true);
 							}
-						}
 
-						// If the remaining absorb + the new absorb is lower than 15% health cast visual for low strenght shield
-						if (newAbsorb < health * 15 / 100 && newAbsorb >= 0)
-						{
-							if (player->HasAura(SPELL_ANCIENT_BARRIER_L))
-							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_L); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_L, &newAbsorb, NULL, NULL, true);
-							}
-
-							if (player->HasAura(SPELL_ANCIENT_BARRIER_M))
-							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_M); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_L, &newAbsorb, NULL, NULL, true);
-							}
-
-							if (player->HasAura(SPELL_ANCIENT_BARRIER_H))
+							// If the remaining absorb + the new absorb is lower than 15% health cast visual for low strenght shield
+							if (newAbsorb < health * 15 / 100 && newAbsorb >= 0)
 							{
 								player->RemoveAura(SPELL_ANCIENT_BARRIER_H); // prevents buggs
 								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_L, &newAbsorb, NULL, NULL, true);
 							}
-						}
 
-						// If the remaining absorb + the new absorb is lower or equal to max health and bigger than 85% health cast visual for high strenght shield
-						if (newAbsorb >= health * 85 / 100 && newAbsorb <= health)
-						{
-							if (player->HasAura(SPELL_ANCIENT_BARRIER_L))
-							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_L); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &newAbsorb, NULL, NULL, true);
-							}
-
-							if (player->HasAura(SPELL_ANCIENT_BARRIER_M))
-							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_M); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &newAbsorb, NULL, NULL, true);
-							}
-
-							if (player->HasAura(SPELL_ANCIENT_BARRIER_H))
+							// If the remaining absorb + the new absorb is lower or equal to max health and bigger than 85% health cast visual for high strenght shield
+							if (newAbsorb >= health * 85 / 100 && newAbsorb <= health)
 							{
 								player->RemoveAura(SPELL_ANCIENT_BARRIER_H); // prevents buggs
 								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &newAbsorb, NULL, NULL, true);
 							}
-						}
-						// If the remaining absorb + the new absorb is bigger than max health set it to be equal to the max health
-						if (newAbsorb > health)
-						{
-							newAbsorb = health;
-							
-							if (player->HasAura(SPELL_ANCIENT_BARRIER_L))
-							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_L); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &newAbsorb, NULL, NULL, true);
-							}
 
-							if (player->HasAura(SPELL_ANCIENT_BARRIER_M))
+							// If the remaining absorb + the new absorb is bigger than max health set it to be equal to the max health
+							if (newAbsorb > health)
 							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_M); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &newAbsorb, NULL, NULL, true);
-							}
+								newAbsorb = health;
 
-							if (player->HasAura(SPELL_ANCIENT_BARRIER_H))
-							{
 								player->RemoveAura(SPELL_ANCIENT_BARRIER_H); // prevents buggs
 								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &newAbsorb, NULL, NULL, true);
 							}
