@@ -106,6 +106,7 @@ set(scripts_STAT_SRCS
   Pandaria/SiegeOfOrgrimmar/boss_iron_juggernaut.cpp
   Pandaria/SiegeOfOrgrimmar/boss_dark_shaman.cpp
   Pandaria/SiegeOfOrgrimmar/boss_general_nazgrim.cpp
+  Pandaria/SiegeOfOrgrimmar/boss_immersius.cpp
   Pandaria/SiegeOfOrgrimmar/boss_malkorok.cpp
   Pandaria/SiegeOfOrgrimmar/boss_spoils_of_pandaria.cpp
   Pandaria/SiegeOfOrgrimmar/boss_thok_the_bloodthirsty.cpp
