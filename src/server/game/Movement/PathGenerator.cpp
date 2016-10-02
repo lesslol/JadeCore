@@ -30,7 +30,7 @@
 PathGenerator::PathGenerator(const Unit* owner) :
     _polyLength(0), _type(PATHFIND_BLANK),
     _useStraightPath(false), _forceDestination(false), _pointPathLimit(MAX_POINT_PATH_LENGTH),
-    _sourceUnit(owner), _navMesh(NULL), _navMeshQuery(NULL)
+    _sourceUnit(owner), _navMesh(NULL), _navMeshQuery(NULL), _endPosition(Vector3::zero())
 {
     sLog->outDebug(LOG_FILTER_MAPS, "++ PathGenerator::PathGenerator for %u \n", _sourceUnit->GetGUIDLow());
 
@@ -53,16 +53,16 @@ PathGenerator::~PathGenerator()
 bool PathGenerator::CalculatePath(float destX, float destY, float destZ, bool forceDest)
 {
     
-    if (!JadeCore::IsValidMapCoord(destX, destY, destZ) ||
-        !JadeCore::IsValidMapCoord(_sourceUnit->GetPositionX(), _sourceUnit->GetPositionY(), _sourceUnit->GetPositionZ()))
+    float x, y, z;
+    _sourceUnit->GetPosition(x, y, z);
+    
+    if (!JadeCore::IsValidMapCoord(destX, destY, destZ) || !JadeCore::IsValidMapCoord(x, y, z))
         return false;
 
     Vector3 oldDest = getEndPosition();
     Vector3 dest(destX, destY, destZ);
     setEndPosition(dest);
 
-    float x, y, z;
-    _sourceUnit->GetPosition(x, y, z);
     Vector3 start(x, y, z);
     setStartPosition(start);
 
@@ -85,7 +85,7 @@ bool PathGenerator::CalculatePath(float destX, float destY, float destZ, bool fo
     // check if destination moved - if not we can optimize something here
     // we are following old, precalculated path?
     float dist = _sourceUnit->GetObjectSize();
-    if (inRange(oldDest, dest, dist, dist) && _pathPoints.size() > 2)
+    if (oldDest != Vector3::zero() && inRange(oldDest, dest, dist, dist) && _pathPoints.size() > 2)
     {
         // our target is not moving - we just coming closer
         // we are moving on precalculated path - enjoy the ride
@@ -277,11 +277,12 @@ void PathGenerator::BuildPolyPath(const Vector3 &startPos, const Vector3 &endPos
     // TODO: we can merge it with getPathPolyByPosition() loop
     bool startPolyFound = false;
     bool endPolyFound = false;
-    uint32 pathStartIndex, pathEndIndex;
+    uint32 pathStartIndex = 0;
+    uint32 pathEndIndex = 0;
 
     if (_polyLength)
     {
-        for (pathStartIndex = 0; pathStartIndex < _polyLength; ++pathStartIndex)
+        for (; pathStartIndex < _polyLength; ++pathStartIndex)
         {
             // here to carch few bugs
             ASSERT(_pathPolyRefs[pathStartIndex] != INVALID_POLYREF);
@@ -456,6 +457,13 @@ void PathGenerator::BuildPointPath(const float *startPoint, const float *endPoin
         _type = PATHFIND_NOPATH;
         return;
     }
+    else if (pointCount == _pointPathLimit)
+    {
+        sLog->outDebug(LOG_FILTER_MAPS, "++ PathGenerator::BuildPointPath FAILED! path sized %d returned, lower than limit set to %d\n", pointCount, _pointPathLimit);
+        BuildShortcut();
+        _type = PATHFIND_SHORT;
+        return;
+    }
 
     _pathPoints.resize(pointCount);
     for (uint32 i = 0; i < pointCount; ++i)
@@ -588,8 +596,7 @@ bool PathGenerator::HaveTile(const Vector3 &p) const
     return (_navMesh->getTileAt(tx, ty, 0) != NULL);
 }
 
-uint32 PathGenerator::fixupCorridor(dtPolyRef* path, uint32 npath, uint32 maxPath,
-                               const dtPolyRef* visited, uint32 nvisited)
+uint32 PathGenerator::fixupCorridor(dtPolyRef* path, uint32 npath, uint32 maxPath, dtPolyRef const* visited, uint32 nvisited)
 {
     int32 furthestPath = -1;
     int32 furthestVisited = -1;
@@ -619,17 +626,17 @@ uint32 PathGenerator::fixupCorridor(dtPolyRef* path, uint32 npath, uint32 maxPat
 
     // Adjust beginning of the buffer to include the visited.
     uint32 req = nvisited - furthestVisited;
-    uint32 orig = uint32(furthestPath+1) < npath ? furthestPath+1 : npath;
-    uint32 size = npath-orig > 0 ? npath-orig : 0;
-    if (req+size > maxPath)
+    uint32 orig = uint32(furthestPath + 1) < npath ? furthestPath + 1 : npath;
+    uint32 size = npath > orig ? npath - orig : 0;
+    if (req + size > maxPath)
         size = maxPath-req;
 
     if (size)
-        memmove(path+req, path+orig, size*sizeof(dtPolyRef));
+        memmove(path + req, path + orig, size * sizeof(dtPolyRef));
 
     // Store visited
     for (uint32 i = 0; i < req; ++i)
-        path[i] = visited[(nvisited-1)-i];
+        path[i] = visited[(nvisited - 1) - i];
 
     return req+size;
 }

@@ -21916,7 +21916,7 @@ void Unit::_ExitVehicle(Position const* exitPosition)
     }
 
     Movement::MoveSplineInit init(this);
-    init.MoveTo(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ());
+    init.MoveTo(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), false);
     init.SetFacing(GetOrientation());
     init.SetTransportExit();
     init.Launch();

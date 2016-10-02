@@ -346,7 +346,7 @@ void MotionMaster::MoveKnockbackFrom(float srcX, float srcY, float speedXY, floa
     _owner->GetNearPoint(_owner, x, y, z, _owner->GetObjectSize(), dist, _owner->GetAngle(srcX, srcY) + M_PI);
 
     Movement::MoveSplineInit init(_owner);
-    init.MoveTo(x,y,z);
+    init.MoveTo(x, y, z);
     init.SetParabolic(max_height,0);
     init.SetOrientationFixed(true);
     init.SetVelocity(speedXY);
@@ -434,7 +434,7 @@ void MotionMaster::MoveFall(uint32 id/*=0*/)
     }
 
     Movement::MoveSplineInit init(_owner);
-    init.MoveTo(_owner->GetPositionX(), _owner->GetPositionY(), tz);
+    init.MoveTo(_owner->GetPositionX(), _owner->GetPositionY(), tz, false);
     init.SetFall();
     init.Launch();
     Mutate(new EffectMovementGenerator(id), MOTION_SLOT_CONTROLLED);
@@ -470,6 +470,18 @@ void MotionMaster::MoveCharge(float x, float y, float z, float speed, uint32 id,
             _owner->GetEntry(), _owner->GetGUIDLow(), x, y, z);
         Mutate(new PointMovementGenerator<Creature>(id, x, y, z, generatePath, speed), MOTION_SLOT_CONTROLLED);
     }
+}
+
+void MotionMaster::MoveCharge(PathGenerator path, float speed, uint32 id)
+{
+    Vector3 dest = path.getActualEndPosition();
+
+    MoveCharge(dest.x, dest.y, dest.z);
+
+    Movement::MoveSplineInit init(_owner);
+    init.MovebyPath(path.getPath());
+    init.SetVelocity(speed);
+    init.Launch();
 }
 
 void MotionMaster::MoveSeekAssistance(float x, float y, float z)

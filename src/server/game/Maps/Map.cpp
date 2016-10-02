@@ -123,8 +123,7 @@ bool Map::ExistVMap(uint32 mapid, int gx, int gy)
 
 void Map::LoadMMap(int gx, int gy)
 {
-    // DONT CHANGE "gy" and "gx" - Its necessary !
-    int mmapLoadResult = MMAP::MMapFactory::createOrGetMMapManager()->loadMap((sWorld->GetDataPath() + "mmaps").c_str(), GetId(), gy, gx);
+    int mmapLoadResult = MMAP::MMapFactory::createOrGetMMapManager()->loadMap((sWorld->GetDataPath() + "mmaps").c_str(), GetId(), gx, gy);
     if (mmapLoadResult)
         sLog->outInfo(LOG_FILTER_MAPS, "MMAP loaded name:%s, id:%d, x:%d, y:%d (mmap rep.: x:%d, y:%d)", GetMapName(), GetId(), gx, gy, gx, gy);
     else
@@ -133,7 +132,6 @@ void Map::LoadMMap(int gx, int gy)
 
 void Map::LoadVMap(int gx, int gy)
 {
-    // x and y are swapped !!
     int vmapLoadResult = VMAP::VMapFactory::createOrGetVMapManager()->loadMap((sWorld->GetDataPath() + "vmaps").c_str(),  GetId(), gx, gy);
     switch (vmapLoadResult)
     {

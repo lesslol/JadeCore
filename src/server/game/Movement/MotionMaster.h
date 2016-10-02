@@ -27,6 +27,7 @@
 
 class MovementGenerator;
 class Unit;
+class PathGenerator;
 
 // Creature Entry ID used for waypoints show, visible only for GMs
 #define VISUAL_WAYPOINT 1
@@ -165,6 +166,7 @@ class MotionMaster //: private std::stack<MovementGenerator *>
         void MoveTakeoff(uint32 id, float x, float y, float z);
 
         void MoveCharge(float x, float y, float z, float speed = SPEED_CHARGE, uint32 id = EVENT_CHARGE, bool generatePath = false);
+        void MoveCharge(PathGenerator path, float speed = SPEED_CHARGE, uint32 id = EVENT_CHARGE);
         void MoveKnockbackFrom(float srcX, float srcY, float speedXY, float speedZ);
         void MoveJumpTo(float angle, float speedXY, float speedZ);
         void MoveJump(float x, float y, float z, float speedXY, float speedZ, float o = 10.0f, uint32 id = 0);
