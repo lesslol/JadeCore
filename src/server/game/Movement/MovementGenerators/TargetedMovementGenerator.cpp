@@ -166,9 +166,6 @@ bool TargetedMovementGeneratorMedium<T,D>::Update(T &owner, const uint32 & time_
         return true;
     }
 
-    if (owner.GetTypeId() == TYPEID_UNIT && !i_target->isInAccessiblePlaceFor((const Creature*)&owner))
-        return false;
-
     // prevent crash after creature killed pet
     if (static_cast<D*>(this)->_lostTarget(owner))
     {

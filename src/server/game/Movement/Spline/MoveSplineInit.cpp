@@ -416,6 +416,23 @@ namespace Movement
         args.flags.fallingSlow = unit.HasUnitMovementFlag(MOVEMENTFLAG_FALLING_SLOW);
     }
 
+    void MoveSplineInit::MoveTo(const Vector3& dest, bool generatePath, bool forceDestination)
+    {
+        if (generatePath)
+        {
+            PathGenerator path(&unit);
+            path.calculate(dest.x, dest.y, dest.z, forceDestination);
+            MovebyPath(path.getPath());
+        }
+        else
+        {
+            args.path_Idx_offset = 0;
+            args.path.resize(2);
+            TransportPathTransform transform(unit, args.TransformForTransport);
+            args.path[1] = transform(dest);
+        }
+    }
+
     Vector3 TransportPathTransform::operator()(Vector3 input)
     {
         if (_transformForTransport)
