@@ -31,7 +31,6 @@
     - Need to add script for Ra-den
 
 5) Siege of Orgrimmar:
-    - Need to rewrite Immerseus
     - Need to rewrite Norushen
     - Need to finish Galakras script
     - Need to finish Iron Juggernaut script
