@@ -76,17 +76,17 @@ enum eCreatures
 
 enum eTexts
 {
-	MALKOROK_INTRO					= 1,
-	MALKOROK_AGGRO					= 2,
-	MALKOROK_ARCING_SMASH			= 3, // 0, 1 or 2 in database
-	MALKOROK_BREATH_OF_YSHAARJ		= 6, // 0 or 1 in database
-	MALKOROK_BLOOD_RAGE_1			= 7,
-	MALKOROK_BLOOD_RAGE_2			= 8,
-	MALKOROK_BERSERK				= 9,
-	MALKOROK_WIPE					= 10,
-	MALKOROK_DEATH					= 11,
+	MALKOROK_INTRO             = 1,
+	MALKOROK_AGGRO             = 2,
+	MALKOROK_ARCING_SMASH      = 3, // 0, 1 or 2 in database
+	MALKOROK_BREATH_OF_YSHAARJ = 6, // 0 or 1 in database
+	MALKOROK_BLOOD_RAGE        = 7,
+	MALKOROK_BERSERK           = 9,
+	MALKOROK_WIPE              = 10,
+	MALKOROK_DEATH             = 11,
 };
 
+// 71454 - Malkorok
 class boss_malkorok : public CreatureScript
 {
 	public:
@@ -336,6 +336,7 @@ class boss_malkorok : public CreatureScript
 		}
 };
 
+// 71513 - Ancient Miasma
 class mob_ancient_miasma : public CreatureScript
 {
 	public:
@@ -377,6 +378,8 @@ class mob_ancient_miasma : public CreatureScript
 		}
 };
 
+
+// 142913 - Displaced Energy
 class spell_displaced_energy : public SpellScriptLoader
 {
 	public:
@@ -404,6 +407,7 @@ class spell_displaced_energy : public SpellScriptLoader
 		}
 };
 
+// 142890 - Blood Rage
 class spell_blood_rage : public SpellScriptLoader
 {
 	public:
@@ -445,6 +449,7 @@ class spell_blood_rage : public SpellScriptLoader
 		}
 };
 
+// 142861 - Ancient Miasma
 class spell_ancient_barrier : public SpellScriptLoader
 {
 	public:
@@ -590,6 +595,7 @@ class spell_ancient_barrier : public SpellScriptLoader
 		}
 };
 
+// 142842 - Breath of Y'shaarj
 class spell_breath_of_yshaarj : public SpellScriptLoader
 {
 	public:
@@ -629,6 +635,8 @@ class spell_breath_of_yshaarj : public SpellScriptLoader
 void AddSC_boss_malkorok()
 {
 	new boss_malkorok();
+
+	new mob_ancient_miasma();
 
 	new spell_displaced_energy();
 	new spell_blood_rage();
