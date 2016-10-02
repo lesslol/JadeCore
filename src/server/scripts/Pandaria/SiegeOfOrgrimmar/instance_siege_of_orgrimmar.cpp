@@ -72,6 +72,7 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
             uint64 East03Guid;
 
 			// Galakras
+			uint64 GalakrasGuid;
 
 			// Iron Juggernaut
 			uint64 JuggernautGuid;
@@ -89,10 +90,13 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
 			uint64 MalkorokGuid;
 
 			// Spoils of Pandaria
+			uint64 SpoilsGuid;
 
 			// Thok the Bloodthirsty
+			uint64 ThokGuid;
 
 			// Siegecrafter Blackfuse
+			uint64 BlackfuseGuid;
 
 			// Paragons of the Klaxxi
 
