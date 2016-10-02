@@ -64,7 +64,6 @@ Pandaria Dungeons:
 
 -- Gate of the Setting Sun
 -- Mogu'shan Palace
--- Scarlet Monastery
 -- Scholomance
 -- Shado-Pan Monastery
 -- Stormstout Brewery
