@@ -23,15 +23,6 @@
 #include "siege_of_orgrimmar.h"  
 #include "ScriptedEscortAI.h"
 
-enum VisualSpells
-{
-    SPELL_BUBBLE_STREAM = 147333,
-};
-enum SOOtriggers
-{
-    TRIGGER_BUBBLE = 2314235,
-};
-
 Position position_fishes[10] =
 {
     {1377.13f, 430.445f, 259.625f, 6.073042f},
@@ -86,171 +77,270 @@ enum Talks
     TALK_12 = 12, // Can it be?... Oh no.. no! NO! (38131)
     TALK_13 = 13, // The Golden Lotus?! but.. the pledged their life to defend this place!
 };
-enum eventsos
+enum eEvents
 {
-    EVENT_TALK_1 = 20,
-    EVENT_TALK_2 = 22,
-    EVENT_TALK_3 = 23,
-    EVENT_TALK_4 = 24,
-    EVENT_TALK_5 = 25,
-    EVENT_TALK_6 = 26,
-    EVENT_TALK_7 = 27,
-    EVENT_TALK_8 = 28,
-    EVENT_TALK_9 = 29,
+    EVENT_TALK_1              = 20,
+    EVENT_TALK_2              = 22,
+    EVENT_TALK_3              = 23,
+    EVENT_TALK_4              = 24,
+    EVENT_TALK_5              = 25,
+    EVENT_TALK_6              = 26,
+    EVENT_TALK_7              = 27,
+    EVENT_TALK_8              = 28,
+    EVENT_TALK_9              = 29,
+	EVENT_FPT_WATERBOLT       = 30,
+	EVENT_FPT_CORRUPTED_WATER = 31,
+	EVENT_AD_RUSHING_WATERS   = 32,
 };
 
-class Event_bubble_stream : public BasicEvent
+enum MobSpells
 {
-public:
-    explicit Event_bubble_stream(Unit* unit) : obj(unit)
-    {
-    }
+    SPELL_INITIATE_BUBBLE_SHIELD = 147333,
 
-    bool Execute(uint64 /*currTime*/, uint32 diff)
-    {
-        if (InstanceScript* instance = obj->GetInstanceScript())
+    SPELL_FPT_BUBBLE_SHIELD_AURA = 147450,
+    SPELL_FPT_WATERBOLT          = 147398,
+    SPELL_FPT_CORRUPTED_WATER    = 147351,
+
+    SPELL_AD_RUSHING_WATERS      = 147185,
+};
+
+enum Mobs
+{
+    NPC_TORMENTED_INITIATE       = 73349,
+    NPC_FALLEN_POOL_TENDER       = 73342,
+    NPC_AQUEOUS_DEFENDER         = 73191,
+};
+
+// Tormented Initiate 73349.
+class npc_soo_tormented_initiate : public CreatureScript
+{
+    public:
+        npc_soo_tormented_initiate() : CreatureScript("npc_soo_tormented_initiate") { }
+
+        struct npc_soo_tormented_initiate_AI : public ScriptedAI
         {
-                if (TempSummon* tempo = obj->ToTempSummon())
-                    if (Unit* summoner = tempo->GetSummoner())
-                        if (!obj->isInCombat())
-                            if (Creature* trigger = obj->SummonCreature(TRIGGER_BUBBLE, summoner->GetPositionX(), summoner->GetPositionY(), summoner->GetPositionZ(), summoner->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN, 10000))
-                                obj->CastSpell(trigger, SPELL_BUBBLE_STREAM);
+            npc_soo_tormented_initiate_AI(Creature* creature) : ScriptedAI(creature) { }
 
+            void Reset() { }
 
-                obj->m_Events.AddEvent(new Event_bubble_stream(obj), obj->m_Events.CalculateTime(8000));
+            void EnterCombat(Unit* who)
+            {
+                std::list<Creature*> nearList;
+                GetCreatureListWithEntryInGrid(nearList, me, NPC_TORMENTED_INITIATE, 20.0f);
+                GetCreatureListWithEntryInGrid(nearList, me, NPC_FALLEN_POOL_TENDER, 20.0f);
+                if (!nearList.empty())
+                    for (auto nearMob : nearList)
+                        if (!nearMob->isInCombat())
+                            nearMob->AI()->DoZoneInCombat();
+            }
+
+            void DamageTaken(Unit* who, uint32& damage)
+            {
+                if (Spell* spell = me->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
+                    if (spell->m_spellInfo->Id == SPELL_INITIATE_BUBBLE_SHIELD)
+                        me->InterruptNonMeleeSpells(true);
+            }
+
+            void EnterEvadeMode()
+            {
+                me->AddUnitState(UNIT_STATE_EVADE);
+
+                me->RemoveAllAuras();
+                Reset();
+                me->DeleteThreatList();
+                me->CombatStop(true);
+                me->GetMotionMaster()->MovementExpired();
+                me->GetMotionMaster()->MoveTargetedHome();
+            }
+
+            void JustReachedHome()
+            {
+                me->ClearUnitState(UNIT_STATE_EVADE);
+            }
+
+            void JustDied(Unit* killer) { }
+
+            void UpdateAI(uint32 const diff)
+            {
+                // Maintain Bubble Shield cast on Fallen Pool Tender.
+                if (!me->HasUnitState(UNIT_STATE_CASTING) && !me->HasUnitState(UNIT_STATE_EVADE) && !me->isInCombat())
+                    if (Creature* poolTender = me->FindNearestCreature(NPC_FALLEN_POOL_TENDER, 20.0f, true))
+                        DoCast(poolTender, SPELL_INITIATE_BUBBLE_SHIELD);
+
+                if (!UpdateVictim() || me->HasUnitState(UNIT_STATE_CASTING))
+                    return;
+
+                DoMeleeAttackIfReady();
+            }
+        };
+
+        CreatureAI* GetAI(Creature* creature) const
+        {
+            return new npc_soo_tormented_initiate_AI(creature);
         }
-        return true;
-    }
-
-private:
-    Creature* storm;
-    Unit* obj;
-    int modifier;
-    int Event;
 };
 
-class siege_of_orgrimmar_trigger_bubble : public CreatureScript
+// Fallen Pool Tender 73342.
+class npc_soo_fallen_pool_tender : public CreatureScript
 {
-public:
-    siege_of_orgrimmar_trigger_bubble() : CreatureScript("siege_of_orgrimmar_trigger_bubble") { }
+    public:
+        npc_soo_fallen_pool_tender() : CreatureScript("npc_soo_fallen_pool_tender") { }
 
-    struct siege_of_orgrimmar : public ScriptedAI
-    {
-        siege_of_orgrimmar(Creature* creature) : ScriptedAI(creature)
+        struct npc_soo_fallen_pool_tender_AI : public ScriptedAI
         {
-            instance = creature->GetInstanceScript();
+            npc_soo_fallen_pool_tender_AI(Creature* creature) : ScriptedAI(creature) { }
 
-            for (int i = 0; i < 10; i++)
+            EventMap events;
+
+            void Reset()
             {
-                Creature* initiate = me->SummonCreature(CREATURE_TORMENTED_INITATE, position_fishes[i], TEMPSUMMON_MANUAL_DESPAWN);
-
-                if (initiate)
-                {
-                    initiate->m_Events.AddEvent(new Event_bubble_stream(initiate), initiate->m_Events.CalculateTime(500));
-                }
+                events.Reset();
             }
 
-            Creature* tender = me->SummonCreature(CREATURE_FALLEN_POOL_TENDER, 1423.380f, 505.545f, 246.880f, 3.430770f, TEMPSUMMON_MANUAL_DESPAWN);
-            Creature* tender2 = me->SummonCreature(CREATURE_FALLEN_POOL_TENDER, 1460.640f, 509.049f, 246.882f, 0.258838f, TEMPSUMMON_MANUAL_DESPAWN);
-
-            if (tender)
+            void EnterCombat(Unit* who)
             {
-                for (int i = 0; i <= 4; i++)
-                {
-                    Creature* initiate = tender->SummonCreature(CREATURE_TORMENTED_INITATE, position_fishes_fallen_pool_tender_1st[i], TEMPSUMMON_MANUAL_DESPAWN);
+                // Remove Bubble Shield aura.
+                if (me->HasAura(SPELL_FPT_BUBBLE_SHIELD_AURA))
+                    me->RemoveAurasDueToSpell(SPELL_FPT_BUBBLE_SHIELD_AURA);
 
-                    if (initiate)
-                    {
-                        initiate->m_Events.AddEvent(new Event_bubble_stream(initiate), initiate->m_Events.CalculateTime(500));
-                    }
-                }
+                events.ScheduleEvent(EVENT_FPT_WATERBOLT, 2000);
+                events.ScheduleEvent(EVENT_FPT_CORRUPTED_WATER, 7000);
             }
-            if (tender2)
-            {
-                for (int i = 0; i <= 4; i++)
-                {
-                    Creature* initiate = tender2->SummonCreature(CREATURE_TORMENTED_INITATE, position_fishes_fallen_pool_tender_2st[i], TEMPSUMMON_MANUAL_DESPAWN);
-                    if (initiate)
-                    {
-                        initiate->CastSpell(tender2, SPELL_BUBBLY_SHIELD);
 
-                        if (initiate)
+            void EnterEvadeMode()
+            {
+                me->AddUnitState(UNIT_STATE_EVADE);
+
+                me->RemoveAllAuras();
+                Reset();
+                me->DeleteThreatList();
+                me->CombatStop(true);
+                me->GetMotionMaster()->MovementExpired();
+                me->GetMotionMaster()->MoveTargetedHome();
+            }
+
+            void JustReachedHome()
+            {
+                me->ClearUnitState(UNIT_STATE_EVADE);
+            }
+
+            void JustDied(Unit* killer) { }
+
+            void UpdateAI(uint32 const diff)
+            {
+                // Maintain Bubble Shield aura OOC.
+                if (!me->HasAura(SPELL_FPT_BUBBLE_SHIELD_AURA) && !me->HasUnitState(UNIT_STATE_EVADE) && !me->isInCombat())
+                    DoCast(me, SPELL_FPT_BUBBLE_SHIELD_AURA);
+
+                if (!UpdateVictim() || me->HasUnitState(UNIT_STATE_CASTING))
+                    return;
+
+                events.Update(diff);
+
+                while (uint32 eventId = events.ExecuteEvent())
+                {
+                    switch (eventId)
+                    {
+                        case EVENT_FPT_WATERBOLT:
                         {
-                            initiate->m_Events.AddEvent(new Event_bubble_stream(initiate), initiate->m_Events.CalculateTime(500));
+                            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
+                                DoCast(target, SPELL_FPT_WATERBOLT);
+                            events.ScheduleEvent(EVENT_FPT_WATERBOLT, 3000);
+                            break;
                         }
+
+                        case EVENT_FPT_CORRUPTED_WATER:
+                        {
+                            DoCast(me, SPELL_FPT_CORRUPTED_WATER);
+                            events.ScheduleEvent(EVENT_FPT_CORRUPTED_WATER, urand(17000, 20000));
+                            break;
+                        }
+
+                        default: break;
                     }
                 }
             }
-        }
+        };
 
-        InstanceScript* instance;
-        uint32 pooltender_sha;
-        uint32 pooltender_light;
-
-        void Reset()
+        CreatureAI* GetAI(Creature* creature) const
         {
-            events.Reset();
-            me->setFaction(35);
-
-            me->AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
-
-            pooltender_light = urand(6000, 20000);
-            pooltender_sha = urand(10000, 30000);
+            return new npc_soo_fallen_pool_tender_AI(creature);
         }
-        void UpdateAI(const uint32 diff)
-        {
-            events.Update(diff);
-            
-            if (pooltender_light <= diff)
-            {
-                Position pos;
-                me->GetRandomNearPosition(pos, 8.0f);
-
-                Creature* puddle = me->SummonCreature(CREATURE_CONTAMINATED_PUDDLE, pos, TEMPSUMMON_TIMED_DESPAWN, 6500);
-
-                if (Creature* immersius = instance->instance->GetCreature(instance->GetData64(DATA_IMMERSUS)))
-                {
-                    Position pos_new;
-                    immersius->GetRandomNearPosition(pos_new, 10.0f);
-
-                    puddle->GetMotionMaster()->MovePoint(0, pos_new.GetPositionX(), pos_new.GetPositionY(), pos_new.GetPositionZ());
-                }
-                pooltender_light = urand(6000, 20000);
-
-            }
-            else
-                pooltender_light -= diff;
-
-            if (pooltender_sha <= diff)
-            {
-                Position pos;
-                me->GetRandomNearPosition(pos, 8.0f);
-
-                Creature* puddle = me->SummonCreature(CREATURE_CONTAMINATED_PUDDLE, pos, TEMPSUMMON_TIMED_DESPAWN, 6500);
-
-                if (Creature* immersius = instance->instance->GetCreature(instance->GetData64(DATA_IMMERSUS)))
-                {
-                    Position pos_new;
-                    immersius->GetRandomNearPosition(pos_new, 10.0f);
-
-                    puddle->GetMotionMaster()->MovePoint(0, pos_new.GetPositionX(), pos_new.GetPositionY(), pos_new.GetPositionZ());
-                }
-
-                pooltender_sha = urand(10000, 30000);
-            }
-            else
-                pooltender_sha -= diff;
-        }
-
-    };
-
-    CreatureAI* GetAI(Creature* creature) const
-    {
-        return new siege_of_orgrimmar(creature);
-    }
 };
+
+// Aqueous Defender 73191.
+class npc_soo_aqueous_defender : public CreatureScript
+{
+    public:
+        npc_soo_aqueous_defender() : CreatureScript("npc_soo_aqueous_defender") { }
+
+        struct npc_soo_aqueous_defender_AI : public ScriptedAI
+        {
+            npc_soo_aqueous_defender_AI(Creature* creature) : ScriptedAI(creature) { }
+
+            EventMap events;
+
+            void Reset()
+            {
+                events.Reset();
+            }
+
+            void EnterCombat(Unit* who)
+            {
+                events.ScheduleEvent(EVENT_AD_RUSHING_WATERS, urand(3000, 5000));
+            }
+
+            void EnterEvadeMode()
+            {
+                me->AddUnitState(UNIT_STATE_EVADE);
+
+                me->RemoveAllAuras();
+                Reset();
+                me->DeleteThreatList();
+                me->CombatStop(true);
+                me->GetMotionMaster()->MovementExpired();
+                me->GetMotionMaster()->MoveTargetedHome();
+            }
+
+            void JustReachedHome()
+            {
+                me->ClearUnitState(UNIT_STATE_EVADE);
+            }
+
+            void JustDied(Unit* killer) { }
+
+            void UpdateAI(uint32 const diff)
+            {
+                if (!UpdateVictim() || me->HasUnitState(UNIT_STATE_CASTING))
+                    return;
+
+                events.Update(diff);
+
+                while (uint32 eventId = events.ExecuteEvent())
+                {
+                    switch (eventId)
+                    {
+                        case EVENT_AD_RUSHING_WATERS:
+                        {
+                            DoCast(me, SPELL_AD_RUSHING_WATERS);
+                            events.ScheduleEvent(EVENT_AD_RUSHING_WATERS, urand(20000, 24000));
+                            break;
+                        }
+
+                        default: break;
+                    }
+                }
+
+                DoMeleeAttackIfReady();
+            }
+        };
+
+        CreatureAI* GetAI(Creature* creature) const
+        {
+            return new npc_soo_aqueous_defender_AI(creature);
+        }
+};
+/*
 class siege_of_orgrimmar_lorewalker_cho : public CreatureScript
 {
 public:
@@ -285,10 +375,12 @@ public:
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
-        void DamageTaken(Unit* /*attacker*/, uint32& damage)
+
+        void DamageTaken(Unit* /*attacker*//*, uint32& damage)
         {
             damage = 0;
         }
+
         void DoAction(const int32 action)
         {
             switch (action)
@@ -300,11 +392,12 @@ public:
                 break;
             }
         }
+
         void MoveInLineOfSight(Unit* who)
         {
             if (who && who->IsInWorld() && who->GetTypeId() == TYPEID_PLAYER && me->IsWithinDistInMap(who, 40.0f) && !intro)
             {
-                if (Creature* Immersus = pInstance->instance->GetCreature(pInstance->GetData64((DATA_IMMERSUS))))
+                if (Creature* Immersus = pInstance->instance->GetCreature(pInstance->GetData64((DATA_IMMERSEUS))))
                 {
                     if (Immersus->IsWithinDistInMap(who, 60.0f))
                     {
@@ -317,6 +410,7 @@ public:
                 }
             }
         }
+
         void UpdateAI(const uint32 diff)
         {
             if (!me->GetMotionMaster()->GetMotionSlot(MOTION_SLOT_ACTIVE))
@@ -391,9 +485,11 @@ public:
         return new soo_triggers(creature);
     }
 };
-
+*/
 void AddSC_siege_of_orgrimmar()
 {
-    new siege_of_orgrimmar_trigger_bubble();
-    new siege_of_orgrimmar_lorewalker_cho();
+    // new siege_of_orgrimmar_lorewalker_cho();
+	new npc_soo_tormented_initiate();
+	new npc_soo_fallen_pool_tender();
+	new npc_soo_aqueous_defender();
 }

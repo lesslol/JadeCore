@@ -122,7 +122,7 @@ enum eActionsLocal
 enum eCreaturesLocal
 {
 	// Immerseus
-	NPC_IMMERSEUS = 71543,
+	BOSS_IMMERSEUS = 71543,
 	NPC_SHA_PUDDLE = 71603,
 	NPC_CONTAMINATED_PUDDLE = 71604,
 

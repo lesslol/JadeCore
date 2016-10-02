@@ -188,28 +188,18 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
                 switch (creature->GetEntry())
                 {
 					// Immerseus
-                    case BOSS_IMMERSUS:
-                    case 724360:
-                    case 724366:
-                    case 724367:
-                    case 724368:
+                    case BOSS_IMMERSEUS:
                         ImmersusGuid = creature->GetGUID();
                         break;
 
 					// Fallen Protectors
                     case BOSS_STONE:
-                    case 714750:
-                    case 714751:
                         StoneGuid = creature->GetGUID();
                         break;
                     case BOSS_HU:
-                    case 714790:
-                    case 714791:
                         HuGuid = creature->GetGUID();
                         break;
                     case BOSS_SUN:
-                    case 714800:
-                    case 714801:
                         SunGuid = creature->GetGUID();
                         break;
 
@@ -232,8 +222,6 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
 
 					// Sha of Pride
                     case BOSS_SHA_OF_PRIDE:
-                    case 475683:
-                    case 475684:
                         ShaOfPrideGuid = creature->GetGUID();
                         break;
 
@@ -466,7 +454,7 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
                 switch (type)
                 {
 					// Immerseus
-					case DATA_IMMERSUS:
+					case DATA_IMMERSEUS:
 						return ImmersusGuid;
 						break;
 
