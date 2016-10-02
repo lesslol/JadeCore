@@ -1,2 +1,2 @@
--- "patch" SmartAI Lab 547.01 "Pandaren Monk"
+-- "patch" SmartAI Lab 547.02 "Shado-Pan Monastery"
 
