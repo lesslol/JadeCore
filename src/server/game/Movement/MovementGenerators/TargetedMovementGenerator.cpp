@@ -111,10 +111,7 @@ void TargetedMovementGeneratorMedium<T,D>::_setTargetLocation(T &owner)
     owner.UpdateAllowedPositionZ(x, y, z);
 
     Movement::MoveSplineInit init(owner);
-    if (!i_target->IsInWater())
-        init.MovebyPath(i_path->getPath());
-    else
-        init.MoveTo(i_target->GetPositionX(), i_target->GetPositionY(), i_target->GetPositionZ(), false, false);
+    init.MovebyPath(i_path->getPath());
     init.SetFacing(i_target.getTarget());
     init.SetWalk(((D*)this)->EnableWalking());
     init.Launch();
@@ -168,6 +165,9 @@ bool TargetedMovementGeneratorMedium<T,D>::Update(T &owner, const uint32 & time_
             owner.StopMoving();
         return true;
     }
+
+    if (owner.GetTypeId() == TYPEID_UNIT && !i_target->isInAccessiblePlaceFor((const Creature*)&owner))
+        return false;
 
     // prevent crash after creature killed pet
     if (static_cast<D*>(this)->_lostTarget(owner))

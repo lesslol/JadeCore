@@ -507,6 +507,7 @@ void PathGenerator::BuildShortcut()
     _pathPoints[0] = getStartPosition();
     _pathPoints[1] = getActualEndPosition();
 
+    NormalizePath();
     _type = PATHFIND_SHORTCUT;
 }
 
