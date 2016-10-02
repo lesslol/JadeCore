@@ -50,7 +50,7 @@ PathGenerator::~PathGenerator()
     sLog->outDebug(LOG_FILTER_MAPS, "++ PathGenerator::~PathGenerator() for %u \n", _sourceUnit->GetGUIDLow());
 }
 
-bool PathGenerator::calculate(float destX, float destY, float destZ, bool forceDest)
+bool PathGenerator::CalculatePath(float destX, float destY, float destZ, bool forceDest)
 {
     
     if (!JadeCore::IsValidMapCoord(destX, destY, destZ) ||
@@ -68,7 +68,7 @@ bool PathGenerator::calculate(float destX, float destY, float destZ, bool forceD
 
     _forceDestination = forceDest;
 
-    sLog->outDebug(LOG_FILTER_MAPS, "++ PathGenerator::calculate() for %u \n", _sourceUnit->GetGUIDLow());
+    sLog->outDebug(LOG_FILTER_MAPS, "++ PathGenerator::CalculatePath() for %u \n", _sourceUnit->GetGUIDLow());
 
     // make sure navMesh works - we can run on map w/o mmap
     // check if the start and end point have a .mmtile loaded (can we pass via not loaded tile on the way?)
@@ -89,7 +89,7 @@ bool PathGenerator::calculate(float destX, float destY, float destZ, bool forceD
     {
         // our target is not moving - we just coming closer
         // we are moving on precalculated path - enjoy the ride
-        sLog->outDebug(LOG_FILTER_MAPS, "++ PathGenerator::calculate:: precalculated path\n");
+        sLog->outDebug(LOG_FILTER_MAPS, "++ PathGenerator::CalculatePath:: precalculated path\n");
 
         _pathPoints.erase(_pathPoints.begin());
         return false;

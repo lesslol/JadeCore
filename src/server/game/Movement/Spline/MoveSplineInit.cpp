@@ -130,7 +130,7 @@ namespace Movement
         }
 
         // there is a big chance that current position is unknown if current state is not finalized, need compute it
-        // this also allows calculate spline position and update map position in much greater intervals
+        // this also allows CalculatePath spline position and update map position in much greater intervals
         // Don't compute for transport movement if the unit is in a motion between two transports
         if (!move_spline.Finalized() && move_spline.Initialized() && move_spline.onTransport == (unit.GetTransGUID() != 0))
             real_position = move_spline.ComputePosition();
@@ -421,7 +421,7 @@ namespace Movement
         if (generatePath)
         {
             PathGenerator path(&unit);
-            path.calculate(dest.x, dest.y, dest.z, forceDestination);
+            path.CalculatePath(dest.x, dest.y, dest.z, forceDestination);
             MovebyPath(path.getPath());
         }
         else

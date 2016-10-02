@@ -387,7 +387,7 @@ void MotionMaster::MoveJump(float x, float y, float z, float speedXY, float spee
     }
 
     Movement::MoveSplineInit init(*_owner);
-    init.MoveTo(x,y,z);
+    init.MoveTo(x, y, z, false);
     init.SetParabolic(max_height,0);
     init.SetVelocity(speedXY);
     if (o != 10.0f)
