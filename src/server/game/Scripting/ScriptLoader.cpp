@@ -1050,7 +1050,7 @@ void AddSC_instance_throne_of_thunder();
 // MoP raids - Siege of Orgrimmar
 void AddSC_siege_of_orgrimmar();
 void AddSC_instance_siege_of_orgrimmar();
-void AddSC_immersus();
+void AddSC_immeresus();
 void AddSC_fallen_protectors();
 void AddSC_norushen();
 void AddSC_sha_of_pride();
@@ -2081,7 +2081,7 @@ void AddPandarieScripts()
     // Pandaria Raids - Siege of Orgrimmar
     AddSC_siege_of_orgrimmar();
     AddSC_instance_siege_of_orgrimmar();
-    AddSC_immersus();
+    AddSC_immerseus();
     AddSC_fallen_protectors();
     AddSC_norushen();
     AddSC_sha_of_pride();

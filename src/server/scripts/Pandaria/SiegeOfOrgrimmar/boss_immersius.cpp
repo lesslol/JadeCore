@@ -1493,11 +1493,13 @@ class spell_immerseus_congealing : public SpellScriptLoader
 void AddSC_immerseus()
 {
     new boss_immerseus();
+
     new npc_sha_splash_bolt_immerseus();
     new npc_swirl_immerseus();
     new npc_swirl_target_immerseus();
     new npc_sha_puddle_immerseus();
     new npc_contaminated_puddle_immerseus();
+
     new spell_immerseus_sha_bolt();
     new spell_immerseus_split();
     new spell_immerseus_reform();
