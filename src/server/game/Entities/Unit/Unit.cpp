@@ -418,23 +418,6 @@ void Unit::Update(uint32 p_time)
         ModifyAuraState(AURA_STATE_HEALTH_ABOVE_75_PERCENT, HealthAbovePct(75));
     }
 
-    if (m_SendTransportMoveTimer != 0)
-    {
-        if (m_SendTransportMoveTimer <= p_time)
-        {
-            Movement::MoveSplineInit init(*this);
-            init.DisableTransportPathTransformations();
-            init.MoveTo(m_movementInfo.t_pos.m_positionX, m_movementInfo.t_pos.m_positionY, m_movementInfo.t_pos.m_positionZ);
-            init.SetFacing(0.0f);
-            init.SetTransportEnter();
-            init.Launch();
-            
-            m_SendTransportMoveTimer = 0;
-        }
-        else
-            m_SendTransportMoveTimer -= p_time;
-    }
-
     UpdateSplineMovement(p_time);
     i_motionMaster.UpdateMotion(p_time);
 }
@@ -449,7 +432,7 @@ bool Unit::haveOffhandWeapon() const
 
 void Unit::MonsterMoveWithSpeed(float x, float y, float z, float speed, bool generatePath, bool forceDestination)
 {
-    Movement::MoveSplineInit init(*this);
+    Movement::MoveSplineInit init(this);
     init.MoveTo(x, y, z, generatePath, forceDestination);
     init.SetVelocity(speed);
     init.Launch();
@@ -18574,7 +18557,10 @@ void Unit::StopMoving()
 
     // Update position using old spline
     UpdateSplinePosition();
-    Movement::MoveSplineInit(*this).Stop();
+    Movement::MoveSplineInit init(this);
+    init.MoveTo(GetPositionX(), GetPositionY(), GetPositionZMinusOffset());
+    init.SetFacing(GetOrientation());
+    init.Launch();
 }
 
 void Unit::SendMovementFlagUpdate(bool self /* = false */)
@@ -21929,7 +21915,7 @@ void Unit::_ExitVehicle(Position const* exitPosition)
         SendMessageToSet(&data, false);
     }
 
-    Movement::MoveSplineInit init(*this);
+    Movement::MoveSplineInit init(this);
     init.MoveTo(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ());
     init.SetFacing(GetOrientation());
     init.SetTransportExit();
@@ -22643,7 +22629,7 @@ void Unit::SetInFront(Unit const* target)
 
 void Unit::SetFacingTo(float ori)
 {
-    Movement::MoveSplineInit init(*this);
+    Movement::MoveSplineInit init(this);
     init.MoveTo(GetPositionX(), GetPositionY(), GetPositionZMinusOffset());
     init.SetFacing(ori);
     init.Launch();
