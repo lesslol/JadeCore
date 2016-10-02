@@ -11,3 +11,5 @@ UPDATE `creature_template` SET `ScriptName` = "" WHERE `ScriptName` = "immersus_
 UPDATE `creature_template` SET `ScriptName` = "" WHERE `ScriptName` = "immersus_creature_sha_puddle";
 UPDATE `creature_template` SET `ScriptName` = "" WHERE `ScriptName` = "immersus_creature_sha_pool_heroic";
 UPDATE `creature_template` SET `ScriptName` = "" WHERE `ScriptName` = "immersus_creature_swelling_creature";
+UPDATE `creature_template` SET `ScriptName` = "" WHERE `ScriptName` = "siege_of_orgrimmar_lorewalker_cho";
+UPDATE `creature_template` SET `ScriptName` = "" WHERE `ScriptName` = "siege_of_orgrimmar_trigger_bubble";
