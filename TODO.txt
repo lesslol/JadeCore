@@ -67,7 +67,6 @@ Pandaria Dungeons:
 -- Scholomance
 -- Shado-Pan Monastery
 -- Stormstout Brewery
--- Temple of the Jade Serpent
 
 Pandaria Raids:
 
