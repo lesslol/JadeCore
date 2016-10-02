@@ -831,7 +831,7 @@ class npc_sha_splash_bolt_immerseus : public CreatureScript
                             instance->DoRemoveAurasDueToSpellOnPlayers(SPELL_SHA_SPLASH_DMG);
                         me->SetSpeed(MOVE_WALK, 3.0f);
                         me->SetSpeed(MOVE_RUN, 3.0f);
-                        if (Creature* Immerseus = me->FindNearestCreature(NPC_IMMERSEUS, 150.0f, true))
+                        if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 150.0f, true))
                             me->GetMotionMaster()->MovePoint(1, Immerseus->GetHomePosition().GetPositionX(), Immerseus->GetHomePosition().GetPositionY(), Immerseus->GetHomePosition().GetPositionZ());
                         me->DespawnOrUnsummon(3000);
                         break;
@@ -851,7 +851,7 @@ class npc_sha_splash_bolt_immerseus : public CreatureScript
                         case EVENT_SHA_BOLT_ROOM_CHECK:
                         {
                             // Check for players.
-                            if (Creature* Immerseus = me->FindNearestCreature(NPC_IMMERSEUS, 300.0f, true))
+                            if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 300.0f, true))
 				            {
                                 Map::PlayerList const &PlayerList = me->GetMap()->GetPlayers();
                                 if (!PlayerList.isEmpty())
@@ -938,7 +938,7 @@ class npc_swirl_immerseus : public CreatureScript
                     {
                         case EVENT_SWIRL_ROOM_CHECK:
                         {
-                            if (Creature* Immerseus = me->FindNearestCreature(NPC_IMMERSEUS, 300.0f, true))
+                            if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 300.0f, true))
                             {
                                 Map::PlayerList const &PlayerList = me->GetMap()->GetPlayers();
                                 if (!PlayerList.isEmpty())
@@ -1029,7 +1029,7 @@ class npc_swirl_target_immerseus : public CreatureScript
             void UpdateAI(uint32 const diff)
             {
                 // Handle Immerseus Swirl rotation according to NPC position.
-                if (Creature* Immerseus = me->FindNearestCreature(NPC_IMMERSEUS, 150.0f, true))
+                if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 150.0f, true))
                     if (Immerseus->HasAura(SPELL_SWIRL))
 						Immerseus->SetFacingToObject(me);
 
@@ -1041,7 +1041,7 @@ class npc_swirl_target_immerseus : public CreatureScript
                     {
                         case EVENT_MOVE_CIRCLE:
                         {
-                            if (Creature* Immerseus = me->FindNearestCreature(NPC_IMMERSEUS, 150.0f, true))
+                            if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 150.0f, true))
                             {
                                 Movement::MoveSplineInit init(*me);
                                 FillCirclePath(Immerseus->GetHomePosition(), me->GetDistance(Immerseus), me->GetPositionZ(), init.Path());
@@ -1056,7 +1056,7 @@ class npc_swirl_target_immerseus : public CreatureScript
 
                         case EVENT_SWIRL_TARGET_CHECK:
                         {
-                            if (Creature* Immerseus = me->FindNearestCreature(NPC_IMMERSEUS, 200.0f, true))
+                            if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 200.0f, true))
                             {
                                 Map::PlayerList const &PlayerList = me->GetMap()->GetPlayers();
                                 if (!PlayerList.isEmpty())
@@ -1145,7 +1145,7 @@ class npc_sha_puddle_immerseus : public CreatureScript
 
             void UpdateAI(uint32 const diff)
             {
-                if (Creature* Immerseus = me->FindNearestCreature(NPC_IMMERSEUS, 1.0f, true))
+                if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 1.0f, true))
                 {
                     if (me->GetDistance(Immerseus->GetHomePosition()) <= 5.0f && !reachedBoss)
                     {
@@ -1163,7 +1163,7 @@ class npc_sha_puddle_immerseus : public CreatureScript
                     switch (eventId)
                     {
                         case EVENT_MOVE_CENTER:
-                            if (Creature* Immerseus = me->FindNearestCreature(NPC_IMMERSEUS, 150.0f, true))
+                            if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 150.0f, true))
                                 me->GetMotionMaster()->MovePoint(1, Immerseus->GetHomePosition().GetPositionX(), Immerseus->GetHomePosition().GetPositionY(), Immerseus->GetHomePosition().GetPositionZ());
                             break;
 
@@ -1177,7 +1177,7 @@ class npc_sha_puddle_immerseus : public CreatureScript
             void JustDied(Unit* killer)
             {
                 // Set boss corruption to remove to +1.
-                if (Creature* Immerseus = me->FindNearestCreature(NPC_IMMERSEUS, 200.0f, true))
+                if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 200.0f, true))
                     CAST_AI(boss_immerseus::boss_immerseusAI, Immerseus->AI())->corruptionToRemove += 1;
 
                 // Cast the buffs.
@@ -1241,7 +1241,7 @@ class npc_contaminated_puddle_immerseus : public CreatureScript
 
             void UpdateAI(uint32 const diff)
             {
-                if (Creature* Immerseus = me->FindNearestCreature(NPC_IMMERSEUS, 1.0f, true))
+                if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 1.0f, true))
                 {
                     if (me->GetDistance(Immerseus->GetHomePosition()) <= 5.0f && !reachedBoss)
                     {
@@ -1262,7 +1262,7 @@ class npc_contaminated_puddle_immerseus : public CreatureScript
                     switch (eventId)
                     {
                         case EVENT_MOVE_CENTER:
-                            if (Creature* Immerseus = me->FindNearestCreature(NPC_IMMERSEUS, 150.0f, true))
+                            if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 150.0f, true))
                                 me->GetMotionMaster()->MovePoint(1, Immerseus->GetHomePosition().GetPositionX(), Immerseus->GetHomePosition().GetPositionY(), Immerseus->GetHomePosition().GetPositionZ());
                             break;
 
@@ -1302,7 +1302,7 @@ class spell_immerseus_sha_bolt : public SpellScriptLoader
                 if (!caster->ToCreature())
                     return;
 
-                if (caster->ToCreature()->GetEntry() != NPC_IMMERSEUS)
+                if (caster->ToCreature()->GetEntry() != BOSS_IMMERSEUS)
                     return;
 
                 Map::PlayerList const &PlayerList = caster->GetMap()->GetPlayers();
@@ -1358,7 +1358,7 @@ class spell_immerseus_split : public SpellScriptLoader
                 if (!caster->ToCreature())
                     return;
 
-                if (caster->ToCreature()->GetEntry() != NPC_IMMERSEUS)
+                if (caster->ToCreature()->GetEntry() != BOSS_IMMERSEUS)
                     return;
 
                 // Trigger the mob summon missiles (85 yard radius).
@@ -1409,7 +1409,7 @@ class spell_immerseus_reform : public SpellScriptLoader
                 if (!caster->ToCreature())
                     return;
 
-                if (caster->ToCreature()->GetEntry() != NPC_IMMERSEUS)
+                if (caster->ToCreature()->GetEntry() != BOSS_IMMERSEUS)
                     return;
 
                 CAST_AI(boss_immerseus::boss_immerseusAI, caster->ToCreature()->AI())->ChangePhase(PHASE_IMMERSEUS_NORMAL);
@@ -1470,7 +1470,7 @@ class spell_immerseus_congealing : public SpellScriptLoader
                     caster->AddAura(SPELL_PURIFIED, caster);
 
                     // Set boss corruption to remove to +1.
-                    if (Creature* Immerseus = caster->FindNearestCreature(NPC_IMMERSEUS, 150.0f, true))
+                    if (Creature* Immerseus = caster->FindNearestCreature(BOSS_IMMERSEUS, 150.0f, true))
                         CAST_AI(boss_immerseus::boss_immerseusAI, Immerseus->AI())->corruptionToRemove += 1;
 
                     caster->CastSpell(caster, SPELL_PURIFIED_RESIDUE, true);
