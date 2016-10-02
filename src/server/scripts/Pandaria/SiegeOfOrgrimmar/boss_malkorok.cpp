@@ -137,9 +137,9 @@ class boss_malkorok : public CreatureScript
 				me->SummonCreature(CREATURE_ANCIENT_MIASMA, homeX, homeY, homeZ, 5.0f, TEMPSUMMON_MANUAL_DESPAWN);
 
 				events.SetPhase(PHASE_ONE);
-				events.ScheduleEvent(EVENT_SEISMIC_SLAM, urand(13000, 17000), 0, PHASE_ONE);
 				events.ScheduleEvent(EVENT_ARCING_SMASH_FIRST, 15000, 0, PHASE_ONE);
-				events.ScheduleEvent(EVENT_IMPLODING_ENERGY, urand(13000, 17000), 0, PHASE_ONE);
+				events.ScheduleEvent(EVENT_SEISMIC_SLAM, 16000, 0, PHASE_ONE); // 1 second after Arcing Smash
+				events.ScheduleEvent(EVENT_IMPLODING_ENERGY, 17000, 0, PHASE_ONE); // 2 seconds after Arcing Smash
 				events.ScheduleEvent(EVENT_PHASE_TWO, 120000, 0, PHASE_ONE);
 			}
 
@@ -279,7 +279,15 @@ class boss_malkorok : public CreatureScript
 							DoCast(target, SPELL_SEISMIC_SLAM);
 						}
 
-						events.ScheduleEvent(EVENT_SEISMIC_SLAM, urand(13000, 17000), 0, PHASE_ONE);
+						events.ScheduleEvent(EVENT_SEISMIC_SLAM, 16000, 0, PHASE_ONE);
+						break;
+					}
+
+					case EVENT_IMPLODING_ENERGY:
+					{
+						DoCast(SPELL_IMPLODING_ENERGY);
+
+						events.ScheduleEvent(EVENT_IMPLODING_ENERGY, 17000, 0, PHASE_ONE);
 						break;
 					}
 
