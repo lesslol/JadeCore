@@ -60,7 +60,7 @@ bool PathGenerator::CalculatePath(float destX, float destY, float destZ, bool fo
         return false;
 
     float newDestZ = _sourceUnit->GetBaseMap()->GetHeight(_sourceUnit->GetPhaseMask(), x, y, z, true, MAX_FALL_DISTANCE);
-    if (newDestZ >= INVALID_HEIGHT)
+    if (newDestZ <= INVALID_HEIGHT)
         return false;
     
     Vector3 oldDest = GetEndPosition();
@@ -584,9 +584,9 @@ NavTerrain PathGenerator::GetNavTerrain(float x, float y, float z)
     }
 }
 
-bool PathGenerator::HaveTile(const Vector3 &p) const
+bool PathGenerator::HaveTile(const Vector3& p) const
 {
-    int tx, ty;
+    int tx = -1, ty = -1;
     float point[VERTEX_SIZE] = {p.y, p.z, p.x};
 
     _navMesh->calcTileLoc(point, &tx, &ty);
