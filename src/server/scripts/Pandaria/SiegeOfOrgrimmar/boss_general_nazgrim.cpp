@@ -98,32 +98,40 @@ enum eEvents
 	EVENT_AFTERSHOCK		 = 9,
 
 	EVENT_SUMMON_ADDS_ONE	 = 10,
-	EVENT_SUMMON_ADDS_TWO	 = 11,
-	EVENT_SUNDERING_BLOW	 = 12,
-	EVENT_BONECRACKER		 = 13,
+	EVENT_SUNDERING_BLOW	 = 11,
+	EVENT_BONECRACKER		 = 12,
 
-	EVENT_BATTLE_STANCE_RAGE = 14,
-	EVENT_HEROIC_SHOCKWAVE_J = 15,
+	EVENT_BATTLE_STANCE_RAGE = 13,
+	EVENT_HEROIC_SHOCKWAVE_J = 14,
 
-	EVENT_IRONSTORM			 = 16,
-	EVENT_LAST_STAND		 = 17,
+	EVENT_IRONSTORM			 = 15,
+	EVENT_LAST_STAND		 = 16,
 
-	EVENT_ARCANE_SHOCK		 = 18,
-	EVENT_MAGISTRIKE		 = 19,
-	EVENT_UNSTABLE_BLINK	 = 20,
+	EVENT_ARCANE_SHOCK		 = 17,
+	EVENT_MAGISTRIKE		 = 18,
+	EVENT_UNSTABLE_BLINK	 = 19,
 	
-	EVENT_BACKSTAB			 = 21,
-	EVENT_ASSASSINS_MARK	 = 22,
+	EVENT_BACKSTAB			 = 20,
+	EVENT_ASSASSINS_MARK	 = 21,
 
-	EVENT_EARTH_SHIELD		 = 23,
-	EVENT_CHAIN_HEAL		 = 24,
-	EVENT_HEALING_TIDE_TOTEM = 25,
+	EVENT_EARTH_SHIELD		 = 22,
+	EVENT_CHAIN_HEAL		 = 23,
+	EVENT_HEALING_TIDE_TOTEM = 24,
 
-	EVENT_EXECUTE			 = 26,
+	EVENT_EXECUTE			 = 25,
 
-	EVENT_HUNTERS_MARK		 = 27,
-	EVENT_SHOOT				 = 28,
-	EVENT_MULTI_SHOT		 = 29,
+	EVENT_HUNTERS_MARK		 = 26,
+	EVENT_SHOOT				 = 27,
+	EVENT_MULTI_SHOT		 = 28,
+
+	EVENT_CREATURE_CHECK     = 29,
+	EVENT_SUMMON_ADD_IRO_ASS = 30, // Summon Ironblade and Assassins
+	EVENT_SUMMON_ADD_ASS_WAR = 31, // Summon Assassins and Warshaman
+	EVENT_SUMMON_ADD_IRO_ARC = 32, // Summon Ironblade and Arcweaver
+	EVENT_SUMMON_ADD_ARC_ASS = 33, // Summon Arcweaver and Assassins
+	EVENT_SUMMON_ADD_IRO_WAR = 34, // Summon Ironblade and Warshaman
+	EVENT_SUMMON_ADD_ARC_WAR = 35, // Summon Arcweaver and Warshaman
+
 };
 
 enum eCreatures
@@ -137,6 +145,13 @@ enum eCreatures
 
 enum eSays
 {
+};
+
+Position pos[3] =
+{
+	{ 1568, -4646, -66, 0 },
+	{ 1560, -4634, -67, 0 },
+	{ 1560, -4622, -66, 5 },
 };
 
 void AddRage(Unit* me,uint32 p_BaseValue, uint64 nazgrimGuid)
@@ -495,77 +510,198 @@ class boss_general_nazgrim : public CreatureScript
 
 					case EVENT_SUMMON_ADDS_ONE:
 					{
-						float posX = me->GetPositionX();
-						float posY = me->GetPositionY();
-						float posZ = me->GetPositionZ();
-						float posO = me->GetOrientation();
+						int randomCreature = urand(1, 6);
 
-						if (!me->GetMap()->IsHeroic())
+						switch (randomCreature)
 						{
-							Position pos[2] =
+							case 1: // Ironblade and Assassins - Done
 							{
-								{ 1568, -4646, -66, 0},
-								{ 1560, -4634, -67, 0},
-							};
+								me->SummonCreature(CREATURE_KORKRON_IRONBLADE, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+								me->SummonCreature(CREATURE_KORKRON_ASSASSINS, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+							}
 
-							me->SummonCreature(CREATURE_KORKRON_IRONBLADE, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
-							me->SummonCreature(CREATURE_KORKRON_WARSHAMAN, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+							case 2: // Ironblade and Arcweaver - Done
+							{
+								me->SummonCreature(CREATURE_KORKRON_IRONBLADE, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+								me->SummonCreature(CREATURE_KORKRON_ARCWEAVER, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+							}
+
+							case 3: // Ironblade and Warshaman - Done
+							{
+								me->SummonCreature(CREATURE_KORKRON_IRONBLADE, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+								me->SummonCreature(CREATURE_KORKRON_WARSHAMAN, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+							}
+
+							case 4: // Assassis and Arcweaver - Done
+							{
+								me->SummonCreature(CREATURE_KORKRON_ASSASSINS, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+								me->SummonCreature(CREATURE_KORKRON_ARCWEAVER, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+							}
+
+							case 5: // Assassin and Warshaman - Done
+							{
+								me->SummonCreature(CREATURE_KORKRON_ASSASSINS, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+								me->SummonCreature(CREATURE_KORKRON_WARSHAMAN, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+							}
+
+							case 6: // Arcweaver and Warshaman
+							{
+								me->SummonCreature(CREATURE_KORKRON_ARCWEAVER, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+								me->SummonCreature(CREATURE_KORKRON_WARSHAMAN, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+							}
 						}
 
 						if (me->GetMap()->IsHeroic())
-						{
-							Position pos[3] =
-							{
-								{ 1568, -4646, -66, 0 },
-								{ 1560, -4634, -67, 0 },
-								{ 1560, -4622, -66, 5},
-							};
-
-							me->SummonCreature(CREATURE_KORKRON_IRONBLADE, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
-							me->SummonCreature(CREATURE_KORKRON_WARSHAMAN, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
-							me->SummonCreature(CREATURE_KORKRON_SNIPERS  , pos[2], TEMPSUMMON_MANUAL_DESPAWN);
-						}
+							me->SummonCreature(CREATURE_KORKRON_SNIPERS, pos[2], TEMPSUMMON_MANUAL_DESPAWN);
 
 						Talk(SAY_SUMMON);
-						events.ScheduleEvent(EVENT_SUMMON_ADDS_TWO, 45000);
+						events.ScheduleEvent(EVENT_CREATURE_CHECK, 0);
 						break;
 					}
 
-					case EVENT_SUMMON_ADDS_TWO:
+					case EVENT_CREATURE_CHECK:
 					{
-						float posX = me->GetPositionX();
-						float posY = me->GetPositionY();
-						float posZ = me->GetPositionZ();
-						float posO = me->GetOrientation();
-
-						if (!me->GetMap()->IsHeroic())
+						// Check for Kor'kron Ironblade
+						std::list<Creature*> summonList;
+						me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_IRONBLADE, 50.0f);
+						if (!summonList.empty)
 						{
-							Position pos[2] =
+							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_ASSASSINS, 50.0f);
+							if (!summonList.empty)
 							{
-								{ 1568, -4646, -66, 0 },
-								{ 1560, -4634, -67, 0 },
-							};
+								events.ScheduleEvent(EVENT_SUMMON_ADD_ARC_WAR, 45000);
+							}
 
-							me->SummonCreature(CREATURE_KORKRON_ASSASSINS, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
-							me->SummonCreature(CREATURE_KORKRON_ARCWEAVER, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_ARCWEAVER, 50.0f);
+							if (!summonList.empty)
+							{
+								events.ScheduleEvent(EVENT_SUMMON_ADD_ASS_WAR, 45000);
+							}
+
+							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_WARSHAMAN, 50.0f);
+							if (!summonList.empty)
+							{
+								events.ScheduleEvent(EVENT_SUMMON_ADD_ARC_ASS, 45000);
+							}
 						}
 
-						if (me->GetMap()->IsHeroic())
+						// Check for Kor'kron Assassin
+						me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_ASSASSINS, 50.0f);
+						if (!summonList.empty)
 						{
-							Position pos[3] =
+							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_IRONBLADE, 50.0f);
+							if (!summonList.empty)
 							{
-								{ 1568, -4646, -66, 0 },
-								{ 1560, -4634, -67, 0 },
-								{ 1560, -4622, -66, 5 },
-							};
+								events.ScheduleEvent(EVENT_SUMMON_ADD_IRO_ASS, 45000);
+							}
 
-							me->SummonCreature(CREATURE_KORKRON_ASSASSINS, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
-							me->SummonCreature(CREATURE_KORKRON_ARCWEAVER, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
-							me->SummonCreature(CREATURE_KORKRON_SNIPERS  , pos[2], TEMPSUMMON_MANUAL_DESPAWN);
+							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_ARCWEAVER, 50.0f);
+							if (!summonList.empty)
+							{
+								events.ScheduleEvent(EVENT_SUMMON_ADD_ARC_ASS, 45000);
+							}
+
+							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_WARSHAMAN, 50.0f);
+							if (!summonList.empty)
+							{
+								events.ScheduleEvent(EVENT_SUMMON_ADD_ASS_WAR, 45000);
+							}
 						}
+
+						// Check for Kor'kron Arcweaver
+						me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_ARCWEAVER, 50.0f);
+						if (!summonList.empty)
+						{
+							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_IRONBLADE, 50.0f);
+							if (!summonList.empty)
+							{
+								events.ScheduleEvent(EVENT_SUMMON_ADD_IRO_ARC, 45000);
+							}
+
+							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_ASSASSINS, 50.0f);
+							if (!summonList.empty)
+							{
+								events.ScheduleEvent(EVENT_SUMMON_ADD_ARC_ASS, 45000);
+							}
+
+							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_WARSHAMAN, 50.0f);
+							if (!summonList.empty)
+							{
+								events.ScheduleEvent(EVENT_SUMMON_ADD_ARC_WAR, 45000);
+							}
+						}
+
+						// Check for Kor'kron Warshaman
+						me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_WARSHAMAN, 50.0f);
+						if (!summonList.empty)
+						{
+							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_IRONBLADE, 50.0f);
+							if (!summonList.empty)
+							{
+								events.ScheduleEvent(EVENT_SUMMON_ADD_IRO_WAR, 45000);
+							}
+
+							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_ASSASSINS, 50.0f);
+							if (!summonList.empty)
+							{
+								events.ScheduleEvent(EVENT_SUMMON_ADD_ASS_WAR, 45000);
+							}
+
+							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_ARCWEAVER, 50.0f);
+							if (!summonList.empty)
+							{
+								events.ScheduleEvent(EVENT_SUMMON_ADD_ARC_WAR, 45000);
+							}
+						}
+					}
+
+					case EVENT_SUMMON_ADD_ARC_WAR:
+					{
+						me->SummonCreature(CREATURE_KORKRON_ARCWEAVER, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+						me->SummonCreature(CREATURE_KORKRON_WARSHAMAN, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
 
 						Talk(SAY_SUMMON);
-						events.ScheduleEvent(EVENT_SUMMON_ADDS_ONE, 45000);
+						events.ScheduleEvent(EVENT_SUMMON_ADD_IRO_ASS, 45000);
+						break;
+					}
+
+					case EVENT_SUMMON_ADD_IRO_ASS:
+					{
+						me->SummonCreature(CREATURE_KORKRON_IRONBLADE, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+						me->SummonCreature(CREATURE_KORKRON_ASSASSINS, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+
+						Talk(SAY_SUMMON);
+						events.ScheduleEvent(EVENT_SUMMON_ADD_ARC_WAR, 45000);
+						break;
+					}
+
+					case EVENT_SUMMON_ADD_ASS_WAR:
+					{
+						me->SummonCreature(CREATURE_KORKRON_ASSASSINS, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+						me->SummonCreature(CREATURE_KORKRON_WARSHAMAN, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+
+						Talk(SAY_SUMMON);
+						events.ScheduleEvent(EVENT_SUMMON_ADD_IRO_ARC, 45000);
+						break;
+					}
+
+					case EVENT_SUMMON_ADD_IRO_ARC:
+					{
+						me->SummonCreature(CREATURE_KORKRON_IRONBLADE, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+						me->SummonCreature(CREATURE_KORKRON_ARCWEAVER, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+
+						Talk(SAY_SUMMON);
+						events.ScheduleEvent(EVENT_SUMMON_ADD_ASS_WAR, 45000);
+						break;
+					}
+
+					case EVENT_SUMMON_ADD_ARC_ASS:
+					{
+						me->SummonCreature(CREATURE_KORKRON_ASSASSINS, pos[0], TEMPSUMMON_MANUAL_DESPAWN);
+						me->SummonCreature(CREATURE_KORKRON_ARCWEAVER, pos[1], TEMPSUMMON_MANUAL_DESPAWN);
+
+						Talk(SAY_SUMMON);
+						events.ScheduleEvent(EVENT_SUMMON_ADD_IRO_WAR, 45000);
 						break;
 					}
 
@@ -747,7 +883,7 @@ class mob_korkron_ironblade : public CreatureScript
                 if (!UpdateVictim())
                     return;
 
-				if (me->HasUnitState(UNIT_STATE_CASTING))
+				if (me->HasUnitState(UNIT_STATE_CASTING) && HealthBelowPct(50) && HealthAbovePct(49))
 					return;
 
 
@@ -770,7 +906,9 @@ class mob_korkron_ironblade : public CreatureScript
 					case EVENT_IRONSTORM:
 					{
 						DoCast(me, SPELL_IRONSTORM);
-						events.ScheduleEvent(EVENT_IRONSTORM, 30000);
+						me->GetMotionMaster()->MoveRandom(50.0f);
+
+						events.ScheduleEvent(EVENT_IRONSTORM, 60000);
 						break;
 					}
 
