@@ -63,7 +63,6 @@ Pandaria Zones:
 Pandaria Dungeons:
 
 -- Scholomance
--- Stormstout Brewery
 
 Pandaria Raids:
 
