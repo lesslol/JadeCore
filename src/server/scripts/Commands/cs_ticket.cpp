@@ -562,3 +562,4 @@ void AddSC_ticket_commandscript()
 {
     new ticket_commandscript();
 }
+ 

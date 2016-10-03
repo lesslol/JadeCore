@@ -1464,3 +1464,4 @@ void AddSC_modify_commandscript()
 {
     new modify_commandscript();
 }
+ 

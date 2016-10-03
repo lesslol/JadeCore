@@ -928,3 +928,4 @@ void Map::ScriptsProcess()
         sScriptMgr->DecreaseScheduledScriptCount();
     }
 }
+ 

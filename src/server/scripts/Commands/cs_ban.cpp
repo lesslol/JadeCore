@@ -769,3 +769,4 @@ void AddSC_ban_commandscript()
 {
     new ban_commandscript();
 }
+ 

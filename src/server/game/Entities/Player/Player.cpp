@@ -22612,9 +22612,9 @@ void Player::SendAttackSwingBadFacingAttack()
 
 void Player::SendAutoRepeatCancel(Unit* target)
 {
-	WorldPacket data(SMSG_CANCEL_AUTO_REPEAT, target->GetPackGUID().size());
-	data.append(target->GetPackGUID());                     // may be it's target guid
-	SendMessageToSet(&data, false);
+    WorldPacket data(SMSG_CANCEL_AUTO_REPEAT, target->GetPackGUID().size());
+    data.append(target->GetPackGUID());                     // may be it's target guid
+    SendMessageToSet(&data, false);
 
 }
 
@@ -29193,11 +29193,11 @@ void Player::ActivateSpec(uint8 spec)
             if (GlyphPropertiesEntry const* old_gp = sGlyphPropertiesStore.LookupEntry(oldglyph))
                 RemoveAurasDueToSpell(old_gp->SpellId);
 
-	for (uint8 i = POWER_MANA; i < MAX_POWERS; ++i)
-	{
-		SetPower(Powers(i), 0);
-		SetMaxPower(Powers(i), GetCreatePowers(Powers(i)));
-	}
+    for (uint8 i = POWER_MANA; i < MAX_POWERS; ++i)
+    {
+        SetPower(Powers(i), 0);
+        SetMaxPower(Powers(i), GetCreatePowers(Powers(i)));
+    }
 
     SetActiveSpec(spec);
 
@@ -29235,8 +29235,8 @@ void Player::ActivateSpec(uint8 spec)
 
     SendActionButtons(1);
 
-	for (uint8 i = POWER_MANA; i < MAX_POWERS; ++i)
-		SetPower(Powers(i), 0);
+    for (uint8 i = POWER_MANA; i < MAX_POWERS; ++i)
+        SetPower(Powers(i), 0);
 }
 
 void Player::ResetTimeSync()
@@ -30286,10 +30286,10 @@ void Player::CastPassiveTalentSpell(uint32 spellId)
             if (!HasAura(108499))
                 AddAura(108499, this);
             break;
-	case 108501:// Grimoire of Service
+        case 108501:// Grimoire of Service
             if (!HasAura(108501))
-		AddAura(108501, this);
-           break;
+                AddAura(108501, this);
+            break;
         case 108505:// Archimonde's Vengeance
             if (!HasAura(116403))
                 CastSpell(this, 116403, true); // Passive
@@ -30327,9 +30327,9 @@ void Player::RemovePassiveTalentSpell(uint32 spellId)
         case 108499:// Grimoire of Supremacy
             RemoveAura(108499);
             break;
-	case 108501:// Grimoire of Service
-	    RemoveAura(108501);
-	    break;
+        case 108501:// Grimoire of Service
+            RemoveAura(108501);
+            break;
         case 108505:// Archimonde's Vengeance
             RemoveAura(116403);
             break;

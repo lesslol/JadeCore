@@ -778,3 +778,4 @@ void AddSC_gobject_commandscript()
 {
     new gobject_commandscript();
 }
+ 

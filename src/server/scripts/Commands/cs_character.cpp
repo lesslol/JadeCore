@@ -974,3 +974,4 @@ void AddSC_character_commandscript()
 {
     new character_commandscript();
 }
+ 

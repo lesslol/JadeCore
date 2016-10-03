@@ -491,3 +491,4 @@ void AddSC_learn_commandscript()
 {
     new learn_commandscript();
 }
+ 

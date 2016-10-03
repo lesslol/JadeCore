@@ -308,3 +308,4 @@ void AddSC_cast_commandscript()
 {
     new cast_commandscript();
 }
+ 

@@ -369,3 +369,4 @@ void AddSC_disable_commandscript()
 {
     new disable_commandscript();
 }
+ 

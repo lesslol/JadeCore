@@ -1,7 +1,6 @@
 /*
-* Copyright (C) 2008-20XX JadeCore <http://www.pandashan.com>
-* Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
-* Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+* Copyright (C) 2016-20XX JadeCore <https://jadecore.tk/>
+* Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
 *
 * This program is free software; you can redistribute it and/or modify it
 * under the terms of the GNU General Public License as published by the
@@ -73,6 +72,7 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
             uint64 East03Guid;
 
 			// Galakras
+			uint64 GalakrasGuid;
 
 			// Iron Juggernaut
 			uint64 JuggernautGuid;
@@ -90,10 +90,13 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
 			uint64 MalkorokGuid;
 
 			// Spoils of Pandaria
+			uint64 SpoilsGuid;
 
 			// Thok the Bloodthirsty
+			uint64 ThokGuid;
 
 			// Siegecrafter Blackfuse
+			uint64 BlackfuseGuid;
 
 			// Paragons of the Klaxxi
 
@@ -185,28 +188,18 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
                 switch (creature->GetEntry())
                 {
 					// Immerseus
-                    case BOSS_IMMERSUS:
-                    case 724360:
-                    case 724366:
-                    case 724367:
-                    case 724368:
+                    case BOSS_IMMERSEUS:
                         ImmersusGuid = creature->GetGUID();
                         break;
 
 					// Fallen Protectors
                     case BOSS_STONE:
-                    case 714750:
-                    case 714751:
                         StoneGuid = creature->GetGUID();
                         break;
                     case BOSS_HU:
-                    case 714790:
-                    case 714791:
                         HuGuid = creature->GetGUID();
                         break;
                     case BOSS_SUN:
-                    case 714800:
-                    case 714801:
                         SunGuid = creature->GetGUID();
                         break;
 
@@ -229,8 +222,6 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
 
 					// Sha of Pride
                     case BOSS_SHA_OF_PRIDE:
-                    case 475683:
-                    case 475684:
                         ShaOfPrideGuid = creature->GetGUID();
                         break;
 
@@ -463,7 +454,7 @@ class instance_siege_of_orgrimmar : public InstanceMapScript
                 switch (type)
                 {
 					// Immerseus
-					case DATA_IMMERSUS:
+					case DATA_IMMERSEUS:
 						return ImmersusGuid;
 						break;
 

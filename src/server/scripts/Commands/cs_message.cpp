@@ -213,3 +213,4 @@ void AddSC_message_commandscript()
 {
     new message_commandscript();
 }
+ 

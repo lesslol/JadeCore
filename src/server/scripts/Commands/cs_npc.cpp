@@ -1735,3 +1735,4 @@ void AddSC_npc_commandscript()
 {
     new npc_commandscript();
 }
+ 

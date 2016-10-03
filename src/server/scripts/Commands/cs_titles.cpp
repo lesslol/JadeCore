@@ -247,3 +247,4 @@ void AddSC_titles_commandscript()
 {
     new titles_commandscript();
 }
+ 

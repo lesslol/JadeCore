@@ -1272,3 +1272,4 @@ void AddSC_lookup_commandscript()
 {
     new lookup_commandscript();
 }
+ 

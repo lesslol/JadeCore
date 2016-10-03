@@ -1655,4 +1655,4 @@ template class ScriptRegistry<GroupScript>;
 #undef FOR_SCRIPTS
 #undef SCR_REG_LST
 #undef SCR_REG_ITR
-#undef SCR_REG_MAP
+#undef SCR_REG_MAP 

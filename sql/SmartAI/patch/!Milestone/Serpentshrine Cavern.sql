@@ -163,7 +163,7 @@ INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type
 (@ENTRY,0,0,0,0,0,100,2,1000,3000,12000,18000,11,39027,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Poison Shield'),
 (@ENTRY,0,1,0,0,0,100,2,4000,8000,35000,43000,11,38624,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Water Elemental Totem'),
 (@ENTRY,0,2,0,0,0,100,2,8000,9000,22000,26000,11,39029,0,0,0,0,0,2,0,0,0,0,0,0,0,'Cast Virulent Poison'),
-(@ENTRY,0,3,0,4,0,100,3,0,0,0,0,11,38617,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Frostbrand Attack on Aggro');
+(@ENTRY,0,3,0,4,0,100,3,0,0,0,0,11,38617,0,0,0,0,0,2,0,0,0,0,0,0,0,'Cast Frostbrand Attack on Aggro');
 
 -- Inner Demon
 SET @ENTRY := 21857;

@@ -39,27 +39,27 @@
 class mmaps_commandscript : public CommandScript
 {
 public:
-	mmaps_commandscript() : CommandScript("mmaps_commandscript") { }
+    mmaps_commandscript() : CommandScript("mmaps_commandscript") { }
 
-	ChatCommand* GetCommands() const override
-	{
-		static ChatCommand mmapCommandTable[] =
-		{
-			{ NULL, 0, false, NULL, "", NULL }
-		};
+    ChatCommand* GetCommands() const override
+    {
+        static ChatCommand mmapCommandTable[] =
+        {
+            { NULL, 0, false, NULL, "", NULL }
+        };
 
-		static ChatCommand commandTable[] =
-		{
-			{ "mmap", SEC_ADMINISTRATOR, true, NULL, "", mmapCommandTable },
-			{ NULL, 0, false, NULL, "", NULL }
-		};
-		return commandTable;
-	}
+        static ChatCommand commandTable[] =
+        {
+            { "mmap", SEC_ADMINISTRATOR, true, NULL, "", mmapCommandTable },
+            { NULL, 0, false, NULL, "", NULL }
+        };
+        return commandTable;
+    }
 
 
 };
 
 void AddSC_mmaps_commandscript()
 {
-	new mmaps_commandscript();
+    new mmaps_commandscript();
 }

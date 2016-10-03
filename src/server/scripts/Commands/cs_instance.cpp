@@ -429,3 +429,4 @@ void AddSC_instance_commandscript()
 {
     new instance_commandscript();
 }
+ 

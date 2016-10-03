@@ -335,3 +335,4 @@ void AddSC_guild_commandscript()
 {
     new guild_commandscript();
 }
+ 
