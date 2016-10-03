@@ -564,22 +564,22 @@ class boss_general_nazgrim : public CreatureScript
 						// Check for Kor'kron Ironblade
 						std::list<Creature*> summonList;
 						me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_IRONBLADE, 50.0f);
-						if (!summonList.empty)
+						if (!summonList.empty())
 						{
 							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_ASSASSINS, 50.0f);
-							if (!summonList.empty)
+							if (!summonList.empty())
 							{
 								events.ScheduleEvent(EVENT_SUMMON_ADD_ARC_WAR, 45000);
 							}
 
 							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_ARCWEAVER, 50.0f);
-							if (!summonList.empty)
+							if (!summonList.empty())
 							{
 								events.ScheduleEvent(EVENT_SUMMON_ADD_ASS_WAR, 45000);
 							}
 
 							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_WARSHAMAN, 50.0f);
-							if (!summonList.empty)
+							if (!summonList.empty())
 							{
 								events.ScheduleEvent(EVENT_SUMMON_ADD_ARC_ASS, 45000);
 							}
@@ -587,22 +587,22 @@ class boss_general_nazgrim : public CreatureScript
 
 						// Check for Kor'kron Assassin
 						me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_ASSASSINS, 50.0f);
-						if (!summonList.empty)
+						if (!summonList.empty())
 						{
 							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_IRONBLADE, 50.0f);
-							if (!summonList.empty)
+							if (!summonList.empty())
 							{
 								events.ScheduleEvent(EVENT_SUMMON_ADD_IRO_ASS, 45000);
 							}
 
 							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_ARCWEAVER, 50.0f);
-							if (!summonList.empty)
+							if (!summonList.empty())
 							{
 								events.ScheduleEvent(EVENT_SUMMON_ADD_ARC_ASS, 45000);
 							}
 
 							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_WARSHAMAN, 50.0f);
-							if (!summonList.empty)
+							if (!summonList.empty())
 							{
 								events.ScheduleEvent(EVENT_SUMMON_ADD_ASS_WAR, 45000);
 							}
@@ -610,22 +610,22 @@ class boss_general_nazgrim : public CreatureScript
 
 						// Check for Kor'kron Arcweaver
 						me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_ARCWEAVER, 50.0f);
-						if (!summonList.empty)
+						if (!summonList.empty())
 						{
 							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_IRONBLADE, 50.0f);
-							if (!summonList.empty)
+							if (!summonList.empty())
 							{
 								events.ScheduleEvent(EVENT_SUMMON_ADD_IRO_ARC, 45000);
 							}
 
 							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_ASSASSINS, 50.0f);
-							if (!summonList.empty)
+							if (!summonList.empty())
 							{
 								events.ScheduleEvent(EVENT_SUMMON_ADD_ARC_ASS, 45000);
 							}
 
 							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_WARSHAMAN, 50.0f);
-							if (!summonList.empty)
+							if (!summonList.empty())
 							{
 								events.ScheduleEvent(EVENT_SUMMON_ADD_ARC_WAR, 45000);
 							}
@@ -633,22 +633,22 @@ class boss_general_nazgrim : public CreatureScript
 
 						// Check for Kor'kron Warshaman
 						me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_WARSHAMAN, 50.0f);
-						if (!summonList.empty)
+						if (!summonList.empty())
 						{
 							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_IRONBLADE, 50.0f);
-							if (!summonList.empty)
+							if (!summonList.empty())
 							{
 								events.ScheduleEvent(EVENT_SUMMON_ADD_IRO_WAR, 45000);
 							}
 
 							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_ASSASSINS, 50.0f);
-							if (!summonList.empty)
+							if (!summonList.empty())
 							{
 								events.ScheduleEvent(EVENT_SUMMON_ADD_ASS_WAR, 45000);
 							}
 
 							me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_ARCWEAVER, 50.0f);
-							if (!summonList.empty)
+							if (!summonList.empty())
 							{
 								events.ScheduleEvent(EVENT_SUMMON_ADD_ARC_WAR, 45000);
 							}
