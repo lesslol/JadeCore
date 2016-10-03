@@ -561,8 +561,9 @@ class boss_general_nazgrim : public CreatureScript
 
 					case EVENT_CREATURE_CHECK:
 					{
-						// Check for Kor'kron Ironblade
 						std::list<Creature*> summonList;
+
+						// Check for Kor'kron Ironblade
 						me->GetCreatureListWithEntryInGrid(summonList, CREATURE_KORKRON_IRONBLADE, 50.0f);
 						if (!summonList.empty())
 						{
@@ -653,6 +654,8 @@ class boss_general_nazgrim : public CreatureScript
 								events.ScheduleEvent(EVENT_SUMMON_ADD_ARC_WAR, 45000);
 							}
 						}
+
+						break;
 					}
 
 					case EVENT_SUMMON_ADD_ARC_WAR:
