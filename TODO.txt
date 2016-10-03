@@ -62,7 +62,6 @@ Pandaria Zones:
 
 Pandaria Dungeons:
 
--- Gate of the Setting Sun
 -- Scholomance
 -- Stormstout Brewery
 
