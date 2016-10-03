@@ -59,8 +59,12 @@ bool PathGenerator::CalculatePath(float destX, float destY, float destZ, bool fo
     if (!JadeCore::IsValidMapCoord(destX, destY, destZ) || !JadeCore::IsValidMapCoord(x, y, z))
         return false;
 
+    float newDestZ = _sourceUnit->GetBaseMap()->GetHeight(_sourceUnit->GetPhaseMask(), x, y, z, true, MAX_FALL_DISTANCE);
+    if (newDestZ >= INVALID_HEIGHT)
+        return false;
+    
     Vector3 oldDest = GetEndPosition();
-    Vector3 dest(destX, destY, destZ);
+    Vector3 dest(destX, destY, newDestZ);
     SetEndPosition(dest);
 
     Vector3 start(x, y, z);
@@ -125,7 +129,7 @@ dtPolyRef PathGenerator::GetPathPolyByPosition(const dtPolyRef *polyPath, uint32
             minDist3d = dtVdistSqr(point, closestPoint);
         }
 
-        if(minDist2d < 1.0f) // shortcut out - close enough for us
+        if (minDist2d < 1.0f) // shortcut out - close enough for us
             break;
     }
 

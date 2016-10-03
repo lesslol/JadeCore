@@ -1293,7 +1293,7 @@ void Position::MovePosition(Position &pos, float dist, float angle, WorldObject*
     desty = pos.m_positionY + dist * std::sin(angle);
 
     // Prevent invalid coordinates here, position is unchanged
-    if (!JadeCore::IsValidMapCoord(destx, desty))
+    if (!JadeCore::IsValidMapCoord(destx, desty, pos.m_positionZ))
     {
         sLog->outFatal(LOG_FILTER_GENERAL, "Position::MovePosition invalid coordinates X: %f and Y: %f were passed!", destx, desty);
         return;
