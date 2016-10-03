@@ -70,7 +70,7 @@ void TargetedMovementGeneratorMedium<T,D>::_setTargetLocation(T* owner)
     bool forceDest = (owner->GetTypeId() == TYPEID_UNIT && owner->ToCreature()->isPet()
         && owner->HasUnitState(UNIT_STATE_FOLLOW));
     i_path->CalculatePath(x, y, z, forceDest);
-    if (i_path->getPathType() & PATHFIND_NOPATH)
+    if (i_path->GetPathType() & PATHFIND_NOPATH)
         return;
 
     D::_addUnitStateMove(owner);
@@ -81,7 +81,7 @@ void TargetedMovementGeneratorMedium<T,D>::_setTargetLocation(T* owner)
     owner->UpdateAllowedPositionZ(x, y, z);
 
     Movement::MoveSplineInit init(owner);
-    init.MovebyPath(i_path->getPath());
+    init.MovebyPath(i_path->GetPath());
     init.SetFacing(i_target.getTarget());
     init.SetWalk(((D*)this)->EnableWalking());
     init.Launch();

@@ -64,15 +64,15 @@ class PathGenerator
 
         // option setters - use optional
         void SetUseStraightPath(bool useStraightPath) { _useStraightPath = useStraightPath; };
-        void setPathLengthLimit(float distance) { _pointPathLimit = std::min<uint32>(uint32(distance/SMOOTH_PATH_STEP_SIZE), MAX_POINT_PATH_LENGTH); };
+        void SetPathLengthLimit(float distance) { _pointPathLimit = std::min<uint32>(uint32(distance/SMOOTH_PATH_STEP_SIZE), MAX_POINT_PATH_LENGTH); };
 
         // result getters
-        Vector3 getStartPosition()      const { return _startPosition; }
-        Vector3 getEndPosition()        const { return _endPosition; }
-        Vector3 getActualEndPosition()  const { return _actualEndPosition; }
+        Vector3 GetStartPosition()      const { return _startPosition; }
+        Vector3 GetEndPosition()        const { return _endPosition; }
+        Vector3 GetActualEndPosition()  const { return _actualEndPosition; }
 
-        PointsArray& getPath() { return _pathPoints; }
-        PathType getPathType() const { return _type; }
+        PointsArray& GetPath() { return _pathPoints; }
+        PathType GetPathType() const { return _type; }
 
     private:
 
@@ -96,41 +96,41 @@ class PathGenerator
 
         dtQueryFilter _filter;                     // use single filter for all movements, update it when needed
 
-        void setStartPosition(Vector3 point) { _startPosition = point; }
-        void setEndPosition(Vector3 point) { _actualEndPosition = point; _endPosition = point; }
-        void setActualEndPosition(Vector3 point) { _actualEndPosition = point; }
+        void SetStartPosition(Vector3 point) { _startPosition = point; }
+        void SetEndPosition(Vector3 point) { _actualEndPosition = point; _endPosition = point; }
+        void SetActualEndPosition(Vector3 point) { _actualEndPosition = point; }
 
         void NormalizePath();
 
-        void clear()
+        void Clear()
         {
             _polyLength = 0;
             _pathPoints.clear();
         }
 
-        bool inRange(const Vector3 &p1, const Vector3 &p2, float r, float h) const;
-        float dist3DSqr(const Vector3 &p1, const Vector3 &p2) const;
-        bool inRangeYZX(const float* v1, const float* v2, float r, float h) const;
+        bool InRange(const Vector3 &p1, const Vector3 &p2, float r, float h) const;
+        float Dist3DSqr(const Vector3 &p1, const Vector3 &p2) const;
+        bool InRangeYZX(const float* v1, const float* v2, float r, float h) const;
 
-        dtPolyRef getPathPolyByPosition(const dtPolyRef *polyPath, uint32 polyPathSize, const float* point, float *distance = NULL) const;
-        dtPolyRef getPolyByLocation(const float* point, float *distance) const;
+        dtPolyRef GetPathPolyByPosition(const dtPolyRef *polyPath, uint32 polyPathSize, const float* point, float *distance = NULL) const;
+        dtPolyRef GetPolyByLocation(const float* point, float *distance) const;
         bool HaveTile(const Vector3 &p) const;
 
         void BuildPolyPath(const Vector3 &startPos, const Vector3 &endPos);
         void BuildPointPath(const float *startPoint, const float *endPoint);
         void BuildShortcut();
 
-        NavTerrain getNavTerrain(float x, float y, float z);
-        void createFilter();
-        void updateFilter();
+        NavTerrain GetNavTerrain(float x, float y, float z);
+        void CreateFilter();
+        void UpdateFilter();
 
         // smooth path aux functions
-        uint32 fixupCorridor(dtPolyRef* path, uint32 npath, uint32 maxPath,
+        uint32 FixupCorridor(dtPolyRef* path, uint32 npath, uint32 maxPath,
                              const dtPolyRef* visited, uint32 nvisited);
-        bool getSteerTarget(const float* startPos, const float* endPos, float minTargetDist,
+        bool GetSteerTarget(const float* startPos, const float* endPos, float minTargetDist,
                             const dtPolyRef* path, uint32 pathSize, float* steerPos,
                             unsigned char& steerPosFlag, dtPolyRef& steerPosRef);
-        dtStatus findSmoothPath(const float* startPos, const float* endPos,
+        dtStatus FindSmoothPath(const float* startPos, const float* endPos,
                               const dtPolyRef* polyPath, uint32 polyPathSize,
                               float* smoothPath, int* smoothPathSize, uint32 smoothPathMaxSize);
 };
