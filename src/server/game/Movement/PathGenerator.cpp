@@ -63,7 +63,6 @@ bool PathGenerator::CalculatePath(float destX, float destY, float destZ, bool fo
     if (newDestZ <= INVALID_HEIGHT)
         return false;
     
-    Vector3 oldDest = GetEndPosition();
     Vector3 dest(destX, destY, newDestZ);
     SetEndPosition(dest);
 
@@ -86,24 +85,8 @@ bool PathGenerator::CalculatePath(float destX, float destY, float destZ, bool fo
 
     UpdateFilter();
 
-    // check if destination moved - if not we can optimize something here
-    // we are following old, precalculated path?
-    float dist = _sourceUnit->GetObjectSize();
-    if (oldDest != Vector3::zero() && InRange(oldDest, dest, dist, dist) && _pathPoints.size() > 2)
-    {
-        // our target is not moving - we just coming closer
-        // we are moving on precalculated path - enjoy the ride
-        sLog->outDebug(LOG_FILTER_MAPS, "++ PathGenerator::CalculatePath:: precalculated path\n");
-
-        _pathPoints.erase(_pathPoints.begin());
-        return false;
-    }
-    else
-    {
-        // target moved, so we need to update the poly path
-        BuildPolyPath(start, dest);
-        return true;
-    }
+    BuildPolyPath(start, dest);
+    return true;
 }
 
 dtPolyRef PathGenerator::GetPathPolyByPosition(const dtPolyRef *polyPath, uint32 polyPathSize, const float* point, float *distance) const
@@ -538,10 +521,10 @@ void PathGenerator::CreateFilter()
         if (creature->canSwim())
             includeFlags |= (NAV_WATER | NAV_MAGMA | NAV_SLIME);           // swim
     }
-    else if (_sourceUnit->GetTypeId() == TYPEID_PLAYER)
+    else // assume Player
     {
         // perfect support not possible, just stay 'safe'
-        includeFlags |= (NAV_GROUND | NAV_WATER);
+        includeFlags |= (NAV_GROUND | NAV_WATER | NAV_MAGMA | NAV_SLIME);
     }
 
     _filter.setIncludeFlags(includeFlags);

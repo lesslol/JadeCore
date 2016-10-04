@@ -51,11 +51,10 @@ class TargetedMovementGeneratorMedium : public MovementGeneratorMedium< T, D >, 
         Unit* GetTarget() const { return i_target.getTarget(); }
 
         void unitSpeedChanged() { i_recalculateTravel = true; }
-        void UpdateFinalDistance(float fDistance);
 
         bool IsReachable() const { return (i_path) ? (i_path->GetPathType() & PATHFIND_NORMAL) : true; }
     protected:
-        void _setTargetLocation(T*);
+        void _setTargetLocation(T* owner, bool updateDestination);
 
         TimeTrackerSmall i_recheckDistance;
         float i_offset;
