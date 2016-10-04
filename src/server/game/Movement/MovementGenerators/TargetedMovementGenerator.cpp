@@ -85,10 +85,6 @@ void TargetedMovementGeneratorMedium<T, D>::_setTargetLocation(T* owner, bool up
 
     Movement::MoveSplineInit init(owner);
     init.MovebyPath(i_path->GetPath());
-    if (forceDest && updateDestination)
-        init.SetFacing(i_target.getTarget()->GetOrientation());
-    else
-        init.SetFacing(i_target.getTarget());
     init.SetWalk(((D*)this)->EnableWalking());
     init.Launch();
 }
@@ -260,7 +256,7 @@ void FollowMovementGenerator<T>::DoFinalize(T* owner)
 template<class T>
 void FollowMovementGenerator<T>::DoReset(T* owner)
 {
-    Initialize(owner);
+    DoInitialize(owner);
 }
 
 template<class T>
