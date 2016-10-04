@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2016 JadeCore <https://www.jadecore.tk/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
@@ -85,7 +86,7 @@ public:
             }
         }
 
-        void UpdateAI(uint32 diff)
+        void UpdateAI(const uint32 diff)
         {
             _events.Update(diff);
 
