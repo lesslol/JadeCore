@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2015-2016 JadeCore <https://github.com/cooler-SAI/JadeCore548-patched>
+* Copyright (C) 2016-20XX JadeCore <https://jadecore.tk/>
 * Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
 *
 * This program is free software; you can redistribute it and/or modify it
@@ -186,28 +186,29 @@ enum Events
 	// Toxic Storm
 	EVENT_TOXIC_STORM_VISUAL	= 14,
 	EVENT_TOXIC_STORM_DAMAGE	= 15,
+	EVENT_TOXIC_TORNADO_SUMMON  = 16,
 
 	// Toxic Tornado
-	EVENT_TOXIC_TORNADO_VISUAL	= 16,
-	EVENT_TOXIC_TORNADO_DAMAGE	= 17,
+	EVENT_TOXIC_TORNADO_VISUAL	= 17,
+	EVENT_TOXIC_TORNADO_DAMAGE	= 18,
 
 	// Falling Ash
-	EVENT_FALLING_ASH_DAMAGE	= 18,
-	EVENT_FALLING_CHECK			= 19,
+	EVENT_FALLING_ASH_DAMAGE	= 19,
+	EVENT_FALLING_CHECK			= 20,
 
-	EVENT_MOVE_RANDOM			= 20,
+	EVENT_MOVE_RANDOM			= 21,
 
 	// Foul Slime
-	EVENT_FOULNESS				= 21,
+	EVENT_FOULNESS				= 22,
 
 	// Talk events
-	EVENT_TALK_HAROMM_ONE		= 22,
-	EVENT_TALK_HAROMM_TWO		= 23,
-	EVENT_TALK_HAROMM_THREE		= 24,
-	EVENT_TALK_HAROMM_FOUR		= 25,
-	EVENT_TALK_KARDRIS_ONE		= 26,
-	EVENT_TALK_KARDRIS_TWO		= 27,
-	EVENT_TALK_KARDRIS_THREE	= 28,
+	EVENT_TALK_HAROMM_ONE		= 23,
+	EVENT_TALK_HAROMM_TWO		= 24,
+	EVENT_TALK_HAROMM_THREE		= 25,
+	EVENT_TALK_HAROMM_FOUR		= 26,
+	EVENT_TALK_KARDRIS_ONE		= 27,
+	EVENT_TALK_KARDRIS_TWO		= 28,
+	EVENT_TALK_KARDRIS_THREE	= 29,
 };
 
 enum Creatures
@@ -1008,10 +1009,27 @@ class npc_toxic_storm : public CreatureScript
 				me->SetVisible(true);
 				me->setFaction(16);
 				me->SetInCombatWithZone();
-				me->SetSpeed(MOVE_RUN, 0.05f, true);
+				me->SetSpeed(MOVE_RUN, 0.1f, true);
 				me->ForcedDespawn(60000000);
 				events.Reset();
 				me->CastSpell(me, SPELL_TOXIC_STORM_VISUAL);
+
+				events.ScheduleEvent(EVENT_TOXIC_TORNADO_SUMMON, 15000);
+			}
+
+			void UpdateAI(const uint32 diff)
+			{
+				me->GetMotionMaster()->MoveRandom(50.0f);
+				events.Update(diff);
+
+				switch (events.ExecuteEvent())
+				{
+					case EVENT_TOXIC_TORNADO_SUMMON:
+					{
+						DoCast(SPELL_TOXIC_TORNADO);
+						break;
+					}
+				}
 			}
 		};
 
@@ -1042,10 +1060,15 @@ class npc_toxic_tornado : public CreatureScript
 				me->SetVisible(true);
 				me->setFaction(16);
 				me->SetInCombatWithZone();
-				me->SetSpeed(MOVE_RUN, 0.05f, true);
+				me->SetSpeed(MOVE_RUN, 0.1f, true);
 				me->ForcedDespawn(60000000);
 				events.Reset();
 				me->CastSpell(me, SPELL_TOXIC_TORNADO_VISUAL);
+			}
+
+			void UpdateAI(const uint32 diff)
+			{
+				me->GetMotionMaster()->MoveRandom(50.0f);
 			}
 		};
 

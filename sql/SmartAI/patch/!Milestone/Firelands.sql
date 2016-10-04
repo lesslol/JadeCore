@@ -142,7 +142,7 @@ SET @ENTRY := 53222;
 UPDATE `creature_template` SET `AIName`='SmartAI' WHERE `entry`=@ENTRY;
 DELETE FROM `smart_scripts` WHERE `source_type`=0 AND `entryorguid`=@ENTRY;
 INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type`,`event_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action_type`,`action_param1`,`action_param2`,`action_param3`,`action_param4`,`action_param5`,`action_param6`,`target_type`,`target_param1`,`target_param2`,`target_param3`,`target_x`,`target_y`,`target_z`,`target_o`,`comment`) VALUES
-(@ENTRY,0,0,0,9,0,100,30,0,5,12000,14500,11,16856,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Mortal Strike on Close');
+(@ENTRY,0,0,0,9,0,100,30,0,5,12000,14500,11,16856,0,0,0,0,0,2,0,0,0,0,0,0,0,'Cast Mortal Strike on Close');
 
 -- Flamewaker Forward Guard
 SET @ENTRY := 53119;
@@ -158,7 +158,7 @@ SET @ENTRY := 54073;
 UPDATE `creature_template` SET `AIName`='SmartAI' WHERE `entry`=@ENTRY;
 DELETE FROM `smart_scripts` WHERE `source_type`=0 AND `entryorguid`=@ENTRY;
 INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type`,`event_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action_type`,`action_param1`,`action_param2`,`action_param3`,`action_param4`,`action_param5`,`action_param6`,`target_type`,`target_param1`,`target_param2`,`target_param3`,`target_x`,`target_y`,`target_z`,`target_o`,`comment`) VALUES
-(@ENTRY,0,0,0,4,0,100,31,0,0,0,0,11,100778,0,0,0,0,0,2,0,0,0,0,0,0,0,'Cast Release The Hounds! on Aggro');
+(@ENTRY,0,0,0,4,0,100,31,0,0,0,0,11,100778,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Release The Hounds! on Aggro');
 
 -- Flamewaker Overseer
 SET @ENTRY := 53185;
@@ -309,3 +309,19 @@ DELETE FROM `smart_scripts` WHERE `source_type`=0 AND `entryorguid`=@ENTRY;
 INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type`,`event_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action_type`,`action_param1`,`action_param2`,`action_param3`,`action_param4`,`action_param5`,`action_param6`,`target_type`,`target_param1`,`target_param2`,`target_param3`,`target_x`,`target_y`,`target_z`,`target_o`,`comment`) VALUES
 (@ENTRY,0,0,0,0,0,100,30,4000,4500,20000,25000,11,99918,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Blazing Flame'),
 (@ENTRY,0,1,0,2,0,100,31,0,30,0,0,11,99913,1,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Unbreakable Shell at 30% HP');
+
+
+-- Greyheart Tidecaller
+SET @ENTRY := 21229;
+SET @ENTRYTOTEM := 22236;
+SET @TOTEMSPELL := 38622;
+UPDATE `creature_template` SET `AIName`='SmartAI' WHERE `entry`=@ENTRY;
+DELETE FROM `smart_scripts` WHERE `source_type`=0 AND `entryorguid`=@ENTRY;
+UPDATE `creature_template` SET `AIName`='0' WHERE `entry`=@ENTRYTOTEM;
+UPDATE `creature_template` SET `spell1`=@TOTEMSPELL WHERE `entry`=@ENTRYTOTEM;
+INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type`,`event_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action_type`,`action_param1`,`action_param2`,`action_param3`,`action_param4`,`action_param5`,`action_param6`,`target_type`,`target_param1`,`target_param2`,`target_param3`,`target_x`,`target_y`,`target_z`,`target_o`,`comment`) VALUES
+(@ENTRY,0,0,0,0,0,100,2,1000,3000,12000,18000,11,39027,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Poison Shield'),
+(@ENTRY,0,1,0,0,0,100,2,4000,8000,35000,43000,11,38624,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Water Elemental Totem'),
+(@ENTRY,0,2,0,0,0,100,2,8000,9000,22000,26000,11,39029,0,0,0,0,0,2,0,0,0,0,0,0,0,'Cast Virulent Poison'),
+(@ENTRY,0,3,0,4,0,100,3,0,0,0,0,11,38617,0,0,0,0,0,2,0,0,0,0,0,0,0,'Cast Frostbrand Attack on Aggro');
+

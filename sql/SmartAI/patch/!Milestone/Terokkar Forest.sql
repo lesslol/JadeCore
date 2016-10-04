@@ -97,7 +97,7 @@ DELETE FROM `smart_scripts` WHERE `source_type`=0 AND `entryorguid`=@ENTRY;
 INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type`,`event_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action_type`,`action_param1`,`action_param2`,`action_param3`,`action_param4`,`action_param5`,`action_param6`,`target_type`,`target_param1`,`target_param2`,`target_param3`,`target_x`,`target_y`,`target_z`,`target_o`,`comment`) VALUES
 (@ENTRY,0,0,0,11,0,100,1,0,0,0,0,11,32942,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Phasing Invisibility on Spawn'),
 (@ENTRY,0,1,0,7,0,100,1,0,0,0,0,11,32942,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Phasing Invisibility on Evade'),
-(@ENTRY,0,2,0,4,0,100,1,0,0,0,0,28,32942,0,0,0,0,0,2,0,0,0,0,0,0,0,'Remove Phasing Invisibility on Aggro'),
+(@ENTRY,0,2,0,4,0,100,1,0,0,0,0,28,32942,0,0,0,0,0,1,0,0,0,0,0,0,0,'Remove Phasing Invisibility on Aggro'),
 (@ENTRY,0,3,0,0,0,100,0,3000,6000,4000,7000,11,32739,0,0,0,0,0,4,0,0,0,0,0,0,0,'Cast Venomous Bite'),
 (@ENTRY,0,4,0,0,0,100,0,2000,2000,16000,21000,11,32920,0,0,0,0,0,2,0,0,0,0,0,0,0,'Cast Warp');
 
@@ -1231,7 +1231,7 @@ DELETE FROM `smart_scripts` WHERE `source_type`=0 AND `entryorguid`=@ENTRY;
 INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type`,`event_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action_type`,`action_param1`,`action_param2`,`action_param3`,`action_param4`,`action_param5`,`action_param6`,`target_type`,`target_param1`,`target_param2`,`target_param3`,`target_x`,`target_y`,`target_z`,`target_o`,`comment`) VALUES
 (@ENTRY,0,0,0,11,0,100,1,0,0,0,0,11,32942,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Phasing Invisibility on Spawn'),
 (@ENTRY,0,1,0,7,0,100,1,0,0,0,0,11,32942,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Phasing Invisibility on Evade'),
-(@ENTRY,0,2,5,4,0,100,1,0,0,0,0,28,32942,0,0,0,0,0,2,0,0,0,0,0,0,0,'Remove Phasing Invisibility on Aggro'),
+(@ENTRY,0,2,5,4,0,100,1,0,0,0,0,28,32942,0,0,0,0,0,1,0,0,0,0,0,0,0,'Remove Phasing Invisibility on Aggro'),
 (@ENTRY,0,3,0,0,0,100,0,3000,6000,4000,7000,11,39449,0,0,0,0,0,2,0,0,0,0,0,0,0,'Cast Pounce'),
 (@ENTRY,0,4,0,0,0,100,0,2000,2000,16000,21000,11,32920,0,0,0,0,0,2,0,0,0,0,0,0,0,'Cast Warp'),
 (@ENTRY,0,5,0,61,0,100,1,0,0,0,0,11,32939,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Phase Burst on Aggro');
@@ -1243,7 +1243,7 @@ DELETE FROM `smart_scripts` WHERE `source_type`=0 AND `entryorguid`=@ENTRY;
 INSERT INTO `smart_scripts` (`entryorguid`,`source_type`,`id`,`link`,`event_type`,`event_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action_type`,`action_param1`,`action_param2`,`action_param3`,`action_param4`,`action_param5`,`action_param6`,`target_type`,`target_param1`,`target_param2`,`target_param3`,`target_x`,`target_y`,`target_z`,`target_o`,`comment`) VALUES
 (@ENTRY,0,0,0,11,0,100,1,0,0,0,0,11,32942,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Phasing Invisibility on Spawn'),
 (@ENTRY,0,1,0,7,0,100,1,0,0,0,0,11,32942,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Phasing Invisibility on Evade'),
-(@ENTRY,0,2,5,4,0,100,1,0,0,0,0,28,32942,0,0,0,0,0,2,0,0,0,0,0,0,0,'Remove Phasing Invisibility on Aggro'),
+(@ENTRY,0,2,5,4,0,100,1,0,0,0,0,28,32942,0,0,0,0,0,1,0,0,0,0,0,0,0,'Remove Phasing Invisibility on Aggro'),
 (@ENTRY,0,3,0,0,0,100,0,5000,8000,10000,20000,11,32922,0,0,0,0,0,2,0,0,0,0,0,0,0,'Cast Slow'),
 (@ENTRY,0,4,0,0,0,100,0,2000,2000,16000,21000,11,32920,0,0,0,0,0,2,0,0,0,0,0,0,0,'Cast Warp'),
 (@ENTRY,0,5,0,61,0,100,1,0,0,0,0,11,32939,0,0,0,0,0,1,0,0,0,0,0,0,0,'Cast Phase Burst on Aggro');

@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2016 JadeCore <https://www.jadecore.tk/>
  * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
@@ -18,6 +19,142 @@
 
 #include "ScriptedEscortAI.h"
 #include "Vehicle.h"
+
+enum Soothsayers
+{
+    // Soothsayer Shi'kala
+    SAY_SHIKALA_1                   = 0,
+    SAY_SHIKALA_2                   = 1,
+    SAY_SHIKALA_3                   = 2,
+
+    // Soothsayer Rikkari
+    SAY_RIKKARI_1                   = 0,
+    SAY_RIKKARI_2                   = 1,
+    SAY_RIKKARI_3                   = 2,
+
+    // Soothsayer Mirim'koa
+    SAY_MIRIMKOA_1                  = 0,
+    SAY_MIRIMKOA_2                  = 1,
+    SAY_MIRIMKOA_3                  = 2,
+
+    EVENT_TEXT_1                    = 1,
+    EVENT_TEXT_2                    = 2,
+    EVENT_TEXT_3                    = 3,
+    EVENT_QUEST_COMPLETE            = 4,
+
+    NPC_SOOTHSAYER_SHIKALA          = 37108,
+    NPC_SOOTHSAYER_RIKKARI          = 37173,
+    NPC_SOOTHSAYER_MIRIMKOA         = 37174,
+
+    QUEST_TROLLING_FOR_INFORMATION  = 24489,
+};
+
+/*######
+## npc_quest_trolling_for_information
+######*/
+
+class npc_quest_trolling_for_information : public CreatureScript
+{
+public:
+    npc_quest_trolling_for_information() : CreatureScript("npc_quest_trolling_for_information") { }
+
+    struct npc_quest_trolling_for_informationAI : public ScriptedAI
+    {
+        npc_quest_trolling_for_informationAI(Creature* creature) : ScriptedAI(creature) { }
+
+        EventMap _events;
+        bool _textSays;
+        Player* m_player;
+
+        void Reset()
+        {
+            _events.Reset();
+            _textSays = false;
+            m_player = NULL;
+        }
+
+        void MoveInLineOfSight(Unit* who)
+        {
+            if (_textSays && who->GetTypeId() != TYPEID_PLAYER)
+                return;
+
+            if (!_textSays && me->IsWithinDistInMap(who, 5.0f) && who->GetTypeId() == TYPEID_PLAYER && who->isAlive())
+            {
+                _events.ScheduleEvent(EVENT_TEXT_1, 1 * IN_MILLISECONDS);
+                who = m_player;
+                _textSays = true;
+            }
+        }
+
+        void UpdateAI(const uint32 diff)
+        {
+            _events.Update(diff);
+
+            if (me->HasUnitState(UNIT_STATE_CASTING))
+                return;
+
+            while (uint32 eventId = _events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                    case EVENT_TEXT_1:
+                        if (me->GetEntry() == NPC_SOOTHSAYER_SHIKALA)
+                            Talk(SAY_SHIKALA_1);
+                        if (me->GetEntry() == NPC_SOOTHSAYER_RIKKARI)
+                            Talk(SAY_RIKKARI_1);
+                        if (me->GetEntry() == NPC_SOOTHSAYER_MIRIMKOA)
+                            Talk(SAY_MIRIMKOA_1);
+                        _events.ScheduleEvent(EVENT_TEXT_2, 4 * IN_MILLISECONDS);
+                        break;
+                    case EVENT_TEXT_2:
+                        if (me->GetEntry() == NPC_SOOTHSAYER_SHIKALA)
+                            Talk(SAY_SHIKALA_2);
+                        if (me->GetEntry() == NPC_SOOTHSAYER_RIKKARI)
+                            Talk(SAY_RIKKARI_2);
+                        if (me->GetEntry() == NPC_SOOTHSAYER_MIRIMKOA)
+                            Talk(SAY_MIRIMKOA_2);
+                        _events.ScheduleEvent(EVENT_TEXT_3, 4 * IN_MILLISECONDS);
+                        break;
+                    case EVENT_TEXT_3:
+                        if (me->GetEntry() == NPC_SOOTHSAYER_SHIKALA)
+                            Talk(SAY_SHIKALA_3);
+                        if (me->GetEntry() == NPC_SOOTHSAYER_RIKKARI)
+                            Talk(SAY_RIKKARI_3);
+                        if (me->GetEntry() == NPC_SOOTHSAYER_MIRIMKOA)
+                            Talk(SAY_MIRIMKOA_3);
+                        _events.ScheduleEvent(EVENT_QUEST_COMPLETE, 2 * IN_MILLISECONDS);
+                        break;
+                    case EVENT_QUEST_COMPLETE:
+                        if (me->GetEntry() == NPC_SOOTHSAYER_SHIKALA)
+                        {
+                            if (m_player)
+                                m_player->KilledMonsterCredit(NPC_SOOTHSAYER_SHIKALA);
+                        }
+                        if (me->GetEntry() == NPC_SOOTHSAYER_RIKKARI)
+                        {
+                            if (m_player)
+                                m_player->KilledMonsterCredit(NPC_SOOTHSAYER_RIKKARI);
+                        }
+                        if (me->GetEntry() == NPC_SOOTHSAYER_MIRIMKOA)
+                        {
+                            if (m_player)
+                                m_player->KilledMonsterCredit(NPC_SOOTHSAYER_MIRIMKOA);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            DoMeleeAttackIfReady();
+        }
+    };
+    
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_quest_trolling_for_informationAI (creature);
+    }
+};
 
 /*######
 ## npc_gnomeregan_survivor
@@ -396,6 +533,7 @@ public:
 
 void AddSC_dun_morogh()
 {
+    new npc_quest_trolling_for_information();
     new npc_gnomeregan_survivor();
     new npc_flying_target_machin();
     new npc_carvo_blastbolt();
