@@ -411,8 +411,8 @@ void Object::BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
         uint32 movementFlags = unit->m_movementInfo.GetMovementFlags();
         uint16 movementFlagsExtra = unit->m_movementInfo.GetExtraMovementFlags();
 
-        //if (GetTypeId() == TYPEID_UNIT)
-            //movementFlags &= MOVEMENTFLAG_MASK_CREATURE_ALLOWED;
+        if (GetTypeId() == TYPEID_UNIT)
+            movementFlags &= MOVEMENTFLAG_MASK_CREATURE_ALLOWED;
 
         bool isSplineEnabled = unit->movespline->Initialized() && !unit->movespline->Finalized();
 

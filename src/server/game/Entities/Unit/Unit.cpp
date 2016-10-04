@@ -22117,6 +22117,7 @@ bool Unit::UpdatePosition(float x, float y, float z, float orientation, bool tel
     if (!JadeCore::IsValidMapCoord(x, y, z, orientation))
         return false;
 
+    orientation = MapManager::NormalizeOrientation(orientation); 
     bool turn = (GetOrientation() != orientation);
     bool relocated = (teleport || GetPositionX() != x || GetPositionY() != y || GetPositionZ() != z);
 
