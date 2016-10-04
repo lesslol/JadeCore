@@ -127,10 +127,15 @@ bool TargetedMovementGeneratorMedium<T,D>::DoUpdate(T* owner, const uint32 & tim
         float allowed_dist = owner->GetCombatReach() + sWorld->getRate(RATE_TARGET_POS_RECALCULATION_RANGE);
         G3D::Vector3 dest = owner->movespline->FinalDestination();
         
-            if (owner->GetTypeId() == TYPEID_UNIT && owner->ToCreature()->CanFly())
+        // First check distance
+        if (owner->GetTypeId() == TYPEID_UNIT && owner->ToCreature()->CanFly())
             targetMoved = !i_target->IsWithinDist3d(dest.x, dest.y, dest.z, allowed_dist);
         else
             targetMoved = !i_target->IsWithinDist2d(dest.x, dest.y, allowed_dist);
+
+        // then, if the target is in range, check also Line of Sight.
+        if (!targetMoved)
+            targetMoved = !i_target->IsWithinLOSInMap(owner);
     }
 
     if (i_recalculateTravel || targetMoved)
