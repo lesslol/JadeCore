@@ -1,5 +1,5 @@
 --Fix Only DK Worgen start with Viciousness spell
-DELETE FROM playercreateinfo_spell WHERE race=22 AND Spell=68975
+DELETE FROM playercreateinfo_spell WHERE race=22 AND Spell=68975;
 INSERT INTO playercreateinfo_spell(race, class, Spell, Note)VALUES
 (22, 6, 68975, "Viciousness"),
 (22, 1, 68975, "Viciousness"),
