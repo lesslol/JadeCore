@@ -152,6 +152,9 @@ class CreatureAI : public UnitAI
 
         // Called when owner attacks something
         virtual void OwnerAttacked(Unit* /*target*/) {}
+		//npcbot
+		virtual void OwnerAttackedBy(Unit* /*attacker*/) {}
+		//end npcbot
 
         // Called when a creature regen one of his power
         virtual void RegeneratePower(Powers power, int32& value) {}

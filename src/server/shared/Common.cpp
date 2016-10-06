@@ -17,6 +17,7 @@
  */
 
 #include "Common.h"
+#include "ByteBuffer.h"
 
 ACE_Based::LockedQueue<GmCommand*, ACE_Thread_Mutex> GmLogQueue;
 ACE_Based::LockedQueue<GmChat*, ACE_Thread_Mutex> GmChatLogQueue;
@@ -44,3 +45,4 @@ LocaleConstant GetLocaleByName(const std::string& name)
     return LOCALE_enUS;                                     // including enGB case
 }
 
+const ObjectGuid ObjectGuid::Empty = ObjectGuid();

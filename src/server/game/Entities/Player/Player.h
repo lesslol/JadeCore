@@ -65,6 +65,10 @@ class SpellCastTargets;
 class UpdateMask;
 class PhaseMgr;
 
+// NpcBot mod
+class BotMgr;
+// end NpcBot mod
+
 typedef std::deque<Mail*> PlayerMails;
 
 #define PLAYER_MAX_SKILLS           128
@@ -1318,6 +1322,9 @@ class Player : public Unit, public GridObject<Player>
         bool isAcceptWhispers() const { return m_ExtraFlags & PLAYER_EXTRA_ACCEPT_WHISPERS; }
         void SetAcceptWhispers(bool on) { if (on) m_ExtraFlags |= PLAYER_EXTRA_ACCEPT_WHISPERS; else m_ExtraFlags &= ~PLAYER_EXTRA_ACCEPT_WHISPERS; }
         bool isGameMaster() const { return m_ExtraFlags & PLAYER_EXTRA_GM_ON; }
+		//npcbot
+		bool IsGameMaster() const { return isGameMaster(); }
+		//end npcbot
         void SetGameMaster(bool on);
         bool isGMChat() const { return m_ExtraFlags & PLAYER_EXTRA_GM_CHAT; }
         void SetGMChat(bool on) { if (on) m_ExtraFlags |= PLAYER_EXTRA_GM_CHAT; else m_ExtraFlags &= ~PLAYER_EXTRA_GM_CHAT; }
@@ -1779,6 +1786,9 @@ class Player : public Unit, public GridObject<Player>
         uint64 GetMoney() const { return GetUInt64Value(PLAYER_FIELD_COINAGE); }
         void ModifyMoney(int64 d);
         bool HasEnoughMoney(uint64 amount) const { return GetMoney() >= amount; }
+		//npcbot
+		bool HasEnoughMoney(uint32 amount) const { return HasEnoughMoney(uint64(amount)); }
+		//end npcbot
         bool HasEnoughMoney(int64 amount) const
         {
             if (amount > 0)
@@ -2026,6 +2036,9 @@ class Player : public Unit, public GridObject<Player>
         }
 
         bool IsRessurectRequested() const { return _resurrectionData != NULL; }
+		//npcbot
+		bool IsResurrectRequested() const { return IsRessurectRequested(); }
+		//end npcbot
 
         void ResurectUsingRequestData();
 
@@ -3007,8 +3020,29 @@ class Player : public Unit, public GridObject<Player>
 
         uint8 GetBattleGroundRoles() const { return m_bgRoles; }
         void SetBattleGroundRoles(uint8 roles) { m_bgRoles = roles; }
-
+        /*********************************************************/
+        /***                  NPCBOT SYSTEM                    ***/
+        /*********************************************************/
+        void SetBotMgr(BotMgr* mgr) { ASSERT(!_botMgr); _botMgr = mgr; }
+        BotMgr* GetBotMgr() const { return _botMgr; }
+        bool HaveBot() const;
+        uint8 GetNpcBotsCount(bool inWorldOnly = false) const;
+        uint8 GetBotFollowDist() const;
+        void SetBotFollowDist(int8 dist);
+        void SetBotsShouldUpdateStats();
+        void RemoveAllBots(uint8 removetype = 0);
+        /*********************************************************/
+        /***              END NPCBOT SYSTEM                    ***/
+        /*********************************************************/
      private:
+        /*********************************************************/
+        /***                  NPCBOT SYSTEM                    ***/
+        /*********************************************************/
+        BotMgr* _botMgr;
+        /*********************************************************/
+        /***             END NPCBOT SYSTEM                     ***/
+        /*********************************************************/
+
         // Gamemaster whisper whitelist
         WhisperListContainer WhisperList;
         uint32 m_regenTimerCount;

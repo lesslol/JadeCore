@@ -93,6 +93,9 @@ template <class TO, class FROM> class Reference : public LinkedListElement
         TO* getTarget() const { return iRefTo; }
 
         FROM* getSource() const { return iRefFrom; }
+		//npcbot
+		FROM* GetSource() const { return getSource(); }
+		//end npcbot
 };
 
 //=====================================================

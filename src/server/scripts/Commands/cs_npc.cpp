@@ -29,7 +29,10 @@ EndScriptData */
 #include "CreatureGroups.h"
 #include "TargetedMovementGenerator.h"                      // for HandleNpcUnFollowCommand
 #include "CreatureAI.h"
-
+//npcbot
+#include "bot_ai.h"
+#include "botmgr.h"
+//end npcbot
 struct MechanicImmune
 {
     uint32 flag;
@@ -206,7 +209,17 @@ public:
         char* charID = handler->extractKeyFromLink((char*)args, "Hcreature_entry");
         if (!charID)
             return false;
+		//npcbot
+        uint32 id = atoi(charID);
 
+        CreatureTemplate const* creInfo = sObjectMgr->GetCreatureTemplate(id);
+
+        if (!(creInfo->flags_extra & CREATURE_FLAG_EXTRA_NPCBOT))
+        {
+        char* charID = handler->extractKeyFromLink((char*)args, "Hcreature_entry");
+        if (!charID)
+            return false;
+		//end npcbot
         char* team = strtok(NULL, " ");
         int32 teamval = 0;
         if (team) { teamval = atoi(team); }
@@ -262,6 +275,105 @@ public:
 
         sObjectMgr->AddCreatureToGrid(db_guid, sObjectMgr->GetCreatureData(db_guid));
         return true;
+		//npcbot
+        } else {
+        char* charID = handler->extractKeyFromLink((char*)args, "Hcreature_entry");
+        if (!charID)
+            return false;
+
+		char* team = strtok(NULL, " ");
+		int32 teamval = 0;
+		if (team) { teamval = atoi(team); }
+		if (teamval < 0) { teamval = 0; }
+
+        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_NPCBOT_OWNER);
+        //"SELECT owner FROM character_npcbot WHERE entry = ?", CONNECTION_SYNCH
+        stmt->setUInt32(0, id);
+        PreparedQueryResult res1 = CharacterDatabase.Query(stmt);
+        if (res1)
+        {
+            handler->PSendSysMessage("Npcbot %u already exists in `characters_npcbot` table!", id);
+            handler->SendSysMessage("If you want to replace this bot to new location use '.npc move' command");
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        stmt = WorldDatabase.GetPreparedStatement(WORLD_SEL_CREATURE_BY_ID);
+        //"SELECT guid FROM creature WHERE id = ?", CONNECTION_SYNCH
+        stmt->setUInt32(0, id);
+        PreparedQueryResult res2 = WorldDatabase.Query(stmt);
+        if (res2)
+        {
+            handler->PSendSysMessage("Npcbot %u already exists in `creature` table!", id);
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        Player* chr = handler->GetSession()->GetPlayer();
+
+        if (chr->GetTransport())
+        {
+            handler->SendSysMessage("Cannot spawn bots on transport!");
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        float x = chr->GetPositionX();
+        float y = chr->GetPositionY();
+        float z = chr->GetPositionZ();
+        float o = chr->GetOrientation();
+        Map* map = chr->GetMap();
+
+        if (map->Instanceable())
+        {
+            handler->SendSysMessage("Cannot spawn bots in instances!");
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        Creature* creature = new Creature();
+        if (//!creature->Create(map->GenerateLowGuid<HighGuid::Unit>(), map, chr->GetPhaseMaskForSpawn(), id, x, y, z, o))
+			  !creature->Create(/*map*/sObjectMgr->GenerateLowGuid(HIGHGUID_UNIT)/*()*/, map, chr->GetPhaseMgr().GetPhaseMaskForSpawn(), id, 0, uint32(teamval), x, y, z, o))
+        {
+            delete creature;
+            return false;
+        }
+
+        uint8 roleMask = BOT_ROLE_DPS;
+
+        uint8 m_class = creature->GetCreatureTemplate()->trainer_class;
+        if (!(m_class == CLASS_WARRIOR || m_class == CLASS_ROGUE ||
+            m_class == CLASS_PALADIN || m_class == CLASS_DEATH_KNIGHT ||
+            m_class == CLASS_SHAMAN || m_class == BOT_CLASS_BM))
+            roleMask |= BOT_ROLE_RANGED;
+        if (m_class == CLASS_PRIEST || m_class == CLASS_DRUID ||
+            m_class == CLASS_SHAMAN || m_class == CLASS_PALADIN)
+            roleMask |= BOT_ROLE_HEAL;
+
+        stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_NPCBOT);
+        //"INSERT INTO characters_npcbot (entry, roles) VALUES (?, ?)", CONNECTION_SYNCH
+        stmt->setUInt32(0, id);
+        stmt->setUInt8(1, roleMask);
+        CharacterDatabase.DirectExecute(stmt);
+
+        creature->SaveToDB(map->GetId(), (1 << map->GetSpawnMode()), chr->GetPhaseMgr().GetPhaseMaskForSpawn());
+
+        uint32 db_guid = creature->GetSpawnId();
+        if (!creature->LoadBotCreatureFromDB(db_guid, map))
+        {
+            handler->SendSysMessage("Cannot load npcbot from DB!");
+            handler->SetSentErrorMessage(true);
+            //return false;
+            delete creature;
+            return false;
+        }
+
+        sObjectMgr->AddCreatureToGrid(db_guid, sObjectMgr->GetCreatureData(db_guid));
+
+        handler->SendSysMessage("Npcbot successfully spawned.");
+        return true;
+    }
+	//end npcbot
     }
 
     //add item in vendorlist

@@ -7877,7 +7877,83 @@ SkillRangeType GetSkillRangeType(SkillLineEntry const* pSkill, bool racial)
             return SKILL_RANGE_NONE;
     }
 }
+//npcbot
+void ObjectMgr::LoadCreatureOutfits()
+{
+    uint32 oldMSTime = getMSTime();
 
+    _creatureOutfitStore.clear();                           // for reload case (test only)
+
+    //                                                 0     1      2      3     4     5       6           7
+    QueryResult result = WorldDatabase.Query("SELECT entry, race, gender, skin, face, hair, haircolor, facialhair, "
+        //8       9        10    11     12     13    14     15     16     17     18
+        "head, shoulders, body, chest, waist, legs, feet, wrists, hands, back, tabard FROM creature_template_outfits");
+
+    if (!result)
+    {
+        sLog->outError(LOG_FILTER_SERVER_LOADING, ">> Loaded 0 creature outfits. DB table `creature_template_outfits` is empty!");
+        return;
+    }
+
+    uint32 count = 0;
+
+    do
+    {
+        Field* fields = result->Fetch();
+
+        uint32 i = 0;
+        uint32 entry     = fields[i++].GetUInt32();
+
+        if (!GetCreatureTemplate(entry))
+        {
+			sLog->outError(LOG_FILTER_SERVER_LOADING, ">> Creature entry %u in `creature_template_outfits`, but not in `creature_template`!", entry);
+            continue;
+        }
+
+        CreatureOutfit co; // const, shouldnt be changed after saving
+        co.race          = fields[i++].GetUInt8();
+        ChrRacesEntry const* rEntry = sChrRacesStore.LookupEntry(co.race);
+        if (!rEntry)
+        {
+			sLog->outError(LOG_FILTER_SERVER_LOADING, ">> Creature entry %u in `creature_template_outfits` has incorrect race (%u).", entry, uint32(co.race));
+            continue;
+        }
+        co.gender        = fields[i++].GetUInt8();
+        // Set correct displayId
+        switch (co.gender)
+        {
+            case GENDER_FEMALE:
+                _creatureTemplateStore[entry].Modelid1 = rEntry->model_f;
+                break;
+            case GENDER_MALE:
+                _creatureTemplateStore[entry].Modelid1 = rEntry->model_m;
+                break;
+            default:
+				sLog->outError(LOG_FILTER_SERVER_LOADING, ">> Creature entry %u in `creature_template_outfits` has invalid gender %u", entry, uint32(co.gender));
+                continue;
+        }
+        _creatureTemplateStore[entry].Modelid2 = 0;
+        _creatureTemplateStore[entry].Modelid3 = 0;
+        _creatureTemplateStore[entry].Modelid4 = 0;
+        _creatureTemplateStore[entry].unit_flags2 |= UNIT_FLAG2_MIRROR_IMAGE; // Needed so client requests mirror packet
+
+        co.skin          = fields[i++].GetUInt8();
+        co.face          = fields[i++].GetUInt8();
+        co.hair          = fields[i++].GetUInt8();
+        co.haircolor     = fields[i++].GetUInt8();
+        co.facialhair    = fields[i++].GetUInt8();
+        for (uint32 j = 0; j != MAX_CREATURE_OUTFIT_DISPLAYS; ++j)
+            co.outfit[j] = fields[i+j].GetUInt32();
+
+        _creatureOutfitStore[entry] = co;
+
+        ++count;
+    }
+    while (result->NextRow());
+
+	sLog->outError(LOG_FILTER_SERVER_LOADING, ">> Loaded %u creature outfits in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
+}
+//end npcbot
 void ObjectMgr::LoadGameTele()
 {
     uint32 oldMSTime = getMSTime();

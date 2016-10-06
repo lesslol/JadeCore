@@ -195,6 +195,9 @@ class ObjectAccessor
         // ACCESS LIKE THAT IS NOT THREAD SAFE
         static Pet* FindPet(uint64);
         static Player* FindPlayer(uint64);
+		//npcbot
+		static Player* FindConnectedPlayer(uint64 guid) { return HashMapHolder<Player>::Find(guid); }
+		//end npcbot
         static Creature* FindCreature(uint64);
         static Unit* FindUnit(uint64);
         static DynamicObject* FindDynamicObject(uint64);

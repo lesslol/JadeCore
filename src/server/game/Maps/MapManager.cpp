@@ -33,6 +33,10 @@
 #include "Language.h"
 #include "WorldPacket.h"
 #include "Group.h"
+//npcbot
+#include "botmgr.h"
+#define Trinity JadeCore
+//end npcbot
 
 extern GridState* si_GridStates[];                          // debugging code, should be deleted some day
 
@@ -61,6 +65,82 @@ void MapManager::Initialize()
     // Start mtmaps if needed.
     if (num_threads > 0 && m_updater.activate(num_threads) == -1)
         abort();
+
+    //npcbot - spawn bots
+    BotMgr::LoadConfig();
+
+    if (!BotMgr::IsNpcBotModEnabled())
+        return;
+
+    uint32 botoldMSTime = getMSTime();
+
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Starting NpcBot system...");
+    PreparedStatement* botstmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_NPCBOTS);
+    //"SELECT entry FROM characters_npcbot", CONNECTION_SYNCH
+    PreparedQueryResult res = CharacterDatabase.Query(botstmt);
+    if (!res)
+    {
+		sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Spawned 0 npcbots. Table `characters_npcbot` is empty!");
+        return;
+    }
+
+    PreparedQueryResult infores;
+    uint32 botcounter = 0;
+    Field* field;
+    std::list<uint32> botgrids;
+    do
+    {
+        field = res->Fetch();
+        uint32 entry = field[0].GetUInt32();
+        CreatureTemplate const* proto = sObjectMgr->GetCreatureTemplate(entry);
+        if (!proto)
+        {
+			sLog->outError(LOG_FILTER_SERVER_LOADING, "Cannot find creature_template entry for npcbot (id: %u)!", entry);
+            continue;
+        }
+
+        botstmt = WorldDatabase.GetPreparedStatement(WORLD_SEL_NPCBOT_INFO);
+        //"SELECT guid, map, position_x, position_y, position_z, orientation FROM creature WHERE id = ?", CONNECTION_SYNCH
+        botstmt->setUInt32(0, entry);
+        infores = WorldDatabase.Query(botstmt);
+        if (!infores)
+        {
+			sLog->outError(LOG_FILTER_SERVER_LOADING, "Cannot spawn npcbot %s (id: %u), not found in `creature` table!", proto->Name.c_str(), entry);
+            continue;
+        }
+
+        field = infores->Fetch();
+        uint32 tableGuid = field[0].GetUInt32();
+        uint32 mapId = uint32(field[1].GetUInt16());
+        float pos_x = field[2].GetFloat();
+        float pos_y = field[3].GetFloat();
+        //float pos_z = field[4].GetFloat();
+        //float ori = field[5].GetFloat();
+
+        CellCoord c = Trinity::ComputeCellCoord(pos_x, pos_y);
+        GridCoord g = Trinity::ComputeGridCoord(pos_x, pos_y);
+        ASSERT(c.IsCoordValid() && "Invalid Cell coord!");
+        ASSERT(g.IsCoordValid() && "Invalid Grid coord!");
+        Map* npcbotmap = sMapMgr->CreateBaseMap(mapId);
+        npcbotmap->LoadGrid(pos_x, pos_y);
+        /*Creature* bot = npcbotmap->GetCreature(ObjectGuid(HighGuid::Unit, entry, tableGuid));
+        ABORT();
+        //debug
+        if (!bot->IsAlive())
+        {
+            bot->Respawn();
+            bot->ResetBotAI(1);
+        }*/
+
+		sLog->outDebug(LOG_FILTER_SERVER_LOADING, ">> Spawned npcbot %s (id: %u, map: %u, grid: %u, cell: %u)", proto->Name.c_str(), entry, mapId, g.GetId(), c.GetId());
+        botgrids.push_back(g.GetId());
+        ++botcounter;
+
+    } while (res->NextRow());
+
+    botgrids.unique();
+	sLog->outInfo(LOG_FILTER_SERVER_LOADING, ">> Spawned %u npcbot(s) within %lu grid(s) in %u ms", botcounter, botgrids.size(), GetMSTimeDiffToNow(botoldMSTime));
+    //end npcbot
 }
 
 void MapManager::InitializeVisibilityDistanceInfo()

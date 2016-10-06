@@ -239,6 +239,12 @@ void Totem::UnSummon(uint32 msTime)
             }
         }
     }
+    //npcbot: send SummonedCreatureDespawn()
+    if (IS_CREATURE_GUID(GetCreatorGUID()))//.IsCreature())
+        if (Unit* bot = ObjectAccessor::FindConnectedPlayer(GetCreatorGUID()))
+            if (bot->ToCreature()->GetIAmABot())
+                bot->ToCreature()->OnBotDespawn(this);
+    //end npcbot
 
     AddObjectToRemoveList();
 }

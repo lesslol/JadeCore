@@ -101,5 +101,10 @@ void WorldDatabaseConnection::DoPrepareStatements()
     PREPARE_STATEMENT(WORLD_UPD_GOLD_RATE_TEMPLATE, "UPDATE personal_rates_table SET rate_gold = ? WHERE guid = ?", CONNECTION_ASYNC);
     PREPARE_STATEMENT(WORLD_INS_RATE_TEMPLATE, "INSERT INTO personal_rates_table (guid, rate_xp, rate_honor, rate_gold) VALUES (?, ?, ?, ?)", CONNECTION_ASYNC);
     PREPARE_STATEMENT(WORLD_SEL_RATE_TEMPLATE, "SELECT guid, rate_xp, rate_honor, rate_gold FROM personal_rates_table WHERE guid = ?", CONNECTION_SYNCH);
-    PREPARE_STATEMENT(WORLD_DEL_RATE_TEMPLATE, "DELETE FROM personal_rates_table WHERE guid = ?", CONNECTION_ASYNC);
+    PREPARE_STATEMENT(WORLD_DEL_RATE_TEMPLATE, "DELETE FROM personal_rates_table WHERE guid = ?", CONNECTION_ASYNC)
+
+    // New NPCBots
+	PREPARE_STATEMENT(WORLD_SEL_NPCBOT_INFO,           "SELECT guid, map, position_x, position_y, position_z, orientation FROM creature WHERE id = ?", CONNECTION_SYNCH);
+	PREPARE_STATEMENT(WORLD_SEL_NPCBOT_PET_LEVELSTATS, "SELECT hp, mana, armor, str, agi, sta, inte, spi FROM pet_levelstats WHERE creature_entry = ? AND level = ?", CONNECTION_SYNCH);
+	PREPARE_STATEMENT(WORLD_UPD_NPCBOT_POSITION,       "UPDATE creature SET map = ?, position_x = ?, position_y = ?, position_z = ?, orientation = ? WHERE guid = ?", CONNECTION_ASYNC);
 }

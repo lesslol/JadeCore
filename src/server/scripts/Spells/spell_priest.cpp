@@ -528,7 +528,7 @@ int32 mendingCharges = 0;
 // Player of Mending - 33076
 // Heal by Player of Mending - 33110
 // Glyph of Prayer of Mending - 55685
-// Äîäåëàòü. Ïîïðîáîâàòü ÷åðåç èñ÷åçàíèå àóðû ñàìîãî ìåíäèíãà, çàïèñàòü êàêàÿ ýòî àóðà ïî ñ÷åòó è åñëè ïåðâàÿ - òî óâåëè÷èòü õèë.
+// Ã„Ã®Ã¤Ã¥Ã«Ã Ã²Ã¼. ÃÃ®Ã¯Ã°Ã®Ã¡Ã®Ã¢Ã Ã²?Ã·Ã¥Ã°Ã¥?Ã¨Ã±Ã·Ã¥Ã§Ã Ã­Ã¨?Ã Ã³Ã°Ã» Ã±Ã Ã¬Ã®Ã£Ã® Ã¬Ã¥Ã­Ã¤Ã¨Ã­Ã£Ã , Ã§Ã Ã¯Ã¨Ã±Ã Ã²Ã¼ ÃªÃ ÃªÃ Ã¿ Ã½Ã²?Ã Ã³Ã°Ã  Ã¯Ã® Ã±Ã·Ã¥Ã²??Ã¥Ã±Ã«Ã¨ Ã¯Ã¥Ã°Ã¢? - Ã²Ã® Ã³Ã¢Ã¥Ã«Ã¨Ã·Ã¨Ã²?ÃµÃ¨?
 class spell_pri_glyph_of_player_of_mending : public SpellScriptLoader
 {
     public:
@@ -2468,6 +2468,7 @@ class spell_pri_penance : public SpellScriptLoader
 
             bool Load()
             {
+                if (GetCaster() && GetCaster()->GetTypeId() == TYPEID_UNIT && GetCaster()->ToCreature()->IsNPCBot()) return true;
                 return GetCaster()->GetTypeId() == TYPEID_PLAYER;
             }
 
@@ -2514,7 +2515,9 @@ class spell_pri_penance : public SpellScriptLoader
 
             SpellCastResult CheckCast()
             {
-                Player* caster = GetCaster()->ToPlayer();
+                /*Player*/Unit* caster = GetCaster()->ToPlayer();
+                if (!caster && GetCaster()->GetTypeId() == TYPEID_UNIT && GetCaster()->ToCreature()->IsNPCBot())
+                    caster = /*(Player*)*/GetCaster();
                 if (Unit* target = GetExplTargetUnit())
                     if (!caster->IsFriendlyTo(target) && !caster->IsValidAttackTarget(target))
                         return SPELL_FAILED_BAD_TARGETS;

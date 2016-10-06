@@ -499,7 +499,12 @@ public:
     bool IsSingleTargetWith(SpellInfo const* spellInfo) const;
     bool IsAuraExclusiveBySpecificWith(SpellInfo const* spellInfo) const;
     bool IsAuraExclusiveBySpecificPerCasterWith(SpellInfo const* spellInfo) const;
-
+	//npcbot
+	bool SpellInfo::IsCooldownStartedOnEvent() const
+	{
+		return Attributes & SPELL_ATTR0_DISABLED_WHILE_ACTIVE || (CategoryFlags & SPELL_CATEGORY_FLAG_COOLDOWN_STARTS_ON_EVENT);
+	}
+	//end npcbot
     inline bool HasAttribute(SpellAttr0 attribute) const { return Attributes & attribute; }
     inline bool HasAttribute(SpellAttr1 attribute) const { return AttributesEx & attribute; }
     inline bool HasAttribute(SpellAttr2 attribute) const { return AttributesEx2 & attribute; }
@@ -520,6 +525,9 @@ public:
     SpellCastResult CheckVehicle(Unit const* caster) const;
     bool CheckTargetCreatureType(Unit const* target) const;
 
+	//npcbot
+	uint32 GetCategory() const { return Category;  }
+	//end npcbot
     SpellSchoolMask GetSchoolMask() const;
     uint32 GetAllEffectsMechanicMask() const;
     uint32 GetEffectMechanicMask(uint8 effIndex) const;

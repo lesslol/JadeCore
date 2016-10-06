@@ -2182,6 +2182,9 @@ struct SpellRadiusEntry
     //uint32    unk_1;                                      // 2    always 0
     float     radiusFriend;                                 // 3
     //float    unk_2                                        // 4
+	//npcbot
+	float RadiusMax() const { return std::max(radiusHostile, radiusFriend); }
+	//end npcbot
 };
 
 // @author Selenium: todo for 5.4 valid

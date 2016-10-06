@@ -331,6 +331,9 @@ class Group
 
         void ChangeMembersGroup(uint64 guid, uint8 group);
         void ChangeMembersGroup(Player* player, uint8 group);
+		//npcbot
+		uint64 const* GetTargetIcons(void) const { return m_targetIcons; }
+		//end npcbot
         void SetTargetIcon(uint8 id, ObjectGuid whoGuid, ObjectGuid targetGuid);
         void SetGroupMemberFlag(uint64 guid, bool apply, GroupMemberFlags flag);
         void setGroupMemberRole(uint64 guid, uint32 role);

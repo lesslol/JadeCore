@@ -87,7 +87,22 @@ struct GameTele
 };
 
 typedef UNORDERED_MAP<uint32, GameTele > GameTeleContainer;
+//npcbot
+#define MAX_CREATURE_OUTFIT_DISPLAYS 11
+struct CreatureOutfit
+{
+    uint8 race;
+    uint8 gender;
+    uint8 face;
+    uint8 skin;
+    uint8 hair;
+    uint8 facialhair;
+    uint8 haircolor;
+    uint32 outfit[MAX_CREATURE_OUTFIT_DISPLAYS];
+};
 
+typedef std::unordered_map<uint32, CreatureOutfit > CreatureOutfitContainer;
+//end npcbot
 enum ScriptsType
 {
     SCRIPTS_FIRST = 1,
@@ -986,7 +1001,10 @@ class ObjectMgr
         void LoadQuestPOI();
 
         void LoadNPCSpellClickSpells();
-
+		//npcbot
+        void LoadCreatureOutfits();
+        CreatureOutfitContainer const& GetCreatureOutfitMap() const { return _creatureOutfitStore; }
+		//end npcbot
         void LoadGameTele();
 
         void LoadGossipMenu();
@@ -1393,7 +1411,9 @@ class ObjectMgr
 
         ResearchZoneMap _researchZoneMap;
         ResearchLootVector _researchLoot;
-
+        //npcbot
+        CreatureOutfitContainer _creatureOutfitStore;
+		//end npcbot
     private:
         void LoadScripts(ScriptsType type);
         void CheckScripts(ScriptsType type, std::set<int32>& ids);
