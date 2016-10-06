@@ -9,3 +9,6 @@ INSERT INTO playercreateinfo_spell(race, class, Spell, Note)VALUES
 (22, 8, 68975, "Viciousness"),
 (22, 9, 68975, "Viciousness"),
 (22, 11, 68975, "Viciousness");
+
+-- Fix Force of Nature Crash server
+DELETE FROM `spell_script_names` WHERE `spell_id`=33831 AND `ScriptName`="spell_dru_force_of_nature";
