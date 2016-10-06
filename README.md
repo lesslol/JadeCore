@@ -95,6 +95,7 @@ This project is brought to you thanks to:
 - [JadeCore developers and contributors](https://github.com/JadeEmu/JadeCore_547/graphs/contributors)
 - [TrinityCore developers and contributors](https://github.com/TrinityCore/TrinityCore/blob/3.3.5/THANKS)
 - [MaNGOS, ScriptDev2 and UDB developers and contributors](https://github.com/cmangos/mangos-wotlk/blob/master/AUTHORS.md)
+- [SkyFire developers and contributors](https://github.com/ProjectSkyfire/SkyFire.548/blob/master/THANKS.md)
 
 
 ## Links
