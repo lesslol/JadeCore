@@ -62,10 +62,7 @@ Pandaria Zones:
 
 Pandaria Dungeons:
 
--- Gate of the Setting Sun
--- Mogu'shan Palace
 -- Scholomance
--- Stormstout Brewery
 
 Pandaria Raids:
 

@@ -23,6 +23,7 @@
 #include "SharedDefines.h"
 #include "ObjectMgr.h"
 #include "SpellInfo.h"
+#include "PathGenerator.h"
 
 class Unit;
 class Player;
@@ -775,6 +776,8 @@ class Spell
 
         bool m_skipCheck;
         uint32 m_auraScaleMask;
+        PathGenerator m_preGeneratedPath;
+
 
         typedef std::map<uint32, SpellLogHelper> LogHelperMap;
         LogHelperMap m_effectExecuteData;

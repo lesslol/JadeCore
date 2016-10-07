@@ -300,9 +300,10 @@ inline void LoadDBC(uint32& availableDbcLocales, StoreProblemList& errors, DBCSt
         // Sort problematic dbc to (1) non compatible and (2) non-existed
         if (FILE* f = fopen(dbcFilename.c_str(), "rb"))
         {
-            char buf[100];
-            snprintf(buf, 100, " (exists, but has %u fields instead of " SIZEFMTD ") Possible wrong client version.", storage.GetFieldCount(), strlen(storage.GetFormat()));
-            errors.push_back(dbcFilename + buf);
+            std::ostringstream stream;
+            stream << dbcFilename << " exists, and has " << storage.GetFieldCount() << " field(s) (expected " << strlen(storage.GetFormat()) << "). Extracted file might be from wrong client version or a database-update has been forgotten.";
+            std::string buf = stream.str();
+            errors.push_back(buf);
             fclose(f);
         }
         else
