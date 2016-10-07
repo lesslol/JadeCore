@@ -100,4 +100,4 @@ This project is brought to you thanks to:
 
 ## Links
 
-[Forums](#)
+[Forums](https://jadecore.tk)
