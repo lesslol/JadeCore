@@ -138,8 +138,7 @@ public:
     {
         SPELL_SUMMON_RISEN_DEAD  = 93447,
         SPELL_DIRT_EXPLOSION     = 89199,
-        SPELL_CHURNING_DIRT      = 92788,
-        SPELL_VISUAL             = 89199
+        SPELL_CHURNING_DIRT      = 92788
     };
 
     struct npc_deathknell_grave_targetAI : public ScriptedAI
@@ -181,7 +180,6 @@ public:
                 case 1:
                     me->AddAura(SPELL_DIRT_EXPLOSION, me);
                     DoCast(me, SPELL_CHURNING_DIRT);
-                    DoCast(me, SPELL_VISUAL);
                     m_phase = 2;
                     break;
                 case 2:
