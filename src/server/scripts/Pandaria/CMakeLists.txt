@@ -61,7 +61,7 @@ set(scripts_STAT_SRCS
   Pandaria/MogushanVault/boss_elegon.cpp
   Pandaria/MogushanVault/boss_will_of_emperor.cpp
 
-Pandaria/HeartOfFear/heart_of_fear.cpp
+  Pandaria/HeartOfFear/heart_of_fear.cpp
   Pandaria/HeartOfFear/Imperial_Zorlok.cpp
   Pandaria/HeartOfFear/Blade_Lord_Tayak.cpp  
   Pandaria/HeartOfFear/Wind_Lord_Meljarak.cpp
@@ -111,7 +111,8 @@ Pandaria/HeartOfFear/heart_of_fear.cpp
   Pandaria/SiegeOfOrgrimmar/siege_of_orgrimmar.h
   Pandaria/SiegeOfOrgrimmar/siege_of_orgrimmar.cpp
   Pandaria/SiegeOfOrgrimmar/instance_siege_of_orgrimmar.cpp
-  Pandaria/SiegeOfOrgrimmar/boss_fallen_protectors.cpp	
+  Pandaria/SiegeOfOrgrimmar/boss_fallen_protectors.cpp
+  Pandaria/SiegeOfOrgrimmar/boss_immersius.cpp
   Pandaria/SiegeOfOrgrimmar/boss_norushen.cpp
   Pandaria/SiegeOfOrgrimmar/boss_sha_of_pride.cpp
   Pandaria/SiegeOfOrgrimmar/boss_galakras.cpp
