@@ -2211,10 +2211,10 @@ void Map::AddToActive(Creature* c)
         GridCoord p = JadeCore::ComputeGridCoord(x, y);
         if (getNGrid(p.x_coord, p.y_coord))
             getNGrid(p.x_coord, p.y_coord)->incUnloadActiveLock();
-        //bot
+        //npcbot
         else if (c->GetIAmABot())
             EnsureGridLoadedForActiveObject(Cell(Trinity::ComputeCellCoord(c->GetPositionX(), c->GetPositionY())), c);
-        //end bot
+        //end npcbot
         else
         {
             GridCoord p2 = JadeCore::ComputeGridCoord(c->GetPositionX(), c->GetPositionY());
@@ -2236,10 +2236,10 @@ void Map::RemoveFromActive(Creature* c)
         GridCoord p = JadeCore::ComputeGridCoord(x, y);
         if (getNGrid(p.x_coord, p.y_coord))
             getNGrid(p.x_coord, p.y_coord)->decUnloadActiveLock();
-        //bot
+        //npcbot
         else if (c->GetIAmABot())
             EnsureGridLoaded(Cell(Trinity::ComputeCellCoord(c->GetPositionX(), c->GetPositionY())));
-        //end bot
+        //end npcbot
         else
         {
             GridCoord p2 = JadeCore::ComputeGridCoord(c->GetPositionX(), c->GetPositionY());

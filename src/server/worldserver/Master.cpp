@@ -339,8 +339,8 @@ int Master::Run()
     //sLog->outInfo(LOG_FILTER_WORLDSERVER, "              ╚██████╗╚██████╔╝██║  ██║███████╗");             
     //sLog->outInfo(LOG_FILTER_WORLDSERVER, "               ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝"); 
     sLog->outInfo(LOG_FILTER_WORLDSERVER, "   ");                                                        
-    sLog->outInfo(LOG_FILTER_WORLDSERVER, "  	JadeCore 2016(c) Open-Sourced Game Emulation"); 
-    sLog->outInfo(LOG_FILTER_WORLDSERVER, "		       https://www.jadecore.tk ");
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "      JadeCore 2016(c) Open-Sourced Game Emulation"); 
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, "               https://www.jadecore.tk ");
     sLog->outInfo(LOG_FILTER_WORLDSERVER, "");                                                   
 
     /// worldserver PID file creation
