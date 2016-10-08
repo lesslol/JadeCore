@@ -5,7 +5,6 @@
 | [![JadeCore_5.4.7](https://travis-ci.org/JadeEmu/JadeCore_547.svg?branch=master)](https://travis-ci.org/JadeEmu/JadeCore_547/builds)
 | [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/JadeEmu/JadeCore_547.svg)](http://isitmaintained.com/project/JadeEmu/JadeCore_547 "Average time to resolve an issue")
 | [![Percentage of issues still open](http://isitmaintained.com/badge/open/JadeEmu/JadeCore_547.svg)](http://isitmaintained.com/project/JadeEmu/JadeCore_547 "Percentage of issues still open")
-| [![Coverity Scan Build Status](https://scan.coverity.com/projects/10344/badge.svg)]("https://scan.coverity.com/projects/jadecore_547)
 
 #Project General Information
 
@@ -91,7 +90,7 @@ Read file [COPYING](#)
 
 This project is brought to you thanks to:
 
-![ach_gjqbctw6](https://cloud.githubusercontent.com/assets/812439/18919030/66919942-85a5-11e6-8c7f-c2078be9854f.jpg)
+![ach_oc0xo42y](https://cloud.githubusercontent.com/assets/812439/19197100/ce6f70d0-8cc0-11e6-9ceb-b0340244cbd7.jpg)
 
 - [JadeCore developers and contributors](https://github.com/JadeEmu/JadeCore_547/graphs/contributors)
 - [TrinityCore developers and contributors](https://github.com/TrinityCore/TrinityCore/blob/3.3.5/THANKS)
@@ -101,4 +100,4 @@ This project is brought to you thanks to:
 
 ## Links
 
-[Forums](#)
+[Forums](https://jadecore.tk)

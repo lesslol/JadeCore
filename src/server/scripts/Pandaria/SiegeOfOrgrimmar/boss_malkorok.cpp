@@ -1,21 +1,3 @@
-/*
-* Copyright (C) 2016-20XX JadeCore <https://jadecore.tk/>
-* Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
-*
-* This program is free software; you can redistribute it and/or modify it
-* under the terms of the GNU General Public License as published by the
-* Free Software Foundation; either version 2 of the License, or (at your
-* option) any later version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-* FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-* more details.
-*
-* You should have received a copy of the GNU General Public License along
-* with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "siege_of_orgrimmar.h"
@@ -36,9 +18,7 @@ enum eSpells
 	SPELL_BREATH_DAMAGE      = 142816,
 	SPELL_DISPLACED_ENERGY_D = 142928,
 	SPELL_BLOOD_RAGE_DAMAGE  = 142890,
-	SPELL_ANCIENT_BARRIER_L  = 142864,
-	SPELL_ANCIENT_BARRIER_M  = 142865,
-	SPELL_ANCIENT_BARRIER_H  = 142866,
+	SPELL_ANCIENT_BARRIER    = 142864,
 	SPELL_ANCIENT_MIASMA_VIS = 143018,
 	SPELL_ANCIENT_MIASMA_DMG = 142906,
 };
@@ -76,17 +56,17 @@ enum eCreatures
 
 enum eTexts
 {
-	MALKOROK_INTRO             = 1,
-	MALKOROK_AGGRO             = 2,
-	MALKOROK_ARCING_SMASH      = 3, // 0, 1 or 2 in database
-	MALKOROK_BREATH_OF_YSHAARJ = 6, // 0 or 1 in database
-	MALKOROK_BLOOD_RAGE        = 7,
-	MALKOROK_BERSERK           = 9,
-	MALKOROK_WIPE              = 10,
-	MALKOROK_DEATH             = 11,
+	MALKOROK_INTRO					= 1,
+	MALKOROK_AGGRO					= 2,
+	MALKOROK_ARCING_SMASH			= 3, // 0, 1 or 2 in database
+	MALKOROK_BREATH_OF_YSHAARJ		= 6, // 0 or 1 in database
+	MALKOROK_BLOOD_RAGE_1			= 7,
+	MALKOROK_BLOOD_RAGE_2			= 8,
+	MALKOROK_BERSERK				= 9,
+	MALKOROK_WIPE					= 10,
+	MALKOROK_DEATH					= 11,
 };
 
-// 71454 - Malkorok
 class boss_malkorok : public CreatureScript
 {
 	public:
@@ -137,9 +117,9 @@ class boss_malkorok : public CreatureScript
 				me->SummonCreature(CREATURE_ANCIENT_MIASMA, homeX, homeY, homeZ, 5.0f, TEMPSUMMON_MANUAL_DESPAWN);
 
 				events.SetPhase(PHASE_ONE);
+				events.ScheduleEvent(EVENT_SEISMIC_SLAM, urand(13000, 17000), 0, PHASE_ONE);
 				events.ScheduleEvent(EVENT_ARCING_SMASH_FIRST, 15000, 0, PHASE_ONE);
-				events.ScheduleEvent(EVENT_SEISMIC_SLAM, 16000, 0, PHASE_ONE); // 1 second after Arcing Smash
-				events.ScheduleEvent(EVENT_IMPLODING_ENERGY, 17000, 0, PHASE_ONE); // 2 seconds after Arcing Smash
+				events.ScheduleEvent(EVENT_IMPLODING_ENERGY, urand(13000, 17000), 0, PHASE_ONE);
 				events.ScheduleEvent(EVENT_PHASE_TWO, 120000, 0, PHASE_ONE);
 			}
 
@@ -159,10 +139,6 @@ class boss_malkorok : public CreatureScript
 					case EVENT_PHASE_ONE:
 					{
 						DoCast(me, SPELL_RELENTLESS_ASSAULT);
-						float homeX = me->GetHomePosition().GetPositionX();
-						float homeY = me->GetHomePosition().GetPositionY();
-						float homeZ = me->GetHomePosition().GetPositionZ();
-						me->SummonCreature(CREATURE_ANCIENT_MIASMA, homeX, homeY, homeZ, 5.0f, TEMPSUMMON_MANUAL_DESPAWN);
 
 						events.SetPhase(PHASE_ONE);
 						events.ScheduleEvent(EVENT_SEISMIC_SLAM, urand(13000, 17000), 0, PHASE_ONE);
@@ -279,15 +255,7 @@ class boss_malkorok : public CreatureScript
 							DoCast(target, SPELL_SEISMIC_SLAM);
 						}
 
-						events.ScheduleEvent(EVENT_SEISMIC_SLAM, 16000, 0, PHASE_ONE);
-						break;
-					}
-
-					case EVENT_IMPLODING_ENERGY:
-					{
-						DoCast(SPELL_IMPLODING_ENERGY);
-
-						events.ScheduleEvent(EVENT_IMPLODING_ENERGY, 17000, 0, PHASE_ONE);
+						events.ScheduleEvent(EVENT_SEISMIC_SLAM, urand(13000, 17000), 0, PHASE_ONE);
 						break;
 					}
 
@@ -295,17 +263,6 @@ class boss_malkorok : public CreatureScript
 					{
 						events.Reset();
 						events.SetPhase(PHASE_TWO);
-						me->DespawnCreaturesInArea(CREATURE_ANCIENT_MIASMA);
-						std::list<Player*> pl_list;
-						me->GetPlayerListInGrid(pl_list, 100.0f);
-						for (auto itr : pl_list)
-						{
-							if (itr->HasAura(SPELL_ANCIENT_MIASMA_DMG))
-								itr->RemoveAura(SPELL_ANCIENT_MIASMA_DMG);
-
-							if (itr->HasAura(SPELL_ANCIENT_MIASMA))
-								itr->RemoveAura(SPELL_ANCIENT_MIASMA);
-						}
 
 						DoCast(SPELL_BLOOD_RAGE);
 						events.ScheduleEvent(EVENT_BLOOD_RAGE, 1000, 0, PHASE_TWO);
@@ -344,7 +301,6 @@ class boss_malkorok : public CreatureScript
 		}
 };
 
-// 71513 - Ancient Miasma
 class mob_ancient_miasma : public CreatureScript
 {
 	public:
@@ -358,23 +314,12 @@ class mob_ancient_miasma : public CreatureScript
 			}
 
 			InstanceScript* pInstance;
-			EventMap events;
 
 			void Reset() override
 			{
 				me->SetInCombatWithZone();
 				DoCast(SPELL_ANCIENT_MIASMA_VIS);
-				std::list<Player*> pl_list;
-				me->GetPlayerListInGrid(pl_list, 100.0f);
-				for (auto itr : pl_list)
-				{
-					if (!itr->HasAura(SPELL_ANCIENT_MIASMA_DMG))
-						me->AddAura(SPELL_ANCIENT_MIASMA_DMG, itr);
-
-					if (!itr->HasAura(SPELL_ANCIENT_MIASMA))
-						me->AddAura(SPELL_ANCIENT_MIASMA, itr);
-				}
-
+				DoCast(SPELL_ANCIENT_MIASMA_DMG);
 				me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_NOT_SELECTABLE);
 				me->AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
 			}
@@ -386,8 +331,6 @@ class mob_ancient_miasma : public CreatureScript
 		}
 };
 
-
-// 142913 - Displaced Energy
 class spell_displaced_energy : public SpellScriptLoader
 {
 	public:
@@ -415,7 +358,6 @@ class spell_displaced_energy : public SpellScriptLoader
 		}
 };
 
-// 142890 - Blood Rage
 class spell_blood_rage : public SpellScriptLoader
 {
 	public:
@@ -457,7 +399,6 @@ class spell_blood_rage : public SpellScriptLoader
 		}
 };
 
-// 142861 - Ancient Miasma
 class spell_ancient_barrier : public SpellScriptLoader
 {
 	public:
@@ -467,135 +408,20 @@ class spell_ancient_barrier : public SpellScriptLoader
 		{
 			PrepareAuraScript(spell_ancient_barrier_AuraScript);
 
-			void OnUpdate(uint32 diff)
+			void HandleDummy(AuraEffectPtr /*aurEff*/, DamageInfo & dmgInfo, uint32 & absorbAmount)
 			{
 				if (Unit* caster = GetCaster())
 					if (Unit* player = GetTarget())
 					{
 						int32 absorb = player->GetHealingTakenInPastSecs(1);
-						int32 health = player->GetMaxHealth();
-
-						if (!(player->HasAura(SPELL_ANCIENT_BARRIER_L)) && !(player->HasAura(SPELL_ANCIENT_BARRIER_M)) && !(player->HasAura(SPELL_ANCIENT_BARRIER_H)))
-							caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_L, &absorb, NULL, NULL, true);
-
-						int32 remainingAbsorb;
-						int32 newAbsorb;
-						uint32 casterGuid = caster->GetGUID();
-
-						if (player->HasAura(SPELL_ANCIENT_BARRIER_L))
-						{
-							remainingAbsorb = player->GetRemainingPeriodicAmount(casterGuid, SPELL_ANCIENT_BARRIER_L, SPELL_AURA_SCHOOL_ABSORB);
-							newAbsorb = remainingAbsorb+absorb;
-
-							// If the remaining absorb + the new absorb is between 15% and 85% health cast visual for medium strenght shield
-							if (newAbsorb >= health * 15 / 100 && newAbsorb < health * 85 / 100)
-							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_L); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_M, &newAbsorb, NULL, NULL, true);
-							}
-
-							// If the remaining absorb + the new absorb is lower than 15% health cast visual for low strenght shield
-							if (newAbsorb < health * 15 / 100 && newAbsorb >= 0)
-							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_L); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_L, &newAbsorb, NULL, NULL, true);
-							}
-
-							// If the remaining absorb + the new absorb is lower or equal to max health and bigger than 85% health cast visual for high strenght shield
-							if (newAbsorb >= health * 85 / 100 && newAbsorb <= health)
-							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_L); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &newAbsorb, NULL, NULL, true);
-							}
-
-							// If the remaining absorb + the new absorb is bigger than max health set it to be equal to the max health
-							if (newAbsorb > health)
-							{
-								newAbsorb = health;
-
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_L); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &newAbsorb, NULL, NULL, true);
-							}
-
-						}
-
-						if (player->HasAura(SPELL_ANCIENT_BARRIER_M))
-						{
-							remainingAbsorb = player->GetRemainingPeriodicAmount(casterGuid, SPELL_ANCIENT_BARRIER_M, SPELL_AURA_SCHOOL_ABSORB);
-							newAbsorb = remainingAbsorb + absorb;
-
-							// If the remaining absorb + the new absorb is between 15% and 85% health cast visual for medium strenght shield
-							if (newAbsorb >= health * 15 / 100 && newAbsorb < health * 85 / 100)
-							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_M); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_M, &newAbsorb, NULL, NULL, true);
-							}
-
-							// If the remaining absorb + the new absorb is lower than 15% health cast visual for low strenght shield
-							if (newAbsorb < health * 15 / 100 && newAbsorb >= 0)
-							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_M); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_L, &newAbsorb, NULL, NULL, true);
-							}
-
-							// If the remaining absorb + the new absorb is lower or equal to max health and bigger than 85% health cast visual for high strenght shield
-							if (newAbsorb >= health * 85 / 100 && newAbsorb <= health)
-							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_M); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &newAbsorb, NULL, NULL, true);
-							}
-
-							// If the remaining absorb + the new absorb is bigger than max health set it to be equal to the max health
-							if (newAbsorb > health)
-							{
-								newAbsorb = health;
-
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_M); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &newAbsorb, NULL, NULL, true);
-							}
-						}
-
-						if (player->HasAura(SPELL_ANCIENT_BARRIER_H))
-						{
-							remainingAbsorb = player->GetRemainingPeriodicAmount(casterGuid, SPELL_ANCIENT_BARRIER_H, SPELL_AURA_SCHOOL_ABSORB);
-							newAbsorb = remainingAbsorb + absorb;
-
-							// If the remaining absorb + the new absorb is between 15% and 85% health cast visual for medium strenght shield
-							if (newAbsorb >= health * 15 / 100 && newAbsorb < health * 85 / 100)
-							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_H); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_M, &newAbsorb, NULL, NULL, true);
-							}
-
-							// If the remaining absorb + the new absorb is lower than 15% health cast visual for low strenght shield
-							if (newAbsorb < health * 15 / 100 && newAbsorb >= 0)
-							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_H); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_L, &newAbsorb, NULL, NULL, true);
-							}
-
-							// If the remaining absorb + the new absorb is lower or equal to max health and bigger than 85% health cast visual for high strenght shield
-							if (newAbsorb >= health * 85 / 100 && newAbsorb <= health)
-							{
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_H); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &newAbsorb, NULL, NULL, true);
-							}
-
-							// If the remaining absorb + the new absorb is bigger than max health set it to be equal to the max health
-							if (newAbsorb > health)
-							{
-								newAbsorb = health;
-
-								player->RemoveAura(SPELL_ANCIENT_BARRIER_H); // prevents buggs
-								caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER_H, &newAbsorb, NULL, NULL, true);
-							}
-						}
+						absorb = absorb + absorb;
+						caster->CastCustomSpell(player, SPELL_ANCIENT_BARRIER, &absorb, NULL, NULL, true);
 					}
 			}
 
 			void Register()
 			{
-				OnAuraUpdate += AuraUpdateFn(spell_ancient_barrier_AuraScript::OnUpdate);
+				OnEffectAbsorb += AuraEffectAbsorbFn(spell_ancient_barrier_AuraScript::HandleDummy, EFFECT_0);
 			}
 		};
 
@@ -605,7 +431,6 @@ class spell_ancient_barrier : public SpellScriptLoader
 		}
 };
 
-// 142842 - Breath of Y'shaarj
 class spell_breath_of_yshaarj : public SpellScriptLoader
 {
 	public:
@@ -645,8 +470,6 @@ class spell_breath_of_yshaarj : public SpellScriptLoader
 void AddSC_boss_malkorok()
 {
 	new boss_malkorok();
-
-	new mob_ancient_miasma();
 
 	new spell_displaced_energy();
 	new spell_blood_rage();

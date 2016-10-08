@@ -939,15 +939,15 @@ public:
             InitSpellMap(KILL_SHOT_1);
   /*Talent*/lvl >= 60 ? InitSpellMap(EXPLOSIVE_SHOT_1) : RemoveSpell(EXPLOSIVE_SHOT_1);
             InitSpellMap(MULTISHOT_1);
-            InitSpellMap(VOLLEY_1);
-  /*Talent*/lvl >= 20 ? InitSpellMap(SCATTER_SHOT_1) : RemoveSpell(SCATTER_SHOT_1);
+            //InitSpellMap(VOLLEY_1); // No SpellInfo
+  /*Talent*///lvl >= 20 ? InitSpellMap(SCATTER_SHOT_1) : RemoveSpell(SCATTER_SHOT_1); // No SpellInfo
             InitSpellMap(CONCUSSIVE_SHOT_1);
             InitSpellMap(DISTRACTING_SHOT_1);
-            InitSpellMap(SCORPID_STING_1);
+            //InitSpellMap(SCORPID_STING_1); // No SpellInfo
             //InitSpellMap(VIPER_STING_1);
             InitSpellMap(RAPID_FIRE_1);
-            InitSpellMap(WING_CLIP_1);
-            InitSpellMap(RAPTOR_STRIKE_1);
+            //InitSpellMap(WING_CLIP_1); // No SpellInfo
+            //InitSpellMap(RAPTOR_STRIKE_1); // No SpellInfo
             InitSpellMap(DISENGAGE_1);
             InitSpellMap(FROST_TRAP_1);
             InitSpellMap(FREEZING_ARROW_1);
@@ -967,22 +967,22 @@ public:
         {
             uint8 level = master->getLevel();
 
-            RefreshAura(RAPID_KILLING, level >= 20 ? 1 : 0);
+            //RefreshAura(RAPID_KILLING, level >= 20 ? 1 : 0);
             RefreshAura(CONCUSSIVE_BARRAGE, level >= 30 ? 1 : 0);
             RefreshAura(PIERCING_SHOTS, level >= 40 ? 1 : 0);
             RefreshAura(TRUESHOT_AURA, level >= 40 ? 1 : 0);
             RefreshAura(RAPID_RECUPERATION, level >= 45 ? 1 : 0);
-            RefreshAura(MASTER_MARKSMAN, level >= 45 ? 1 : 0);
-            RefreshAura(WILD_QUIVER, level >= 70 ? 3 : level >= 60 ? 2 : level >= 50 ? 1 : 0);
+            //RefreshAura(MASTER_MARKSMAN, level >= 45 ? 1 : 0);
+            //RefreshAura(WILD_QUIVER, level >= 70 ? 3 : level >= 60 ? 2 : level >= 50 ? 1 : 0);
             RefreshAura(SUREFOOTED, level >= 15 ? 1 : 0);
-            RefreshAura(ENTRAPMENT, level >= 15 ? 1 : 0);
+            //RefreshAura(ENTRAPMENT, level >= 15 ? 1 : 0);
             RefreshAura(MASTER_TACTICIAN5, level >= 67 ? 3 : level >= 58 ? 2 : level >= 50 ? 1 : 0);
             RefreshAura(MASTER_TACTICIAN4, level >= 49 && level < 50 ? 1 : 0);
             RefreshAura(MASTER_TACTICIAN3, level >= 48 && level < 49 ? 1 : 0);
             RefreshAura(MASTER_TACTICIAN2, level >= 47 && level < 48 ? 1 : 0);
             RefreshAura(MASTER_TACTICIAN1, level >= 46 && level < 47 ? 1 : 0);
-            RefreshAura(NOXIOUS_STINGS, level >= 45 ? 1 : 0);
-            RefreshAura(HUNTING_PARTY, level >= 55 ? 1 : 0);
+            //RefreshAura(NOXIOUS_STINGS, level >= 45 ? 1 : 0);
+            //RefreshAura(HUNTING_PARTY, level >= 55 ? 1 : 0);
         }
 
         bool CanUseManually(uint32 basespell) const
@@ -1019,15 +1019,15 @@ public:
             KILL_SHOT_1                         = 53351,
             EXPLOSIVE_SHOT_1                    = 53301,
             MULTISHOT_1                         = 2643,
-            VOLLEY_1                            = 1510,
+            VOLLEY_1                            = 1510, // 194386 (6.2)
             SCATTER_SHOT_1                      = 1991,
             CONCUSSIVE_SHOT_1                   = 5116,
             DISTRACTING_SHOT_1                  = 20736,
             SCORPID_STING_1                     = 3043,
             //VIPER_STING_1                       = 3034,
             RAPID_FIRE_1                        = 3045,
-            WING_CLIP_1                         = 2974,
-            RAPTOR_STRIKE_1                     = 2973,
+            WING_CLIP_1                         = 2974, //195645 (6.2)
+            RAPTOR_STRIKE_1                     = 2973, //186270 (6.2)
             DISENGAGE_1                         = 781,
             FROST_TRAP_1                        = 13809,
             FREEZING_ARROW_1                    = 60192,

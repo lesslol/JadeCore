@@ -313,15 +313,15 @@ public:
 			handler->SendSysMessage("Looks up npcbots by #class, and returns all matches with their creature ID's.");
 			handler->PSendSysMessage("BOT_CLASS_WARRIOR = %u", uint32(BOT_CLASS_WARRIOR));
 			handler->PSendSysMessage("BOT_CLASS_PALADIN = %u", uint32(BOT_CLASS_PALADIN));
-			handler->PSendSysMessage("BOT_CLASS_HUNTER = %u", uint32(BOT_CLASS_HUNTER));
+			//handler->PSendSysMessage("BOT_CLASS_HUNTER = %u", uint32(BOT_CLASS_HUNTER));
 			handler->PSendSysMessage("BOT_CLASS_ROGUE = %u", uint32(BOT_CLASS_ROGUE));
 			handler->PSendSysMessage("BOT_CLASS_PRIEST = %u", uint32(BOT_CLASS_PRIEST));
-			handler->PSendSysMessage("BOT_CLASS_DEATH_KNIGHT = %u", uint32(BOT_CLASS_DEATH_KNIGHT));
+			//handler->PSendSysMessage("BOT_CLASS_DEATH_KNIGHT = %u", uint32(BOT_CLASS_DEATH_KNIGHT));
 			handler->PSendSysMessage("BOT_CLASS_SHAMAN = %u", uint32(BOT_CLASS_SHAMAN));
 			handler->PSendSysMessage("BOT_CLASS_MAGE = %u", uint32(BOT_CLASS_MAGE));
 			handler->PSendSysMessage("BOT_CLASS_WARLOCK = %u", uint32(BOT_CLASS_WARLOCK));
 			handler->PSendSysMessage("BOT_CLASS_DRUID = %u", uint32(BOT_CLASS_DRUID));
-			handler->PSendSysMessage("BOT_CLASS_BM = %u", uint32(BOT_CLASS_BM));
+			//handler->PSendSysMessage("BOT_CLASS_BM = %u", uint32(BOT_CLASS_BM));
 			handler->SetSentErrorMessage(true);
 			return false;
 		}
@@ -332,7 +332,7 @@ public:
 		if (classstr)
 			botclass = (uint8)atoi(classstr);
 
-		if (botclass == BOT_CLASS_NONE || botclass >= BOT_CLASS_END)
+		if (botclass == BOT_CLASS_NONE || botclass >= BOT_CLASS_BM)//BOT_CLASS_END)
 		{
 			handler->PSendSysMessage("Unknown bot class %u", uint32(botclass));
 			handler->SetSentErrorMessage(true);
@@ -478,15 +478,15 @@ public:
 
 		//!(m_class == CLASS_WARRIOR || m_class == CLASS_ROGUE || m_class == CLASS_PALADIN || m_class == CLASS_DEATH_KNIGHT || m_class == CLASS_SHAMAN || m_class == BOT_CLASS_BM) roleMask |= BOT_ROLE_RANGED;
 		//  m_class == CLASS_PRIEST  || m_class == CLASS_DRUID || m_class == CLASS_SHAMAN  || m_class == CLASS_PALADIN) roleMask |= BOT_ROLE_HEAL;
-		//switch (creInfo->trainer_class)
-		//{
-		//case CLASS_HUNTER:
+		switch (creInfo->trainer_class)
+		{
 		//case CLASS_MAGE:
-		//case CLASS_MONK:
-		//	handler->PSendSysMessage("creature %u(%u) is not allowed [not implemented]!", id, creInfo->trainer_class);
-		//	handler->SetSentErrorMessage(true);
-		//	return false;
-		//}
+		case CLASS_HUNTER:
+		case CLASS_DEATH_KNIGHT:
+			handler->PSendSysMessage("creature %u(%u) is not allowed [not implemented]!", id, creInfo->trainer_class);
+			handler->SetSentErrorMessage(true);
+			return false;
+		}
 
 		PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_NPCBOT_OWNER);
 		//"SELECT owner FROM character_npcbot WHERE entry = ?", CONNECTION_SYNCH

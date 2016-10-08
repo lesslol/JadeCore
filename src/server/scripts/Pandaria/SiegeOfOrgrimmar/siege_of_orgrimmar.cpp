@@ -1,27 +1,18 @@
-/*
-* Copyright (C) 2016-20XX JadeCore <https://jadecore.tk/>
-* Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
-*
-* This program is free software; you can redistribute it and/or modify it
-* under the terms of the GNU General Public License as published by the
-* Free Software Foundation; either version 2 of the License, or (at your
-* option) any later version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-* FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-* more details.
-*
-* You should have received a copy of the GNU General Public License along
-* with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #include "GameObjectAI.h"
 #include "ScriptMgr.h"
 #include "Group.h"
 #include "ScriptedCreature.h"
 #include "siege_of_orgrimmar.h"  
 #include "ScriptedEscortAI.h"
+
+enum VisualSpells
+{
+    SPELL_BUBBLE_STREAM = 147333,
+};
+enum SOOtriggers
+{
+    TRIGGER_BUBBLE = 2314235,
+};
 
 Position position_fishes[10] =
 {
@@ -77,270 +68,171 @@ enum Talks
     TALK_12 = 12, // Can it be?... Oh no.. no! NO! (38131)
     TALK_13 = 13, // The Golden Lotus?! but.. the pledged their life to defend this place!
 };
-enum eEvents
+enum eventsos
 {
-    EVENT_TALK_1              = 20,
-    EVENT_TALK_2              = 22,
-    EVENT_TALK_3              = 23,
-    EVENT_TALK_4              = 24,
-    EVENT_TALK_5              = 25,
-    EVENT_TALK_6              = 26,
-    EVENT_TALK_7              = 27,
-    EVENT_TALK_8              = 28,
-    EVENT_TALK_9              = 29,
-	EVENT_FPT_WATERBOLT       = 30,
-	EVENT_FPT_CORRUPTED_WATER = 31,
-	EVENT_AD_RUSHING_WATERS   = 32,
+    EVENT_TALK_1 = 20,
+    EVENT_TALK_2 = 22,
+    EVENT_TALK_3 = 23,
+    EVENT_TALK_4 = 24,
+    EVENT_TALK_5 = 25,
+    EVENT_TALK_6 = 26,
+    EVENT_TALK_7 = 27,
+    EVENT_TALK_8 = 28,
+    EVENT_TALK_9 = 29,
 };
 
-enum MobSpells
+class Event_bubble_stream : public BasicEvent
 {
-    SPELL_INITIATE_BUBBLE_SHIELD = 147333,
+public:
+    explicit Event_bubble_stream(Unit* unit) : obj(unit)
+    {
+    }
 
-    SPELL_FPT_BUBBLE_SHIELD_AURA = 147450,
-    SPELL_FPT_WATERBOLT          = 147398,
-    SPELL_FPT_CORRUPTED_WATER    = 147351,
-
-    SPELL_AD_RUSHING_WATERS      = 147185,
-};
-
-enum Mobs
-{
-    NPC_TORMENTED_INITIATE       = 73349,
-    NPC_FALLEN_POOL_TENDER       = 73342,
-    NPC_AQUEOUS_DEFENDER         = 73191,
-};
-
-// Tormented Initiate 73349.
-class npc_soo_tormented_initiate : public CreatureScript
-{
-    public:
-        npc_soo_tormented_initiate() : CreatureScript("npc_soo_tormented_initiate") { }
-
-        struct npc_soo_tormented_initiate_AI : public ScriptedAI
+    bool Execute(uint64 /*currTime*/, uint32 diff)
+    {
+        if (InstanceScript* instance = obj->GetInstanceScript())
         {
-            npc_soo_tormented_initiate_AI(Creature* creature) : ScriptedAI(creature) { }
+                if (TempSummon* tempo = obj->ToTempSummon())
+                    if (Unit* summoner = tempo->GetSummoner())
+                        if (!obj->isInCombat())
+                            if (Creature* trigger = obj->SummonCreature(TRIGGER_BUBBLE, summoner->GetPositionX(), summoner->GetPositionY(), summoner->GetPositionZ(), summoner->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN, 10000))
+                                obj->CastSpell(trigger, SPELL_BUBBLE_STREAM);
 
-            void Reset() { }
 
-            void EnterCombat(Unit* who)
-            {
-                std::list<Creature*> nearList;
-                GetCreatureListWithEntryInGrid(nearList, me, NPC_TORMENTED_INITIATE, 20.0f);
-                GetCreatureListWithEntryInGrid(nearList, me, NPC_FALLEN_POOL_TENDER, 20.0f);
-                if (!nearList.empty())
-                    for (auto nearMob : nearList)
-                        if (!nearMob->isInCombat())
-                            nearMob->AI()->DoZoneInCombat();
-            }
-
-            void DamageTaken(Unit* who, uint32& damage)
-            {
-                if (Spell* spell = me->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
-                    if (spell->m_spellInfo->Id == SPELL_INITIATE_BUBBLE_SHIELD)
-                        me->InterruptNonMeleeSpells(true);
-            }
-
-            void EnterEvadeMode()
-            {
-                me->AddUnitState(UNIT_STATE_EVADE);
-
-                me->RemoveAllAuras();
-                Reset();
-                me->DeleteThreatList();
-                me->CombatStop(true);
-                me->GetMotionMaster()->MovementExpired();
-                me->GetMotionMaster()->MoveTargetedHome();
-            }
-
-            void JustReachedHome()
-            {
-                me->ClearUnitState(UNIT_STATE_EVADE);
-            }
-
-            void JustDied(Unit* killer) { }
-
-            void UpdateAI(uint32 const diff)
-            {
-                // Maintain Bubble Shield cast on Fallen Pool Tender.
-                if (!me->HasUnitState(UNIT_STATE_CASTING) && !me->HasUnitState(UNIT_STATE_EVADE) && !me->isInCombat())
-                    if (Creature* poolTender = me->FindNearestCreature(NPC_FALLEN_POOL_TENDER, 20.0f, true))
-                        DoCast(poolTender, SPELL_INITIATE_BUBBLE_SHIELD);
-
-                if (!UpdateVictim() || me->HasUnitState(UNIT_STATE_CASTING))
-                    return;
-
-                DoMeleeAttackIfReady();
-            }
-        };
-
-        CreatureAI* GetAI(Creature* creature) const
-        {
-            return new npc_soo_tormented_initiate_AI(creature);
+                obj->m_Events.AddEvent(new Event_bubble_stream(obj), obj->m_Events.CalculateTime(8000));
         }
+        return true;
+    }
+
+private:
+    Creature* storm;
+    Unit* obj;
+    int modifier;
+    int Event;
 };
 
-// Fallen Pool Tender 73342.
-class npc_soo_fallen_pool_tender : public CreatureScript
+class siege_of_orgrimmar_trigger_bubble : public CreatureScript
 {
-    public:
-        npc_soo_fallen_pool_tender() : CreatureScript("npc_soo_fallen_pool_tender") { }
+public:
+    siege_of_orgrimmar_trigger_bubble() : CreatureScript("siege_of_orgrimmar_trigger_bubble") { }
 
-        struct npc_soo_fallen_pool_tender_AI : public ScriptedAI
+    struct siege_of_orgrimmar : public ScriptedAI
+    {
+        siege_of_orgrimmar(Creature* creature) : ScriptedAI(creature)
         {
-            npc_soo_fallen_pool_tender_AI(Creature* creature) : ScriptedAI(creature) { }
+            instance = creature->GetInstanceScript();
 
-            EventMap events;
-
-            void Reset()
+            for (int i = 0; i < 10; i++)
             {
-                events.Reset();
-            }
+                Creature* initiate = me->SummonCreature(CREATURE_TORMENTED_INITATE, position_fishes[i], TEMPSUMMON_MANUAL_DESPAWN);
 
-            void EnterCombat(Unit* who)
-            {
-                // Remove Bubble Shield aura.
-                if (me->HasAura(SPELL_FPT_BUBBLE_SHIELD_AURA))
-                    me->RemoveAurasDueToSpell(SPELL_FPT_BUBBLE_SHIELD_AURA);
-
-                events.ScheduleEvent(EVENT_FPT_WATERBOLT, 2000);
-                events.ScheduleEvent(EVENT_FPT_CORRUPTED_WATER, 7000);
-            }
-
-            void EnterEvadeMode()
-            {
-                me->AddUnitState(UNIT_STATE_EVADE);
-
-                me->RemoveAllAuras();
-                Reset();
-                me->DeleteThreatList();
-                me->CombatStop(true);
-                me->GetMotionMaster()->MovementExpired();
-                me->GetMotionMaster()->MoveTargetedHome();
-            }
-
-            void JustReachedHome()
-            {
-                me->ClearUnitState(UNIT_STATE_EVADE);
-            }
-
-            void JustDied(Unit* killer) { }
-
-            void UpdateAI(uint32 const diff)
-            {
-                // Maintain Bubble Shield aura OOC.
-                if (!me->HasAura(SPELL_FPT_BUBBLE_SHIELD_AURA) && !me->HasUnitState(UNIT_STATE_EVADE) && !me->isInCombat())
-                    DoCast(me, SPELL_FPT_BUBBLE_SHIELD_AURA);
-
-                if (!UpdateVictim() || me->HasUnitState(UNIT_STATE_CASTING))
-                    return;
-
-                events.Update(diff);
-
-                while (uint32 eventId = events.ExecuteEvent())
+                if (initiate)
                 {
-                    switch (eventId)
+                    initiate->m_Events.AddEvent(new Event_bubble_stream(initiate), initiate->m_Events.CalculateTime(500));
+                }
+            }
+
+            Creature* tender = me->SummonCreature(CREATURE_FALLEN_POOL_TENDER, 1423.380f, 505.545f, 246.880f, 3.430770f, TEMPSUMMON_MANUAL_DESPAWN);
+            Creature* tender2 = me->SummonCreature(CREATURE_FALLEN_POOL_TENDER, 1460.640f, 509.049f, 246.882f, 0.258838f, TEMPSUMMON_MANUAL_DESPAWN);
+
+            if (tender)
+            {
+                for (int i = 0; i <= 4; i++)
+                {
+                    Creature* initiate = tender->SummonCreature(CREATURE_TORMENTED_INITATE, position_fishes_fallen_pool_tender_1st[i], TEMPSUMMON_MANUAL_DESPAWN);
+
+                    if (initiate)
                     {
-                        case EVENT_FPT_WATERBOLT:
-                        {
-                            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
-                                DoCast(target, SPELL_FPT_WATERBOLT);
-                            events.ScheduleEvent(EVENT_FPT_WATERBOLT, 3000);
-                            break;
-                        }
-
-                        case EVENT_FPT_CORRUPTED_WATER:
-                        {
-                            DoCast(me, SPELL_FPT_CORRUPTED_WATER);
-                            events.ScheduleEvent(EVENT_FPT_CORRUPTED_WATER, urand(17000, 20000));
-                            break;
-                        }
-
-                        default: break;
+                        initiate->m_Events.AddEvent(new Event_bubble_stream(initiate), initiate->m_Events.CalculateTime(500));
                     }
                 }
             }
-        };
-
-        CreatureAI* GetAI(Creature* creature) const
-        {
-            return new npc_soo_fallen_pool_tender_AI(creature);
-        }
-};
-
-// Aqueous Defender 73191.
-class npc_soo_aqueous_defender : public CreatureScript
-{
-    public:
-        npc_soo_aqueous_defender() : CreatureScript("npc_soo_aqueous_defender") { }
-
-        struct npc_soo_aqueous_defender_AI : public ScriptedAI
-        {
-            npc_soo_aqueous_defender_AI(Creature* creature) : ScriptedAI(creature) { }
-
-            EventMap events;
-
-            void Reset()
+            if (tender2)
             {
-                events.Reset();
-            }
-
-            void EnterCombat(Unit* who)
-            {
-                events.ScheduleEvent(EVENT_AD_RUSHING_WATERS, urand(3000, 5000));
-            }
-
-            void EnterEvadeMode()
-            {
-                me->AddUnitState(UNIT_STATE_EVADE);
-
-                me->RemoveAllAuras();
-                Reset();
-                me->DeleteThreatList();
-                me->CombatStop(true);
-                me->GetMotionMaster()->MovementExpired();
-                me->GetMotionMaster()->MoveTargetedHome();
-            }
-
-            void JustReachedHome()
-            {
-                me->ClearUnitState(UNIT_STATE_EVADE);
-            }
-
-            void JustDied(Unit* killer) { }
-
-            void UpdateAI(uint32 const diff)
-            {
-                if (!UpdateVictim() || me->HasUnitState(UNIT_STATE_CASTING))
-                    return;
-
-                events.Update(diff);
-
-                while (uint32 eventId = events.ExecuteEvent())
+                for (int i = 0; i <= 4; i++)
                 {
-                    switch (eventId)
+                    Creature* initiate = tender2->SummonCreature(CREATURE_TORMENTED_INITATE, position_fishes_fallen_pool_tender_2st[i], TEMPSUMMON_MANUAL_DESPAWN);
+                    if (initiate)
                     {
-                        case EVENT_AD_RUSHING_WATERS:
-                        {
-                            DoCast(me, SPELL_AD_RUSHING_WATERS);
-                            events.ScheduleEvent(EVENT_AD_RUSHING_WATERS, urand(20000, 24000));
-                            break;
-                        }
+                        initiate->CastSpell(tender2, SPELL_BUBBLY_SHIELD);
 
-                        default: break;
+                        if (initiate)
+                        {
+                            initiate->m_Events.AddEvent(new Event_bubble_stream(initiate), initiate->m_Events.CalculateTime(500));
+                        }
                     }
                 }
-
-                DoMeleeAttackIfReady();
             }
-        };
-
-        CreatureAI* GetAI(Creature* creature) const
-        {
-            return new npc_soo_aqueous_defender_AI(creature);
         }
+
+        InstanceScript* instance;
+        uint32 pooltender_sha;
+        uint32 pooltender_light;
+
+        void Reset()
+        {
+            events.Reset();
+            me->setFaction(35);
+
+            me->AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
+
+            pooltender_light = urand(6000, 20000);
+            pooltender_sha = urand(10000, 30000);
+        }
+        void UpdateAI(const uint32 diff)
+        {
+            events.Update(diff);
+            
+            if (pooltender_light <= diff)
+            {
+                Position pos;
+                me->GetRandomNearPosition(pos, 8.0f);
+
+                Creature* puddle = me->SummonCreature(CREATURE_CONTAMINATED_PUDDLE, pos, TEMPSUMMON_TIMED_DESPAWN, 6500);
+
+                if (Creature* immersius = instance->instance->GetCreature(instance->GetData64(DATA_IMMERSUS)))
+                {
+                    Position pos_new;
+                    immersius->GetRandomNearPosition(pos_new, 10.0f);
+
+                    puddle->GetMotionMaster()->MovePoint(0, pos_new.GetPositionX(), pos_new.GetPositionY(), pos_new.GetPositionZ());
+                }
+                pooltender_light = urand(6000, 20000);
+
+            }
+            else
+                pooltender_light -= diff;
+
+            if (pooltender_sha <= diff)
+            {
+                Position pos;
+                me->GetRandomNearPosition(pos, 8.0f);
+
+                Creature* puddle = me->SummonCreature(CREATURE_CONTAMINATED_PUDDLE, pos, TEMPSUMMON_TIMED_DESPAWN, 6500);
+
+                if (Creature* immersius = instance->instance->GetCreature(instance->GetData64(DATA_IMMERSUS)))
+                {
+                    Position pos_new;
+                    immersius->GetRandomNearPosition(pos_new, 10.0f);
+
+                    puddle->GetMotionMaster()->MovePoint(0, pos_new.GetPositionX(), pos_new.GetPositionY(), pos_new.GetPositionZ());
+                }
+
+                pooltender_sha = urand(10000, 30000);
+            }
+            else
+                pooltender_sha -= diff;
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new siege_of_orgrimmar(creature);
+    }
 };
-/*
 class siege_of_orgrimmar_lorewalker_cho : public CreatureScript
 {
 public:
@@ -375,12 +267,10 @@ public:
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
-
-        void DamageTaken(Unit* /*attacker*//*, uint32& damage)
+        void DamageTaken(Unit* /*attacker*/, uint32& damage)
         {
             damage = 0;
         }
-
         void DoAction(const int32 action)
         {
             switch (action)
@@ -392,12 +282,11 @@ public:
                 break;
             }
         }
-
         void MoveInLineOfSight(Unit* who)
         {
             if (who && who->IsInWorld() && who->GetTypeId() == TYPEID_PLAYER && me->IsWithinDistInMap(who, 40.0f) && !intro)
             {
-                if (Creature* Immersus = pInstance->instance->GetCreature(pInstance->GetData64((DATA_IMMERSEUS))))
+                if (Creature* Immersus = pInstance->instance->GetCreature(pInstance->GetData64((DATA_IMMERSUS))))
                 {
                     if (Immersus->IsWithinDistInMap(who, 60.0f))
                     {
@@ -410,7 +299,6 @@ public:
                 }
             }
         }
-
         void UpdateAI(const uint32 diff)
         {
             if (!me->GetMotionMaster()->GetMotionSlot(MOTION_SLOT_ACTIVE))
@@ -485,11 +373,9 @@ public:
         return new soo_triggers(creature);
     }
 };
-*/
+
 void AddSC_siege_of_orgrimmar()
 {
-    // new siege_of_orgrimmar_lorewalker_cho();
-	new npc_soo_tormented_initiate();
-	new npc_soo_fallen_pool_tender();
-	new npc_soo_aqueous_defender();
+    new siege_of_orgrimmar_trigger_bubble();
+    new siege_of_orgrimmar_lorewalker_cho();
 }

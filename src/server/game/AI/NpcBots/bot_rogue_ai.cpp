@@ -715,7 +715,7 @@ public:
         {
             uint8 lvl = me->getLevel();
             InitSpellMap(BACKSTAB_1);
-            InitSpellMap(SINISTER_STRIKE_1);
+            //InitSpellMap(SINISTER_STRIKE_1);
             InitSpellMap(SLICE_DICE_1);
             InitSpellMap(EVISCERATE_1);
             InitSpellMap(KICK_1);
@@ -726,7 +726,7 @@ public:
             InitSpellMap(DISMANTLE_1);
             lvl >= 30 ? InitSpellMap(BLADE_FLURRY_1) : RemoveSpell(BLADE_FLURRY_1);
 
-            InitSpellMap(WOUND_POISON_1);
+            //InitSpellMap(WOUND_POISON_1);
             InitSpellMap(MIND_NUMBING_POISON_1);
         }
 
@@ -734,26 +734,26 @@ public:
         {
             uint8 level = master->getLevel();
 
-            RefreshAura(COMBAT_POTENCY5, level >= 70 ? 2 : level >= 55 ? 1 : 0);
-            RefreshAura(COMBAT_POTENCY4, level >= 52 && level < 55 ? 1 : 0);
-            RefreshAura(COMBAT_POTENCY3, level >= 49 && level < 52 ? 1 : 0);
-            RefreshAura(COMBAT_POTENCY2, level >= 47 && level < 49 ? 1 : 0);
-            RefreshAura(COMBAT_POTENCY1, level >= 45 && level < 47 ? 1 : 0);
-            RefreshAura(SEAL_FATE5, level >= 35 ? 1 : 0);
-            RefreshAura(SEAL_FATE4, level >= 32 && level < 35 ? 1 : 0);
-            RefreshAura(SEAL_FATE3, level >= 29 && level < 32 ? 1 : 0);
-            RefreshAura(SEAL_FATE2, level >= 27 && level < 29 ? 1 : 0);
+            //RefreshAura(COMBAT_POTENCY5, level >= 70 ? 2 : level >= 55 ? 1 : 0);
+            //RefreshAura(COMBAT_POTENCY4, level >= 52 && level < 55 ? 1 : 0);
+            RefreshAura(COMBAT_POTENCY3, level >= 49 /*&& level < 52*/ ? 1 : 0);
+            //RefreshAura(COMBAT_POTENCY2, level >= 47 && level < 49 ? 1 : 0);
+            //RefreshAura(COMBAT_POTENCY1, level >= 45 && level < 47 ? 1 : 0);
+            //RefreshAura(SEAL_FATE5, level >= 35 ? 1 : 0);
+            //RefreshAura(SEAL_FATE4, level >= 32 && level < 35 ? 1 : 0);
+            //RefreshAura(SEAL_FATE3, level >= 29 && level < 32 ? 1 : 0);
+            RefreshAura(SEAL_FATE2, level >= 27 /*&& level < 29*/ ? 1 : 0);
             RefreshAura(SEAL_FATE1, level >= 25 && level < 27 ? 1 : 0);
             RefreshAura(VITALITY, level >= 70 ? 3 : level >= 55 ? 2 : level >= 40 ? 1 : 0);
-            RefreshAura(TURN_THE_TABLES, level >= 55 ? 1 : 0);
+            //RefreshAura(TURN_THE_TABLES, level >= 55 ? 1 : 0);
             RefreshAura(DEADLY_BREW, level >= 40 ? 1 : 0);
-            RefreshAura(BLADE_TWISTING1, level >= 35 ? 1 : 0);
-            RefreshAura(QUICK_RECOVERY2, level >= 35 ? 1 : 0);
-            RefreshAura(QUICK_RECOVERY1, level >= 30 && level < 35 ? 1 : 0);
-            RefreshAura(IMPROVED_KIDNEY_SHOT, level >= 30 ? 1 : 0);
+            //RefreshAura(BLADE_TWISTING1, level >= 35 ? 1 : 0);
+            //RefreshAura(QUICK_RECOVERY2, level >= 35 ? 1 : 0);
+            //RefreshAura(QUICK_RECOVERY1, level >= 30 && level < 35 ? 1 : 0);
+            //RefreshAura(IMPROVED_KIDNEY_SHOT, level >= 30 ? 1 : 0);
             RefreshAura(GLYPH_BACKSTAB, level >= 10 ? 1 : 0);
-            RefreshAura(SURPRISE_ATTACKS, level >= 10 ? 1 : 0);
-            RefreshAura(ROGUE_VIGOR, level >= 25 ? 2 : level >= 20 ? 1 : 0);
+            //RefreshAura(SURPRISE_ATTACKS, level >= 10 ? 1 : 0);
+            //RefreshAura(ROGUE_VIGOR, level >= 25 ? 2 : level >= 20 ? 1 : 0);
         }
 
     private:

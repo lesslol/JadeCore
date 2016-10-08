@@ -1045,7 +1045,13 @@ bool Object::RemoveUInt64Value(uint16 index, uint64 value)
 
 void Object::SetFloatValue(uint16 index, float value)
 {
-    ASSERT(index < m_valuesCount || PrintIndexError(index, true));
+    //ASSERT(index < m_valuesCount || PrintIndexError(index, true));
+	//npcbot
+	if (index >= m_valuesCount) {
+		PrintIndexError(index, true);
+		return;
+	}
+	//end npcbot
 
     if (m_floatValues[index] != value)
     {

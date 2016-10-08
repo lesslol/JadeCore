@@ -930,7 +930,7 @@ public:
             InitSpellMap(FLASH_OF_LIGHT_1);
             InitSpellMap(HOLY_LIGHT_1);
             InitSpellMap(LAY_ON_HANDS_1);
-            InitSpellMap(SACRED_SHIELD_1);
+            //InitSpellMap(SACRED_SHIELD_1);
   /*Talent*/lvl >= 40 ? InitSpellMap(HOLY_SHOCK_1) : RemoveSpell(HOLY_SHOCK_1);
             InitSpellMap(CLEANSE_1);
             InitSpellMap(REDEMPTION_1);
@@ -939,7 +939,7 @@ public:
             InitSpellMap(TURN_EVIL_1);
             InitSpellMap(HOLY_WRATH_1);
             InitSpellMap(EXORCISM_1);
-  /*Talent*/lvl >= 25 ? InitSpellMap(SEAL_OF_COMMAND_1) : RemoveSpell(SEAL_OF_COMMAND_1);
+  /*Talent*///lvl >= 25 ? InitSpellMap(SEAL_OF_COMMAND_1) : RemoveSpell(SEAL_OF_COMMAND_1);
   /*Talent*/lvl >= 20 ? InitSpellMap(CRUSADER_STRIKE_1) : RemoveSpell(CRUSADER_STRIKE_1);
             InitSpellMap(JUDGEMENT_1);
             InitSpellMap(CONSECRATION_1);
@@ -947,11 +947,11 @@ public:
             InitSpellMap(HOW_1);
             InitSpellMap(AVENGING_WRATH_1);
             InitSpellMap(BLESSING_OF_MIGHT_1);
-            InitSpellMap(BLESSING_OF_WISDOM_1);
+            //InitSpellMap(BLESSING_OF_WISDOM_1);
             InitSpellMap(BLESSING_OF_KINGS_1);
-  /*Talent*/lvl >= 30 ? InitSpellMap(BLESSING_OF_SANCTUARY_1) : RemoveSpell(BLESSING_OF_SANCTUARY_1);
-            InitSpellMap(DEVOTION_AURA_1);
-            InitSpellMap(CONCENTRATION_AURA_1);
+  /*Talent*///lvl >= 30 ? InitSpellMap(BLESSING_OF_SANCTUARY_1) : RemoveSpell(BLESSING_OF_SANCTUARY_1);
+            //InitSpellMap(DEVOTION_AURA_1);
+            //InitSpellMap(CONCENTRATION_AURA_1);
             InitSpellMap(DIVINE_PLEA_1);
             InitSpellMap(HAND_OF_PROTECTION_1);
             InitSpellMap(HOF_1);
@@ -967,32 +967,32 @@ public:
 
             //RefreshAura(SPELLDMG, /*level >= 78 ? 5 : level >= 75 ? 4 */level >= 55 ? 3 : level >= 35 ? 2 : level >= 15 ? 1 : 0);
             //RefreshAura(SPELLDMG2, level >= 55 ? 3 : level >= 35 ? 2 : level >= 15 ? 1 : 0);
-            RefreshAura(PURE1, level >= 55 ? 1 : 0);
-            RefreshAura(WISE, level >= 35 ? 1 : 0);
-            RefreshAura(RECKONING5, level >= 50 ? 1 : 0);
-            RefreshAura(RECKONING4, level >= 45 && level < 50 ? 1 : 0);
-            RefreshAura(RECKONING3, level >= 40 && level < 45 ? 1 : 0);
-            RefreshAura(RECKONING2, level >= 35 && level < 40 ? 1 : 0);
-            RefreshAura(RECKONING1, level >= 30 && level < 35 ? 1 : 0);
-            RefreshAura(VENGEANCE3, level >= 30 ? 1 : 0);
-            RefreshAura(VENGEANCE2, level >= 27 && level < 30 ? 1 : 0);
-            RefreshAura(VENGEANCE1, level >= 25 && level < 27 ? 1 : 0);
+            //RefreshAura(PURE1, level >= 55 ? 1 : 0);
+            //RefreshAura(WISE, level >= 35 ? 1 : 0);
+            //RefreshAura(RECKONING5, level >= 50 ? 1 : 0);
+            //RefreshAura(RECKONING4, level >= 45 && level < 50 ? 1 : 0);
+            //RefreshAura(RECKONING3, level >= 40 && level < 45 ? 1 : 0);
+            //RefreshAura(RECKONING2, level >= 35 && level < 40 ? 1 : 0);
+            //RefreshAura(RECKONING1, level >= 30 && level < 35 ? 1 : 0);
+            //RefreshAura(VENGEANCE3, level >= 30 ? 1 : 0);
+            //RefreshAura(VENGEANCE2, level >= 27 && level < 30 ? 1 : 0);
+            //RefreshAura(VENGEANCE1, level >= 25 && level < 27 ? 1 : 0);
             RefreshAura(SHOFL3, level >= 60 ? 1 : 0);
-            RefreshAura(SHOFL2, level >= 55 && level < 60 ? 1 : 0);
-            RefreshAura(SHOFL1, level >= 50 && level < 55 ? 1 : 0);
-            RefreshAura(SACRED_CLEANSING, level >= 45 ? 1 : 0);
-            RefreshAura(DIVINE_PURPOSE, level >= 35 ? 1 : 0);
-            RefreshAura(VINDICATION2, level >= 25 ? 1 : 0);
-            RefreshAura(VINDICATION1, level >= 20 && level < 25 ? 1 : 0);
-            RefreshAura(LAYHANDS, level >= 30 ? 1 : 0);
-            RefreshAura(FANATICISM, level >= 20 ? 2 : 0);
-            RefreshAura(ARDENT_DEFENDER, level >= 40 ? 1 : 0);
-            RefreshAura(ILLUMINATION, level >= 20 ? 1 : 0);
-            RefreshAura(INFUSION_OF_LIGHT, level >= 55 ? 1 : 0); //NYI
-            RefreshAura(REDOUBT3, level >= 68 ? 2 : level >= 55 ? 1 : 0);
-            RefreshAura(REDOUBT2, level >= 50 && level < 55 ? 1 : 0);
-            RefreshAura(REDOUBT1, level >= 45 && level < 50 ? 1 : 0);
-            RefreshAura(GLYPH_HOLY_LIGHT, level >= 15 ? 1 : 0);
+            //RefreshAura(SHOFL2, level >= 55 && level < 60 ? 1 : 0);
+            //RefreshAura(SHOFL1, level >= 50 && level < 55 ? 1 : 0);
+            //RefreshAura(SACRED_CLEANSING, level >= 45 ? 1 : 0);
+            //RefreshAura(DIVINE_PURPOSE, level >= 35 ? 1 : 0);
+            RefreshAura(VINDICATION2, level >= 25 ? 1 : 0); // Assertion Failed. Access player-field of Object, but have only creature-fields
+            //RefreshAura(VINDICATION1, level >= 20 && level < 25 ? 1 : 0);
+            //RefreshAura(LAYHANDS, level >= 30 ? 1 : 0);
+            //RefreshAura(FANATICISM, level >= 20 ? 2 : 0);
+            //RefreshAura(ARDENT_DEFENDER, level >= 40 ? 1 : 0);
+            //RefreshAura(ILLUMINATION, level >= 20 ? 1 : 0);
+            RefreshAura(INFUSION_OF_LIGHT, level >= 55 ? 1 : 0); //NYI  // Assertion Failed. Access player-field of Object, but have only creature-fields
+            //RefreshAura(REDOUBT3, level >= 68 ? 2 : level >= 55 ? 1 : 0);
+            //RefreshAura(REDOUBT2, level >= 50 && level < 55 ? 1 : 0);
+            //RefreshAura(REDOUBT1, level >= 45 && level < 50 ? 1 : 0);
+            RefreshAura(GLYPH_HOLY_LIGHT, level >= 15 ? 1 : 0); // Assertion Failed. Access player-field of Object, but have only creature-fields
         }
 
         bool CanUseManually(uint32 basespell) const

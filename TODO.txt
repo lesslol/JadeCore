@@ -31,6 +31,7 @@
     - Need to add script for Ra-den
 
 5) Siege of Orgrimmar:
+    - Need to rewrite Immerseus
     - Need to rewrite Norushen
     - Need to finish Galakras script
     - Need to finish Iron Juggernaut script
@@ -62,7 +63,14 @@ Pandaria Zones:
 
 Pandaria Dungeons:
 
+-- Gate of the Setting Sun
+-- Mogu'shan Palace
+-- Scarlet Monastery
 -- Scholomance
+-- Shado-Pan Monastery
+-- Siege of Niuzao Temple
+-- Stormstout Brewery
+-- Temple of the Jade Serpent
 
 Pandaria Raids:
 
@@ -74,10 +82,12 @@ Pandaria Raids:
 
 The Maelstrom Zones:
 
+-- The Lost Isles
 -- The Wandering Isle
 
 Mists of Pandaria Start Zones Quests ( 1-5 lvl ) TODO:
 
+-- Dwarf
 -- Undead
 -- Night Elf
 -- Tauren

@@ -17,8 +17,8 @@ class TeleportFinishEvent;
 enum CommonValues
 {
 //MISC
-    BOT_ENTRY_BEGIN                     = 70001,
-    BOT_ENTRY_END                       = 71000,
+    BOT_ENTRY_BEGIN                     = 90001,//70001,
+    BOT_ENTRY_END                       = 91000,//71000,
     BOT_ICON_ON                         = 9,    //GOSSIP_ICON_BATTLE,
     BOT_ICON_OFF                        = 7,    //GOSSIP_ICON_TALK,
     BOT_MAX_CHASE_RANGE                 = 120,  //yds
@@ -60,10 +60,10 @@ enum CommonValues
     //EXPERTISE /*Weapon Expertise-rogue*/= 30919,//rank 1 5 expertise
     //EXPERTISE2/*Weapon Expertise-rogue*/= 30920,//rank 2 10 expertise
   //3) Pet/Special
-    THREAT   /****  (unused)  ****/     = 57339,//+43% threat generated
+    THREAT   /****  (unused)  ****/     = 57339,//+43% threat generated // No SpellInfo
     //BOR      /*Blood of Rhino - pet*/   = 53482,//rank 2 +40% healing taken
     //BOAR     /*Boar's Speed - pet*/     = 19596,//rank 1 +30% movement speed
-    RCP      /*Rogue Class Passive*/    = 21184,//-27% threat caused
+    RCP      /*Rogue Class Passive*/    = 21184,//-27% threat caused // No SpellInfo
     DEFENSIVE_STANCE_PASSIVE /*Warrior*/= 7376, //+45% threat -10% damage taken -5% damage done
 //COMMON GOSSIPS
     GOSSIP_SERVE_MASTER                 = 70001, //"I live only to serve the master."

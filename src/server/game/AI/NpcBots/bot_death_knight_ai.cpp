@@ -1364,7 +1364,7 @@ public:
 
         void InitPowers()
         {
-            if (master->getLevel() >= 70)
+            /*if (master->getLevel() >= 70)
                 RefreshAura(RUNIC_POWER_MASTERY,5);
             else if (master->getLevel() >= 58)
                 RefreshAura(RUNIC_POWER_MASTERY,4);
@@ -1375,7 +1375,7 @@ public:
             }
 
             if (runicpower)
-                me->SetPower(POWER_RUNIC_POWER, runicpower);
+                me->SetPower(POWER_RUNIC_POWER, runicpower);*/
         }
 
         void InitSpells()
@@ -1404,14 +1404,14 @@ public:
             InitSpellMap(ANTI_MAGIC_SHELL_1);
             InitSpellMap(ARMY_OF_THE_DEAD_1);
   /*Talent*/InitSpellMap(LICHBORNE_1, true);
-  /*Talent*/lvl >= 60 ? InitSpellMap(HUNGERING_COLD_1) : RemoveSpell(HUNGERING_COLD_1);
+  /*Talent*///lvl >= 60 ? InitSpellMap(HUNGERING_COLD_1) : RemoveSpell(HUNGERING_COLD_1);
 
             InitSpellMap(PATH_OF_FROST_1);
             InitSpellMap(HORN_OF_WINTER_1);
   /*Talent*/InitSpellMap(RUNE_TAP_1, true);
   /*Talent*/lvl >= 58 ? InitSpellMap(BONE_SHIELD_1) : RemoveSpell(BONE_SHIELD_1);
             InitSpellMap(EMPOWER_RUNE_WEAPON_1);
-  /*Talent*/InitSpellMap(MARK_OF_BLOOD_1, true);
+  /*Talent*///InitSpellMap(MARK_OF_BLOOD_1, true);
   /*Talent*/InitSpellMap(VAMPIRIC_BLOOD_1, true);
   /*Talent*/lvl >= 59 ? InitSpellMap(HYSTERIA_1) : RemoveSpell(HYSTERIA_1);
 
