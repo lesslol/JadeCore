@@ -210,7 +210,7 @@ INSERT INTO `creature_template` (`entry`, `modelid1`, `modelid2`, `modelid3`, `m
  (@BOT_START+0201,16226,0,16226,0,'Kore','Warrior Bot','',0,1,90,2,14,14,1,1.2,1.3,1,0,0,3400,2000,1,0,16384,0,0,0,0,1,11,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,3,0,0,0,1,68157552,'warrior_bot',-1),
  (@BOT_START+0202,16787,0,16787,0,'Alamma','Warlock Bot','',0,1,90,2,14,14,1,1.2,1.3,1,0,0,3500,2000,8,0,16384,0,0,0,0,9,10,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,3,0,0,0,1,68157552,'warlock_bot',-1),
  (@BOT_START+0203,16800,0,16800,0,'Talionia','Warlock Bot','',0,1,90,2,14,14,1,1.2,1.3,1,0,0,3500,2000,8,0,16384,0,0,0,0,9,10,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,3,0,0,0,1,68157552,'warlock_bot',-1),
- (@BOT_START+0204,16831,0,16831,0,'Zanien','Hunter Bot','',0,1,90,2,14,14,1,1.2,1.3,1,0,0,3500,2000,2,0,16384,0,0,0,0,9,10,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,3,0,0,0,1,68157552,'hunter_bot',-1),
+ (@BOT_START+0204,16831,0,16831,0,'Zanien','Hunter Bot','',0,1,90,2,14,14,1,1.2,1.3,1,0,0,3500,2000,2,0,16384,0,0,0,0,3,10,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,3,0,0,0,1,68157552,'hunter_bot',-1),
  (@BOT_START+0205,16781,0,16781,0,'Zaedana','Mage Bot','',0,1,90,2,14,14,1,1.2,1.3,1,0,0,3800,2000,8,0,16384,0,0,0,0,8,10,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,3,0,0,0,1,68157552,'mage_bot',-1),
  (@BOT_START+0206,16824,0,16824,0,'Quithas','Mage Bot','',0,1,90,2,14,14,1,1.2,1.3,1,0,0,3800,2000,8,0,16384,0,0,0,0,8,10,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,3,0,0,0,1,68157552,'mage_bot',-1),
  (@BOT_START+0207,16739,0,16739,0,'Harene','Druid Bot','',0,1,90,2,14,14,1,1.2,1.3,1,0,0,2200,2000,2,0,16384,0,0,0,0,11,6,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,3,0,0,0,1,68157552,'druid_bot',-1),
@@ -254,9 +254,9 @@ INSERT INTO `creature_template` (`entry`, `modelid1`, `modelid2`, `modelid3`, `m
  (@BOT_START+0245,28840,28840,28840,28840,'Zor\'be','Death Knight Bot','',0,1,90,2,14,14,1,1.2,1.3,1,0,0,3300,2000,1,0,16384,0,0,0,0,6,8,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,3,0,0,0,1,68157552,'death_knight_bot',-1),
  (@BOT_START+0246,25512,25512,25512,25512,'Datura','Death Knight Bot','',0,1,90,2,14,14,1,1.2,1.3,1,0,0,3300,2000,1,0,16384,0,0,0,0,6,10,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,3,0,0,0,1,68157552,'death_knight_bot',-1),
  (@BOT_START+0247,1132,0,1132,0,'Voidwalker','Warlock\'s Pet Bot',NULL,0,1,90,2,14,14,0,1.2,    1.3,1,0,0,2000,2000,2,0,0,0,16,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,    '',0,3,0,  0,0,1,1048688,'voidwalker_bot',-1),
- (@BOT_START+0248,1105,     0,    0,    0,'Hunter\'s Pet',          NULL,NULL,0,1,90,0,14,14,0,1.1,1.14286,1,0,0,2000,   0,1,0,0,0,7,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,5708,0,0,0,0,0,0,0,0,0,0,0,'',0,3,0,149,1,0,0,'',-1),
- (@BOT_START+0301,17659,17659,17659,17659,'Gorkramato','Ex. Blademaster',    '',0,91,91,2,14,14,1,1.2,1.3, 1.05,4,0,2200,2000,1,0,16384,0,0,0,0,12,2,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,3,0,0,0,1,68157560,'blademaster_bot',-1),
- (@BOT_START+1000,16853,16853,16853,16853,'Airen','Priestess of Suffering',NULL,0,95,95,1,14,14,1,1.2,1.3,1.173,4,0,1500,0,1,898,49152,2,0,0,0, 0,0,3,67110912,0,0,0,450,450,450,450,450,450,0,0,0,0,0,0,0,0,0,0,0,0,'',0,3,1,0,0,617299839,1048946,'npc_Airen_qI',-213);
+ (@BOT_START+0248,1105,     0,    0,    0,'Hunter\'s Pet',          NULL,NULL,0,1,90,0,14,14,0,1.1,1.14286,1,0,0,2000,   0,1,0,0,0,7,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,5708,0,0,0,0,0,0,0,0,0,0,0,'',0,3,0,149,1,0,0,'',-1);
+-- (@BOT_START+0301,17659,17659,17659,17659,'Gorkramato','Ex. Blademaster',    '',0,91,91,2,14,14,1,1.2,1.3, 1.05,4,0,2200,2000,1,0,16384,0,0,0,0,12,2,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,3,0,0,0,1,68157560,'blademaster_bot',-1),
+-- (@BOT_START+1000,16853,16853,16853,16853,'Airen','Priestess of Suffering',NULL,0,95,95,1,14,14,1,1.2,1.3,1.173,4,0,1500,0,1,898,49152,2,0,0,0, 0,0,3,67110912,0,0,0,450,450,450,450,450,450,0,0,0,0,0,0,0,0,0,0,0,0,'',0,3,1,0,0,617299839,1048946,'npc_Airen_qI',-213);
 
 -- EQUIPS --
 
@@ -305,8 +305,9 @@ INSERT INTO `creature_equip_template` (`entry`, `itemEntry1`, `itemEntry2`, `ite
 (@BOT_START+0225,'18842','0','0'), (@BOT_START+0226,'31289','0','0'), (@BOT_START+0227,'12584','18825','0'), (@BOT_START+0228,'2291','0','2825'), (@BOT_START+0229,'18876','0','0'), (@BOT_START+0230,'31289','0','0'),
 (@BOT_START+0231,'18842','0','0'), (@BOT_START+0232,'18842','0','0'), (@BOT_START+0233,'18203','18202','0'), (@BOT_START+0234,'18203','18202','0'), (@BOT_START+0235,'29175','18826','0'), (@BOT_START+0236,'31289','0','0'),
 (@BOT_START+0237,'13505','0','0'), (@BOT_START+0238,'12775','0','0'), (@BOT_START+0239,'24044','0','0'), (@BOT_START+0240,'43601','0','0'), (@BOT_START+0241,'23499','0','0'), (@BOT_START+0242,'38632','0','0'),
-(@BOT_START+0243,'34891','0','0'), (@BOT_START+0244,'38632','0','0'), (@BOT_START+0245,'50798','0','0'), (@BOT_START+0246,'12592','0','0'), (@BOT_START+0301,'24044','0','0'),
-(@BOT_START+1000,'30902','0','0');
+(@BOT_START+0243,'34891','0','0'), (@BOT_START+0244,'38632','0','0'), (@BOT_START+0245,'50798','0','0'), (@BOT_START+0246,'12592','0','0');
+-- (@BOT_START+0301,'24044','0','0'),
+-- (@BOT_START+1000,'30902','0','0');
 
 -- -- -- Update 18.09.13 - Equips for shamans
 -- Orcs and Draenei. Mainhand: Cudgel of Furious Justice, Offhand: Azure-Shield of Coldarra
@@ -352,10 +353,9 @@ CREATE TABLE IF NOT EXISTS `creature_template_outfits` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 -- End Npc Dress mod
 
-replace into `creature_template_outfits` (`entry`, `race`, `gender`, `skin`, `face`, `hair`, `haircolor`, `facialhair`, `head`, `shoulders`, `body`, `chest`, `waist`, `legs`, `feet`, `wrists`, `hands`, `back`, `tabard`)
-values
-(@BOT_START+0301,'2','0','0','14','9','7','5','0','0','0','0','59194','64674','0','36248','0','0','0'), -- Blademaster
-(@BOT_START+1000,'11','1','0','5','0','6','0','0','53903','21842','35049','35058','35051','35067','35044','0','0','0'); -- Airen
+-- replace into `creature_template_outfits` (`entry`, `race`, `gender`, `skin`, `face`, `hair`, `haircolor`, `facialhair`, `head`, `shoulders`, `body`, `chest`, `waist`, `legs`, `feet`, `wrists`, `hands`, `back`, `tabard`) values
+-- (@BOT_START+0301,'2','0','0','14','9','7','5','0','0','0','0','59194','64674','0','36248','0','0','0'), -- Blademaster
+-- (@BOT_START+1000,'11','1','0','5','0','6','0','0','53903','21842','35049','35058','35051','35067','35044','0','0','0'); -- Airen
 
 
 -- Customize section
@@ -391,20 +391,68 @@ SET @U2_ENEMY_INTERRACT = 16384; -- 0x00004000 - UNIT_FLAG2_ALLOW_ENEMY_INTERACT
 SET @FLAGS_U2 = @U2_ENEMY_INTERRACT;
 
 -- minions
-UPDATE `creature_template` SET exp:=2, baseattacktime:=3300, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:='' where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_DK;
-UPDATE `creature_template` SET exp:=2, baseattacktime:=2200, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:='' where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_DRUID;
-UPDATE `creature_template` SET exp:=2, baseattacktime:=2800, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:='' where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_HUNTER;
-UPDATE `creature_template` SET exp:=2, baseattacktime:=3800, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:='' where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_MAGE;
-UPDATE `creature_template` SET exp:=2, baseattacktime:=2300, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:='' where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_PALADIN;
-UPDATE `creature_template` SET exp:=2, baseattacktime:=3600, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:='' where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_PRIEST;
-UPDATE `creature_template` SET exp:=2, baseattacktime:=1600, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:='' where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_ROGUE;
-UPDATE `creature_template` SET exp:=2, baseattacktime:=2600, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:='' where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_SHAMAN;
-UPDATE `creature_template` SET exp:=2, baseattacktime:=3500, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:='' where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_WARLOCK;
-UPDATE `creature_template` SET exp:=2, baseattacktime:=3400, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:='' where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_WARRIOR;
-UPDATE `creature_template` SET exp:=2, baseattacktime:=2200, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EXN, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:='' where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_BM;
+UPDATE `creature_template` SET exp:=2, baseattacktime:=3300, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:=''
+ where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_DK;
+UPDATE `creature_template` SET exp:=2, baseattacktime:=2200, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:=''
+ where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_DRUID;
+UPDATE `creature_template` SET exp:=2, baseattacktime:=2800, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:=''
+ where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_HUNTER;
+UPDATE `creature_template` SET exp:=2, baseattacktime:=3800, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:=''
+ where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_MAGE;
+UPDATE `creature_template` SET exp:=2, baseattacktime:=2300, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:=''
+ where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_PALADIN;
+UPDATE `creature_template` SET exp:=2, baseattacktime:=3600, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:=''
+ where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_PRIEST;
+UPDATE `creature_template` SET exp:=2, baseattacktime:=1600, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:=''
+ where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_ROGUE;
+UPDATE `creature_template` SET exp:=2, baseattacktime:=2600, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:=''
+ where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_SHAMAN;
+UPDATE `creature_template` SET exp:=2, baseattacktime:=3500, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:=''
+ where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_WARLOCK;
+UPDATE `creature_template` SET exp:=2, baseattacktime:=3400, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:=''
+ where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_WARRIOR;
+UPDATE `creature_template` SET exp:=2, baseattacktime:=2200, rangeattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EXN, unit_flags2:=`unit_flags2`|@FLAGS_U2, AIName:=''
+ where entry between @BOT_START and @BOT_END-1 and trainer_class=@CLASS_BM;
+
+UPDATE  `creature_template` SET type_flags = 0, trainer_type = 0
+WHERE (entry between @BOT_START and @BOT_END-1) and (trainer_class between 1 and 12);
 
 -- pets
 UPDATE `creature_template` SET exp:=2, baseattacktime:=2000, dynamicflags:=0, speed_walk:=1.2, speed_run:=1.3, InhabitType:=3, mechanic_immune_mask:=1, flags_extra:=@FLAGS_EX_PET, AIName:=''
 where entry between @BOT_START and @BOT_END-1 and name='Voidwalker';
 
+-- Error Bots
+/* 
+select A.entry, A.itemEntry1, B.name, B.subname from creature_equip_template A, creature_template B
+ where (A.entry between @BOT_START and @BOT_END)
+  and ((A.itemEntry1 <> 0 and (A.itemEntry1 not in (select entry from item_template)))
+    or (A.itemEntry2 <> 0 and (A.itemEntry2 not in (select entry from item_template)))
+    or (A.itemEntry3 <> 0 and (A.itemEntry3 not in (select entry from item_template))))
+  and (A.entry = B.entry)
+ order by entry; */ -- itemEntry1 == 18,002 // warrior
+DELETE FROM `creature_template` where (`entry` between @BOT_START and @BOT_END) and `entry` in
+ (select `entry` from `creature_equip_template` where (`entry` between @BOT_START and @BOT_END) and `itemEntry1` = 18002);
+DELETE FROM `creature_equip_template` where (`entry` between @BOT_START and @BOT_END) and `itemEntry1` = 18002;
+
+/*
+SET @BOT_START = 90000;
+SET @BOT_END   = 91000;
+
+select entry, name, subname, minlevel, maxlevel, `exp`, `npcflag`, `speed_walk`, `speed_run`, `scale`, `rank`, `dmgschool`,
+  `BaseAttackTime`, `RangeAttackTime`, `unit_class`, `trainer_class`, `unit_flags`, `unit_flags2`, `dynamicflags`, `family`, `trainer_type`, `trainer_spell`, `trainer_race`, `type`, `type_flags`,
+  `lootid`, `pickpocketloot`, `skinloot`, `resistance1`, `resistance2`, `resistance3`, `resistance4`, `resistance5`, `resistance6`,
+  `spell1`, `spell2`, `spell3`, `spell4`, `spell5`, `spell6`, `spell7`, `spell8`, `PetSpellDataId`, `VehicleId`, `mingold`, `maxgold`,
+  `AIName`, `MovementType`, `InhabitType`, `RacialLeader`, `movementId`, `RegenHealth`, `mechanic_immune_mask`, `flags_extra`, `ScriptName`, `WDBVerified`
+from creature_template
+where entry between @BOT_START and @BOT_END order by `unit_class`, `trainer_class`, entry;
+
+select * from creature where id between @BOT_START and @BOT_END;
+
+-- update characters.characters set
+-- map = (select mapId from characters.character_homebind where guid = 28), 
+-- zone = (select zoneId from characters.character_homebind where guid = 28),
+-- position_x = (select posX from characters.character_homebind where guid = 28),
+--	position_y = (select posY from characters.character_homebind where guid = 28),
+--	position_z = (select posZ from characters.character_homebind where guid = 28) where guid = 28;
+*/
 -- end
