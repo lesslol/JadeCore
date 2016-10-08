@@ -1,7 +1,6 @@
 /*
-* Copyright (C) 2012-2013 JadeCore <http://www.pandashan.com/>
-* Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
-* Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+* Copyright (C) 2016-20XX JadeCore <https://jadecore.tk/>
+* Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
 *
 * This program is free software; you can redistribute it and/or modify it
 * under the terms of the GNU General Public License as published by the
@@ -17,1535 +16,1492 @@
 * with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "GameObjectAI.h"
+#include "ObjectMgr.h"
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
-#include "siege_of_orgrimmar.h"  
+#include "SpellScript.h"
+#include "SpellAuraEffects.h"
+#include "SpellAuras.h"
+#include "MapManager.h"
+#include "Spell.h"
+#include "Vehicle.h"
+#include "Cell.h"
+#include "CellImpl.h"
+#include "GridNotifiers.h"
+#include "GridNotifiersImpl.h"
+#include "CreatureTextMgr.h"
+#include "MoveSplineInit.h"
+#include "Unit.h"
+#include "Player.h"
+#include "Creature.h"
+#include "InstanceScript.h"
+#include "Map.h"
+#include "VehicleDefines.h"
+#include "SpellInfo.h"
 
-enum eImmersiusSpells
+#include "siege_of_orgrimmar.h"
+
+/*
+Intro:
+Lorewalker Cho yells: Ah, we adventure together again, except this time I am afraid that the circumstances are much more dire.
+Lorewalker Cho yells: What has become of the Vale?
+Lorewalker Cho yells: The land is scarred! The ever blooming trees and plants wither and die, as the water from the pools drains away.
+Lorewalker Cho yells: Come, let us see the other horrors Garrosh has unleashed upon our land.
+Lorewalker Cho yells: Once, the Titans used these life-giving waters to create and shape all life in Pandaria.
+Lorewalker Cho yells: It is these waters that kept the Vale in bloom. Their runoff into the Valley of the Four Winds created the most fertile farmland in the world!
+Lorewalker Cho yells: And now, the malignance of the Old God has manifested itself within the waters.
+Lorewalker Cho yells: Such a foul, foul thing - destroy it, before it seeps deep into the soil and corrupts all of Pandaria!
+
+Outro:
+Lorewalker Cho yells: Ah, you have done it. The waters are pure once more!
+Lorewalker Cho yells: Can you feel their life-giving energies flow through you?
+Lorewalker Cho yells: It will take much time for the Vale to heal, but you have given us hope!
+*/
+
+enum Yells
 {
-    // 1ST phase 
-    SPELL_SHA_BOLT_COSMETIC = 129067,
-    SPELL_SHA_BOLT_DUMMY = 143290,
-    SPELL_SHA_BOLT_MISSILE = 143293,
-    SPELL_SHA_BOLT_POOL = 143295, // unused
-    // DAFUQ IS WRONG WITH INNTELLISESE
-    SPELL_SWIRL_DUMMY = 143309,
-    SPELL_SWIRL_DAMAGE = 143412,
-    SPELL_CORROSIVE_BLAST = 143436,
+    /*** IMMERSEUS ***/
 
-    SPELL_SEEPING_SHA_CIRCLE = 143281,
-
-    // 2ND PHASE
-    SPELL_SHA_RESIUDE = 143459,
-    SPELL_CONGEALING = 143540,
-    SPELL_PURIFIED_RESIDUE = 143524,
-
-    SPELL_SEEPING_SHA_VISUAL = 143281,
-    SPELL_SEEPING_SHA_DAMAGE = 143286,
-
-    SPELL_ERUPTING_SHA = 143498,
-
-    SPELL_SWIRL_CIRCLE_DUMMY = 143410,
-    SPELL_SWIRL_CIRCLE_DAMAGE = 143413,
-
-    SPELL_SPLIT_DUMMY = 143020,
-    SPELL_SPLIT_SHA_PUDDLE_THROW = 143022,
-    SPELL_SPLIT_CONTEMPLATED_THROW = 143024,
-
-    // HEROIC
-    SPELL_SWELLING_CORRUPTION_AURA = 143574,
-    SPELL_SWELLING_CORRUPTION_SCRIPT = 143578,
-    SPELL_SWELLING_CORRUPTION_SUMMON = 143581,
-    
-    SPELL_CORRUPTION_DOT = 143579,
-
-    // 2ND PHASE HC
-    SPELL_SHA_POOL_EFFECT = 143462,
-    SPELL_SHA_POOL_AURA = 143462,
-    SPELL_SHA_POOL_PERIODIC_DAMAGE = 143460,
-};
-enum eImmersiusTriggers
-{
-    TRIGGER_SHA_POOL = 71611,
-    TRIGGER_SHA_BOLT = 71544,
-    TRIGGER_SEEPING_SHA = 324252, // custom made
-    TRIGGER_SHA_SPAWNS = 324296,// custom made cuz bravery
-    TRIGGER_SHA_SWIRL = 435321,
-    TRIGGER_SHA_SWIRL_CIRCLE = 254235,
-    CREATURE_SHA_POOL_HC = 716112,
-};
-enum eImmersiusEvents
-{
-    EVENT_SHA_BOLT = 100,
-    EVENT_SWIRL = 101,
-    EVENT_CORRSIVE_BLAST = 102,
-    EVENT_SEEPING_SHA = 103,
-    EVENT_SPLIT_PHASE = 104,
-    EVENT_SWIRL_DE = 105,
-    EVENT_SPLIT_PHASE_2 = 106,
-};
-enum eImmersiusActions
-{
-    ACTION_COUNT_SPLIT_PHASE = 540,
-    ACTION_REMOVE_ENERGY = 541,
-};
-enum eImmersiusGroups
-{
-    GROUP_TEARS_OF_THE_VALE = 900, // 1ST PHASE
-    GROUP_SPLIT = 901, // 2ND PHASE
-};
-enum eventsos
-{
-    EVENT_TALK_1 = 20,
-    EVENT_TALK_2 = 22,
-    EVENT_TALK_3 = 23,
-    EVENT_TALK_4 = 24,
-    EVENT_TALK_5 = 25,
-    EVENT_TALK_6 = 26,
-    EVENT_TALK_7 = 27,
-    EVENT_TALK_8 = 28,
-    EVENT_TALK_9 = 29,
+    ANN_SPLIT                  = 0, // Immerseus [Splits]!
+    ANN_REFORM,                     // Immerseus [Reforms]!
+    ANN_SWIRL                       // Immerseus begins to cast [Swirl]!
 };
 
-Position immersusfrontdoor = { 1442.74f, 861.203f, 248.994f, 3.519956f };
-Position immersusbackdoor2 = { 1442.74f, 861.203f, 248.994f, 3.519956f };
-
-Position circleposition[6] =
+enum Spells
 {
-    { 1447.89f, 828.258f, 246.835f },
-    { 1384.38f, 799.616f, 246.784f },
-    { 1366.21f, 726.288f, 246.834f },
-    { 1482.72f, 682.118f, 246.836f },
-    { 1513.86f, 780.797f, 246.835f },
-    { 1447.89f, 828.258f, 246.835f },
+    /*** IMMERSEUS ***/
+
+    // Misc - General.
+    SPELL_ZERO_POWER            =  72242, // No Energy (Corruption) Regen.
+
+    SPELL_SUBMERGE              = 121541, // Submerge visual (when casted makes boss submerge).
+    SPELL_EMERGE                = 139832, // Submerged visual (when removed makes boss emerge).
+
+    // Phase 1 - Tears of the Vale.
+
+    // Sha Bolt
+    // On all players, causes Sha Bolt (Sha Splash casting NPC's) to appear under their feet for the duration of the phase.
+    /*
+        Sha Bolt is an ability that Immerseus uses roughly every 10 seconds. 
+        It deals moderate Shadow damage to every raid member (and to anyone within 5 yards of them), and places a small void zone at their location. 
+        These void zones persist until the end of the phase. When the phase ends, the void zones will move towards Immerseus and disappear upon reaching him.
+    */
+    SPELL_SHA_BOLT_DUMMY        = 143290, // Dummy for SPELL_SHA_BOLT on eff 0 to cast it on all players in 500 yd.
+    SPELL_SHA_BOLT              = 143293, // Triggers missile 143295 (summons NPC_SHA_BOLT).
+
+    // Swirl
+    // Huge ring of water, boss turns around with it, Channeled. On hit / touch deals damage. (IMMERSEUS). Also in the whole room NPC_WHIRL appear under players (ROOM).
+    /*
+        Swirl is an ability that has two components.
+        Immerseus will summon a number of small void zones that move around the room, dealing damage to any players who come in contact with them, and knocking these players up. 
+        Immediately afterwards, Immerseus will channel a very damaging jet of water in front of him, and he will spin clockwise for 10 seconds.
+        After the 10 seconds are up, the void zones will disappear and Immerseus will resume his usual behaviour.
+    */
+    // Handled directly in the script, left here as reminder of spells connections.
+    SPELL_SWIRL                 = 143309, // Applies Areatrigger 1018 (eff 1) on summoned NPC_SWIRL_TARGET - seems visual for water burst on boss. Eff 0 dummy aura.
+    SPELL_SWIRL_DMG_IMMERSEUS   = 143412, // On players coming into contact with waters near Immerseus. Periodic damage aura every 0.25 seconds.
+    SPELL_SWIRL_ROOM_SE         = 143415, // Script effect (eff 0) for casting SPELL_SWIRL_ROOM on all triggers in room (NPC_SWIRL - "cracks in the ground").
+    SPELL_SWIRL_ROOM            = 143410, // Applies Areatrigger 1024 on all NPC_SWIRL ground crack trigger mobs (visual).
+    SPELL_SWIRL_ROOM_DMG        = 143413, // On players coming into contact with waters on NPC_SWIRL "ground crack" trigger mobs. Periodic damage aura every 0.25 seconds.
+
+    // Corrosive Blast
+    // Similar to regular Cone Breath attacks.
+    /*
+        Corrosive Blast is a frontal cone attack that deals Shadow damage to affected players, and debuffs them to take 300% increased Shadow damage for 45 seconds.
+        This effect stacks. Immerseus casts this ability every 35 seconds or so. This ability requires a tank switch.
+    */
+    SPELL_CORROSIVE_BLAST       = 143436, // Damage + Shadow damage taken increase 45 sec.
+
+    // Out of melee range version.
+    SPELL_CORROSIVE_BLAST_OUM   = 143437, // Each sec.
+
+    // Swelling Corruption - Heroic only!
+    // Cast in the beginning of the normal phase, see below for details.
+    /*
+        Once per Immerseus Phase, the boss gains a buff called Swelling Corruption. 
+        Swelling Corruption has an unlimited duration, and it has a certain number of stacks. 
+        Specifically, the buff has one stack for every 2 points of Corruption that the boss has. 
+        The very first Swelling Corruption has 50 stacks, and then fewer stacks as goes on.
+        Every attack made against the boss removes a stack of the buff, and causes the attacker to 
+        gain a stack of a dispellable 6-second Shadow-damage DoT, and to spawn an add called Congealed Sha.
+        The DoT's damage increases over the course of its 6-second duration, and the Congealed Sha adds do not do anything except melee their main aggro target.
+        Swelling Corruption has no other effects, and once all of its stacks are gone, it disappears.
+    */
+    // Handled directly in the script, left here as reminder of spells connections.
+    SPELL_SWELLING_CORRUPTION   = 143574, // Heroic only! Boss aura for checking player ability attacks (Summons Congealed Sha). Stacks = boss Corruption level. Dummy on eff 0 + 1.
+    SPELL_SWELLING_CORRUPTION_D = 143578, // Eff 0 script effect for SPELL_SHA_CORRUPTION_DMG.
+    SPELL_SHA_CORRUPTION_DMG    = 143579, // Periodic damage aura on players when they strike Immerseus with abilities. Stacks.
+    SPELL_SHA_CORRUPTION_SUMM   = 143580, // Triggers SPELL_SWELLING_CORRUPTION_S missile when players strike Immerseus with abilities. Eff 1 on SPELL_SWELLING_CORUPTION.
+    SPELL_SWELLING_CORRUPTION_S = 143581, // Summons NPC_CONGEALED_SHA.
+
+    // Phase 2 - Split.
+
+    // Split.
+    // Actual "Split" spell cast at phase change.
+    /*
+        Split causes Sha Puddles and Contaminated Puddles to erupt from Immerseus that will try to reform in the center of the room.
+        For each Sha Puddle killed and each Contaminated Puddle healed to full, Immerseus' energy is reduced by one.
+    */
+    SPELL_SPLIT                 = 143020, // On eff. 0 stun, eff. 1 Script Effect for add - summoning missiles.
+    SPELL_REFORM                = 143469, // On eff. 0 Script Effect for setting Health and Corruption points.
+
+    // Missiles and corresponding add - summoning spells.
+    SPELL_SPLIT_SHA_MISSILE     = 143022, // Triggers SPELL_SPLIT_SHA.
+    SPELL_SPLIT_SHA             = 143453, // Summons Sha Puddle at location.
+
+    SPELL_SPLIT_CONTAM_MISSILE  = 143024, // Triggers SPELL_SPLIT_CONTAM.
+    SPELL_SPLIT_CONTAM          = 143454, // Summons Contaminated Puddle at location.
+
+    // When any Puddle reaches Immerseus, it triggers an eruption, inflicting:
+    SPELL_ERRUPTING_SHA         = 143498, // 73125 to 76875 Shadow damage to all players for a Sha or Contaminated Puddle;
+    SPELL_ERRUPTING_WATER       = 145377, // 29250 to 30750 Frost damage to all players for a Purified Puddle.
+
+    // When the puddles are destroyed (Sha) / healed fully (Contaminated) before they reach Immerseus, the give to players:
+    SPELL_SHA_RESIDUE           = 143459, // Sha Puddle. Applies Sha Residue to enemies within 10 yards. Increases damage dealt to Sha Puddles by 25%. Stacks.
+    SPELL_PURIFIED_RESIDUE      = 143524, // Contaminated Puddle. Restores 25% of allies within 10 yards mana. Increases healing done by 75% (also 10 yd).
+
+    // Sha Pool - Heroic only!.
+    // The Sha Pool grows over time (+ when a puddle reaches it), inflicting 4000 Shadow damage over 1 sec to enemies who touch it.  Touching the Sha Puddle causes it to shrink.
+    // This is mostly cast by the boss on himself.
+    /*
+        During the Split Phase, Immerseus gains an ability called Sha Pool.
+        This causes the center of the room (the area where your raid cannot go without being damaged and knocked back, 
+        and the same area where all the adds converge) to become a large void zone.
+        Any players standing inside the void zone take a small amount of Shadow damage every second.
+        The void zone grows slowly over the course of the Split Phase, and it also grows each time a Sha Puddle, Contaminated Puddle or Purified Puddle reaches it.
+        As it increases in size, its damage is also increased. The void zone shrinks in size whenever it damages a raid member, and it disappears as soon as the phase ends.
+    */
+    SPELL_SHA_POOL_AURA         = 143462, // Triggers 143460 Periodic damage aura on eff 0, SPELL_SHA_POOL_CHECK_GROW script effect 100 yd on eff 1 (check players and grow / shrink).
+    SPELL_SHA_POOL_CHECK_GROW   = 143461,
+
+    // Phase 1 + Phase 2 (General).
+
+    // Seeping Sha
+    // Cast basically by the boss on himself.Visual areatrigger and damage to players in contact. HAPPENS IN PHASE 2 ALSO!
+    /*
+        Seeping Sha is essentially a protective barrier that surrounds Immerseus (displayed as a ring of water). 
+        Players who get too close to the boss and enter this water take damage and are knocked back.
+        This prevents players from walking through the boss, but since his hitbox is very large, it does not interfere with melee players' ability to attack.
+    */
+    SPELL_SEEPING_SHA           = 143281, // Create Areatrigger 1016 (around Immerseus). 40 yards diameter, base water visual.
+    SPELL_SEEPING_SHA_DAMAGE    = 143286, // Coming into contact with the Seeping Sha that surrounds Immerseus inflicts 97500 to 102500 Shadow damage and knocks players back. 
+
+    SPELL_BERSERK               =  64238, // Berserk, Enrage, Bye - Bye or, simply put, a wipe. :)
+
+    /*** SHA BOLT (NPC_SHA_BOLT) ***/
+
+    SPELL_SHA_SPLASH            = 143298, // Creates Areatrigger 1017.
+    SPELL_SHA_SPLASH_VISUAL     = 119542, // 3 yard visual.
+    SPELL_SHA_SPLASH_DMG        = 143297, // Periodic damage aura on player when splash occurs.
+
+    /*** CONTAMINATED PUDDLE (NPC_CONTAMINATED_PUDDLE) ***/
+
+    SPELL_CONGEALING_AURA       = 143538, // Check health every 500 ms (Periodic Dummy eff 0) and add SPELL_CONGEALING stacks.
+    SPELL_CONGEALING            = 143540, // 5% Size mod. Movement speed reduced by 10%. Speed wanes as it increases in health (1 stack / 10% hp).
+    SPELL_PURIFIED              = 143523  // Applied when it's healed to full (Dummy visual aura).
 };
-enum Talks
-{
-    // 1st boss
-    TALK_1 = 1, // Ah.. we adventure together again, except this time.. I'm afraid circumstances are much.. more die (38120)
-    TALK_2 = 2, // Oh.. what has become of the vale? (38121)
-    TALK_3 = 3, // The land is scarred.. the everblooming trees and plants wither and die.. as the water from the pools drains away. (38122)
-    TALK_4 = 4, // Come.. let us see what other horrors Garrosh has unleashed upon our land. (38123)
-    TALK_5 = 5, // Once the Titans used these life-giving waters, to create and shape all life in Pandaria (38124)
-    TALK_6 = 6, // It is these waters that kept the water in bloom, they run off into the the Valley of Four Winds.. created the most furtile farms in the whole world! (38125)
-    TALK_7 = 7, // And now.. the Melignants of the old gods has menifested themselves into this old waters (38126)
-    TALK_8 = 8, // Such a foul.. foul.. thing.. destroy it, before it seeps deep into the soil, and corrupt all of Pandaria! (38127)
-    TALK_9 = 9, // Ah.. you have done it, the waters are pure once more. (38128)
 
-    // 2nd boss
-    TALK_10 = 10, // Can you feel the life giving energy flow through you? (38129)
-    TALK_11 = 11, // It'll take much time for vale to heal, but you have giving us hope (38130)
-    TALK_12 = 12, // Can it be?... Oh no.. no! NO! (38131)
-    TALK_13 = 13, // The Golden Lotus?! but.. the pledged their life to defend this place!
+enum Events
+{
+    /*** IMMERSEUS ***/
+
+    // First phase (Normal).
+    EVENT_SHA_BOLT              = 1,
+    EVENT_SWIRL,
+    EVENT_CORROSIVE_BLAST,
+    EVENT_CORROSIVE_BLAST_OUM, // Melee check.
+    EVENT_SWELLING_CORRUPTION,
+
+    // Second phase (Split).
+    EVENT_SPLIT,
+    EVENT_PUDDLES_MOVE_CENTER,
+
+    // Both phases.
+    EVENT_SEEPING_SHA,
+    EVENT_BERSERK,
+
+    /*** SHA BOLT (NPC_SHA_BOLT) ***/
+
+    EVENT_SHA_BOLT_ROOM_CHECK,
+
+    /*** SWIRL (NPC_SWIRL) ***/
+
+    EVENT_SWIRL_ROOM_CHECK,
+
+    /*** SWIRL (NPC_SWIRL_TARGET) ***/
+
+    EVENT_MOVE_CIRCLE,
+    EVENT_SWIRL_TARGET_CHECK,
+
+    /*** SHA PUDDLE (NPC_SHA_PUDDLE) / CONTAMINATED PUDDLE (NPC_CONTAMINATED_PUDDLE) ***/
+
+    EVENT_MOVE_CENTER
 };
 
-Position immersus_chest = {1440.66f, 817.257f, 246.835f, 4.679507f};
-
-enum chestsgobjectimmersus
+enum Actions
 {
-    tregularimmersus = 221776,
-    thcimmersus = 221778,
-    tfregularimmersus = 221779,
-    tfhcimmersus = 221780,
-    tfraidfinderimmersus = 221781,
+    /*** SHA PUDDLE / CONTAMINATED PUDDLE ***/
 
-    walkercho_bro_2 = 321445,
+    ACTION_PUDDLES_MOVE_CENTER   = 1,
+    ACTION_STOP_SPLASH_CHECK
 };
 
-Position afterimmersius_cho_spawn_summon =
+enum Phases
 {
-    1452.132f, 820.978f, 246.835f, 2.879340f
+    /*** IMMERSEUS ***/
+
+    PHASE_IMMERSEUS_NORMAL       = 1,
+    PHASE_IMMERSEUS_SPLIT        = 2
 };
 
-
-class boss_immersus : public CreatureScript
+enum Npcs
 {
-public:
-    boss_immersus() : CreatureScript("boss_immersus") { }
+    /*** IMMERSEUS ***/
 
-    struct boss_immersusAI : public BossAI
-    {
-        boss_immersusAI(Creature* creature) : BossAI(creature, DATA_IMMERSUS)
+    NPC_SHA_BOLT                 = 71544, // Sha Bolt NPC - goes with Sha Splash.
+    NPC_SWIRL                    = 71548, // Swirl NPC (many, in room).
+    NPC_SWIRL_TARGET             = 71550, // For the boss channel spell.
+    NPC_CONGEALED_SHA            = 71642, // From Swelling Corruption aura, Heroic only!.
+
+    // Always 25 mobs summoned for p2, different types are selected according to Corruption level.
+    // Already declared in the header as main mobs.
+    // NPC_SHA_PUDDLE               = 71603, // Sha Puddle phase 2 (1 for every 4 Corruption +).
+    // NPC_CONTAMINATED_PUDDLE      = 71604  // Contaminated Puddle phase 2 (1 for every 4 Corruption -).
+};
+
+enum GOs
+{
+    GO_TEARS_OF_THE_VALE         = 221776 // Loot chest.
+};
+
+#define MAX_SPLIT_PUDDLES        25       // Maximum number of puddles summoned each Split phase.
+
+/*** IMMERSEUS - 71543. ***/
+class boss_immerseus : public CreatureScript
+{
+    public:
+        boss_immerseus() : CreatureScript("boss_immerseus") { }
+
+        struct boss_immerseusAI : public BossAI
         {
-            pInstance = creature->GetInstanceScript();
-            intro = false;
-        }
-
-        InstanceScript* pInstance;
-        EventMap events;
-
-        Creature* target = NULL;
-
-        uint32 swirlcirculation;
-        uint32 currentenergy;
-        uint32 swirlhit;
-        uint32 count;
-        uint32 sheepingsha;
-        uint32 berserk;
-        bool intro;
-        bool swirl;
-        bool split;
-        bool splitphase;
-        bool loot;
-
-        void Reset()
-        {
-            _Reset();
-            events.Reset();
-            summons.DespawnAll();
-
-            swirl = false;
-            splitphase = false;
-            split = true;
-            loot = false;
-
-            sheepingsha = 1000;
-            swirlcirculation = 1000;
-            swirlhit = 2000;
-            count = 0;
-            currentenergy = 0;
-            berserk = 60000 * 10;
-
-            target = NULL;
-
-            me->SetDisplayId(49056);
-            me->RemoveAllAuras();
-            
-            DespawnCreaturesInArea(71642, me);
-
-            me->AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
-
-            me->SetPower(POWER_ENERGY, 100);
-            me->SetInt32Value(UNIT_FIELD_POWER1, 100);
-            me->SetMaxPower(POWER_ENERGY, 100);
-            me->SetInt32Value(UNIT_FIELD_MAXPOWER1, 100);
-            me->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_REGENERATE_POWER);
-
-            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
-
-            // health
-            switch (me->GetMap()->GetDifficulty())
+            boss_immerseusAI(Creature* creature) : BossAI(creature, DATA_IMMERSEUS), vehicle(creature->GetVehicleKit()), summons(me)
             {
-            case MAN10_HEROIC_DIFFICULTY:
-                me->SetMaxHealth(87000000);
-                break;
-            case MAN25_HEROIC_DIFFICULTY:
-                me->SetMaxHealth(212000000); 
-                break;
-            case MAN25_DIFFICULTY:
-                me->SetMaxHealth(250000000);
-                break;
-            case MAN10_DIFFICULTY:
-                me->SetMaxHealth(62000000);
-                break;
+                instance = creature->GetInstanceScript();
+                ASSERT(vehicle);                // Purple energy bar. Vehicle Id 2116.
             }
-        }
-        void MoveInLineOfSight(Unit* who)
-        {
-            if (who && who->IsInWorld() && who->GetTypeId() == TYPEID_PLAYER && me->IsWithinDistInMap(who, 60.0f) && !intro)
+
+            InstanceScript* instance;
+            Vehicle* vehicle;
+            EventMap events;
+            SummonList summons;
+            uint8 phase;
+
+            uint8 corruptionToRemove;           // Sha Puddles killed / Contaminated Puddles healed in Split phase each increase it by 1. Used to set boss Corruption @ Phase 1 RR.
+            bool secondPhaseInProgress;         // Used as an UpdateAI diff check.
+
+            uint8 shaPuddlesToSummon;           // For Split phase. 1 / each 4 Corruption points boss has.
+            uint8 contaminatedPuddlesToSummon;  // For Split phase. 1 / each 4 Corruption points boss lacks.
+
+            void Reset()
             {
-                intro = true;
+                events.Reset();
+                summons.DespawnAll();
 
-                if (Creature* Cho = pInstance->instance->GetCreature(pInstance->GetData64((DATA_LORE_WALKER_CHO_01))))
+                me->setPowerType(POWER_ENERGY);
+                me->SetMaxPower(POWER_ENERGY, 100);
+                me->SetPower(POWER_ENERGY, 100);
+
+                DoCast(me, SPELL_ZERO_POWER);
+                if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE))
+                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_REGENERATE_POWER);
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+
+                phase = PHASE_IMMERSEUS_NORMAL;
+
+                corruptionToRemove = 0;
+                secondPhaseInProgress = false;
+
+                shaPuddlesToSummon = 0;
+                contaminatedPuddlesToSummon = 0;
+
+                if (instance)
+                    instance->SetData(DATA_IMMERSEUS, NOT_STARTED);
+
+                _Reset();
+            }
+
+            void EnterCombat(Unit* who)
+            {
+                events.ScheduleEvent(EVENT_SEEPING_SHA,       100);
+                events.ScheduleEvent(EVENT_SHA_BOLT,         5000);
+                events.ScheduleEvent(EVENT_CORROSIVE_BLAST, 10000);
+                events.ScheduleEvent(EVENT_SWIRL,           20000);
+
+                if (me->GetMap()->IsHeroic())
+                    events.ScheduleEvent(EVENT_SWELLING_CORRUPTION, 3000);
+
+                events.ScheduleEvent(EVENT_CORROSIVE_BLAST_OUM, 4000); // Melee check (tank).
+                events.ScheduleEvent(EVENT_BERSERK,        605000); // 6 minutes, 5 seconds according to logs.
+
+                if (instance)
                 {
-                    Cho->DespawnOrUnsummon(25000);
-
-                    if (Cho->GetAI())
-                    Cho->GetAI()->DoAction(ACTION_LAST_TALK_BEFORE_BOSS);
+                    instance->SendEncounterUnit(ENCOUNTER_FRAME_ENGAGE, me); // Add.
+                    instance->SetData(DATA_IMMERSEUS, IN_PROGRESS);
                 }
-            }
-        }
-        void JustReachedHome()
-        {
-            _JustReachedHome();
-            summons.DespawnAll();
 
-            instance->SendEncounterUnit(ENCOUNTER_FRAME_DISENGAGE, me);;
-            instance->SetBossState(DATA_IMMERSUS, FAIL);
-
-            DespawnCreaturesInArea(CREATURE_LESSER_SHA_PUDDLE, me);
-            DespawnCreaturesInArea(CREATURE_CONTAMINATED_PUDDLE, me);
-
-            if (GameObject* backdoor = pInstance->instance->GetGameObject(pInstance->GetData64((DATA_BACK_DOOR_IMMERSUS))))
-            {
-                backdoor->Delete();
-            }
-            if (GameObject* frontdoor = pInstance->instance->GetGameObject(pInstance->GetData64((DATA_FRONT_DOOR_IMMERSUS))))
-            {
-                frontdoor->Delete();
-            }
-        }
-        void EnterCombat(Unit* attacker)
-        {
-            if (pInstance)
-            {
-                pInstance->SendEncounterUnit(ENCOUNTER_FRAME_ENGAGE, me);
-                DoZoneInCombat();
+                _EnterCombat();
             }
 
-            DespawnCreaturesInArea(CREATURE_LESSER_SHA_PUDDLE, me);
-            DespawnCreaturesInArea(CREATURE_CONTAMINATED_PUDDLE, me);
-            DespawnCreaturesInArea(342652, me);
-
-            me->SetPower(POWER_ENERGY, 100);
-            me->SetInt32Value(UNIT_FIELD_POWER1, 100);
-            me->SetMaxPower(POWER_ENERGY, 100);
-            me->SetInt32Value(UNIT_FIELD_MAXPOWER1, 100);
-
-            me->CastSpell(me, SPELL_SEEPING_SHA_CIRCLE);
-            me->CastSpell(me, SPELL_SEEPING_SHA_VISUAL);
-
-            if (me->GetMap()->IsHeroic())
+            void DamageTaken(Unit* attacker, uint32& damage)
             {
-                me->AddAura(143574, me);
-
-                if (AuraPtr aura = me->GetAura(143574))
+                // Handle Split phase entrance and event ending.
+                if (phase == PHASE_IMMERSEUS_NORMAL && damage >= me->GetHealth())
                 {
-                    aura->SetStackAmount(100);
-                }
-            }
+                    damage = 0;
 
-            // 1st phase
-            events.ScheduleEvent(EVENT_SHA_BOLT, 8000, GROUP_TEARS_OF_THE_VALE);
-            events.ScheduleEvent(EVENT_SWIRL, 20000, GROUP_TEARS_OF_THE_VALE);
-            events.ScheduleEvent(EVENT_CORRSIVE_BLAST, urand(12000, 14000), GROUP_TEARS_OF_THE_VALE);
-        }
-        void JustSummoned(Creature* summon)
-        {
-            summons.Summon(summon);
-        }
-        void RegeneratePower(Powers power, int32& value)
-        {
-            int32 val = me->GetPower(POWER_ENERGY);
-            value = 0;
-            me->SetInt32Value(UNIT_FIELD_POWER1, val);
-        }
-        void DamageTaken(Unit* attacker, uint32& damage)
-        {
-            if (!me->isInCombat())
-                return;
-
-            if (me->GetHealthPct() <= 15 && split)
-            {
-                me->CastStop();
-                split = false;
-
-                std::list<Creature*> puddles;
-                puddles.clear();
-
-                me->GetCreatureListWithEntryInGrid(puddles, TRIGGER_SHA_POOL, 200.0f);
-
-                for (auto itr : puddles)
-                {
-                    itr->DespawnOrUnsummon(5000);
-                    itr->GetMotionMaster()->MovePoint(0, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ());
-                }
-
-                events.ScheduleEvent(EVENT_SPLIT_PHASE, 200);
-            }
-            if (me->GetMap()->IsHeroic())
-            {
-                if (!splitphase)
-                {
-                    if (AuraPtr ptr_Aura = me->GetAura(143574))
+                    if (me->GetPower(POWER_ENERGY) > 10) // Split phase.
+                        ChangePhase(PHASE_IMMERSEUS_SPLIT);
+                    else // Boss is done.
                     {
-                        if (ptr_Aura->GetStackAmount() > 1)
+                        JustDied(attacker);
+
+                        me->setFaction(35);
+                        me->RemoveAllAuras();
+                        me->DeleteThreatList();
+                        me->CombatStop(true);
+                        me->SetFullHealth();
+                        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+
+                        attacker->SummonGameObject(GO_TEARS_OF_THE_VALE, 1458.48f, 716.72f, 246.84f, 5.22f, 0.0f, 0.0f, 0.0f, 0.0f, 0);
+                    }
+                }
+            }
+
+            void SpellHit(Unit* caster, SpellInfo const* spell)
+            {
+                if (!instance)
+                    return;
+
+                if (instance->GetData(DATA_IMMERSEUS) == DONE)
+                    return;
+
+                // Handle Emerge / Submerge mechanics.
+                if (spell->Id == SPELL_SUBMERGE)
+                {
+                    me->AddAura(SPELL_EMERGE, me);
+                    me->RemoveAurasDueToSpell(SPELL_SUBMERGE);
+                }
+
+                // Swelling Corruption eff. 0 + 1 handling - player ability cast on boss. Aura addition includes stack increase. Summon NPCs.
+                // A bit of a workaround, but done here because there are no periodic check dummy triggers on the spell itself.
+                if (me->HasAura(SPELL_SWELLING_CORRUPTION) && caster->GetTypeId() == TYPEID_PLAYER)
+                {
+                    me->AddAura(SPELL_SHA_CORRUPTION_DMG, caster);
+                    DoCast(caster, SPELL_SHA_CORRUPTION_SUMM);
+                }
+            }
+
+            void JustSummoned(Creature* summon)
+            {
+                summons.Summon(summon);
+				summon->setActive(true);
+
+				if (me->isInCombat())
+					summon->SetInCombatWithZone();
+            }
+
+            void SummonedCreatureDespawn(Creature* summon)
+            {
+                if (instance && summon->GetEntry() == NPC_SHA_BOLT)
+                    instance->DoRemoveAurasDueToSpellOnPlayers(SPELL_SHA_SPLASH_DMG);
+
+                if (summon->GetEntry() == NPC_SWIRL_TARGET)
+                {
+                    if (instance)
+                    {
+                        instance->DoRemoveAurasDueToSpellOnPlayers(SPELL_SWIRL_DMG_IMMERSEUS);
+                        instance->DoRemoveAurasDueToSpellOnPlayers(SPELL_SWIRL_ROOM_DMG);
+                    }
+                }
+
+                summons.Despawn(summon);
+            }
+
+            // Used to despawn all summons having a specific entry.
+            void DespawnSummon(uint32 entry)
+            {
+                std::list<Creature*> summonsList;
+                GetCreatureListWithEntryInGrid(summonsList, me, entry, 200.0f);
+                if (!summonsList.empty())
+                    for (std::list<Creature*>::iterator summs = summonsList.begin(); summs != summonsList.end(); summs++)
+                        (*summs)->DespawnOrUnsummon();
+            }
+
+            // Used to move and despawn all Sha Bolt Puddles.
+            void MoveAndDespawnPuddles()
+            {
+                std::list<Creature*> summonsList;
+                GetCreatureListWithEntryInGrid(summonsList, me, NPC_SHA_BOLT, 200.0f);
+                if (!summonsList.empty())
+                    for (std::list<Creature*>::iterator summs = summonsList.begin(); summs != summonsList.end(); summs++)
+                        (*summs)->AI()->DoAction(ACTION_STOP_SPLASH_CHECK);
+            }
+
+            // Used as an internal function for calling Boss Phase changes.
+            void ChangePhase(uint8 bossPhase)
+            {
+                // Just preventing processing of any unwanted calls.
+                if (bossPhase > PHASE_IMMERSEUS_SPLIT)
+                    return;
+
+                switch (bossPhase)
+                {
+                    case PHASE_IMMERSEUS_NORMAL: // When all adds are killed / healed or reached boss.
+                        phase = PHASE_IMMERSEUS_NORMAL;
+                        if (int32 powersRemaining = me->GetPower(POWER_ENERGY) - corruptionToRemove)
                         {
-                            ptr_Aura->SetStackAmount(ptr_Aura->GetStackAmount() - 1);
+                            if (uint32 healthRemaining = me->GetMaxHealth() * (0.01 * powersRemaining))
+                                me->SetHealth(healthRemaining < 1 ? 1 : healthRemaining); // Works like percentage calculation (MaxHealth * (100% - (1% * KilledHealedAdds))).
+                            me->SetPower(POWER_ENERGY, powersRemaining);
+                        }
+                        me->RemoveAurasDueToSpell(SPELL_SPLIT);
+                        me->RemoveAurasDueToSpell(SPELL_EMERGE); // Emerge.
+                        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
+                        events.ScheduleEvent(EVENT_SHA_BOLT,         5000);
+                        events.ScheduleEvent(EVENT_CORROSIVE_BLAST, 10000);
+                        events.ScheduleEvent(EVENT_SWIRL,           20000);
+                        events.ScheduleEvent(EVENT_CORROSIVE_BLAST_OUM, 4000);
+                        if (me->GetMap()->IsHeroic())
+                        {
+                            me->RemoveAurasDueToSpell(SPELL_SHA_POOL_AURA);
+                            events.ScheduleEvent(EVENT_SWELLING_CORRUPTION, 3000);
+                        }
+                        if (instance)
+                            instance->DoRemoveAurasDueToSpellOnPlayers(SPELL_SEEPING_SHA_DAMAGE);
+                        corruptionToRemove = 0;
+                        shaPuddlesToSummon = 0;
+                        contaminatedPuddlesToSummon = 0;
+                        break;
 
-                            me->CastSpell(me, 143581);
+                    case PHASE_IMMERSEUS_SPLIT: // When boss "dies" (reaches < 1 health).
+                        phase = PHASE_IMMERSEUS_SPLIT;
+                        MoveAndDespawnPuddles();
+                        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
+                        events.CancelEvent(EVENT_SHA_BOLT);
+                        events.CancelEvent(EVENT_CORROSIVE_BLAST);
+                        events.CancelEvent(EVENT_SWIRL);
+                        events.CancelEvent(EVENT_CORROSIVE_BLAST_OUM);
+                        if (me->GetMap()->IsHeroic())
+                        {
+                            me->RemoveAurasDueToSpell(SPELL_SWELLING_CORRUPTION);
+                            events.CancelEvent(EVENT_SWELLING_CORRUPTION);
+                            me->AddAura(SPELL_SHA_POOL_AURA, me);
+                        }
+                        if (instance)
+                            instance->DoRemoveAurasDueToSpellOnPlayers(SPELL_SEEPING_SHA_DAMAGE);
+                        events.ScheduleEvent(EVENT_SPLIT, 200);
+                        break;
 
-                            if (attacker && attacker->IsInWorld() && attacker->isAlive() && attacker->GetTypeId() == TYPEID_PLAYER)
+                    default: break;
+                }
+            }
+
+            // Used as an Add counter function for SPELL_SPLIT calculations.
+            void CalculateShaContaminatedPuddles()
+            {
+                // Generate some local variables, calculate the correct boss ones and make any necessary extra checks.
+                uint8 myEnergy = me->GetPower(POWER_ENERGY);
+                uint8 myEnergyMissing = 100 - myEnergy;
+
+                shaPuddlesToSummon = ((myEnergy % 4) == 0 ? (myEnergy / 4) : ((myEnergy - (myEnergy % 4)) / 4)); // Select the lowest number.
+                if (shaPuddlesToSummon < 1)
+                    shaPuddlesToSummon = 1;
+                if (shaPuddlesToSummon > 24)
+                    shaPuddlesToSummon = 24;
+
+                contaminatedPuddlesToSummon = ((myEnergyMissing % 4) == 0 ? (myEnergyMissing / 4) : ((myEnergyMissing + (myEnergyMissing % 4)) / 4)); // Select the highest number.
+                if (contaminatedPuddlesToSummon < 1)
+                    contaminatedPuddlesToSummon = 1;
+                if (contaminatedPuddlesToSummon > 24)
+                    contaminatedPuddlesToSummon = 24;
+
+                uint8 totalAddsToSummon = shaPuddlesToSummon + contaminatedPuddlesToSummon;
+
+                // Far fetched to believe we get here, but worth to check.
+                if (totalAddsToSummon < MAX_SPLIT_PUDDLES)
+                {
+                    // Add counts to a reasonable add entry, depending on Corruption points level.
+                    if (myEnergy > 50 && contaminatedPuddlesToSummon < shaPuddlesToSummon)
+                        contaminatedPuddlesToSummon += MAX_SPLIT_PUDDLES - totalAddsToSummon;
+                    else
+                        shaPuddlesToSummon += MAX_SPLIT_PUDDLES - totalAddsToSummon;
+                }
+                else if (totalAddsToSummon > MAX_SPLIT_PUDDLES)
+                {
+                    // Substract counts from a reasonable add entry, depending on Corruption points level.
+                    if (myEnergy > 50 && contaminatedPuddlesToSummon < shaPuddlesToSummon)
+                        shaPuddlesToSummon -= totalAddsToSummon - MAX_SPLIT_PUDDLES;
+                    else
+                        contaminatedPuddlesToSummon -= totalAddsToSummon - MAX_SPLIT_PUDDLES;
+                }
+            }
+
+            void KilledUnit(Unit* who) { } // He does nothing :(.
+
+			void EnterEvadeMode()
+            {
+                DespawnSummon(NPC_SHA_BOLT);
+
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+                me->AddUnitState(UNIT_STATE_EVADE);
+
+                me->RemoveAllAuras();
+                Reset();
+                me->DeleteThreatList();
+                me->CombatStop(true);
+                me->GetMotionMaster()->MovementExpired();
+                me->GetMotionMaster()->MoveTargetedHome();
+
+                if (instance)
+                {
+                    instance->DoRemoveAurasDueToSpellOnPlayers(SPELL_SEEPING_SHA_DAMAGE);
+                    instance->DoRemoveAurasDueToSpellOnPlayers(SPELL_SHA_SPLASH_DMG);
+                    instance->SetData(DATA_IMMERSEUS, FAIL);
+                    instance->SendEncounterUnit(ENCOUNTER_FRAME_DISENGAGE, me); // Remove.
+                }
+
+                _EnterEvadeMode();
+            }
+
+            void JustReachedHome()
+            {
+                // Prevent calling this if boss is not in Evade mode.
+                if (!me->HasUnitState(UNIT_STATE_EVADE))
+                    return;
+
+                me->ClearUnitState(UNIT_STATE_EVADE);
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+
+                DoCast(me, SPELL_ZERO_POWER);
+                me->SetPower(POWER_ENERGY, 100);
+
+                _JustReachedHome();
+            }
+
+            void JustDied(Unit* killer)
+            {
+                summons.DespawnAll();
+                DespawnSummon(NPC_SHA_BOLT);
+
+                if (instance)
+                {
+                    instance->DoRemoveAurasDueToSpellOnPlayers(SPELL_SEEPING_SHA_DAMAGE);
+                    instance->DoRemoveAurasDueToSpellOnPlayers(SPELL_SHA_SPLASH_DMG);
+                    instance->SendEncounterUnit(ENCOUNTER_FRAME_DISENGAGE, me); // Remove.
+                    instance->SetData(DATA_IMMERSEUS, DONE);
+                }
+
+                _JustDied();
+            }
+
+            void UpdateAI(uint32 const diff)
+            {
+                // Handle Normal phase entrance.
+                if (!me->FindNearestCreature(NPC_SHA_PUDDLE, 200.0f, true) && !me->FindNearestCreature(NPC_CONTAMINATED_PUDDLE, 200.0f, true) && secondPhaseInProgress)
+                {
+                    secondPhaseInProgress = false;
+                    Talk(ANN_REFORM);
+                    DoCast(me, SPELL_REFORM);
+                }
+
+                if (!UpdateVictim() || me->HasUnitState(UNIT_STATE_CASTING))
+                    return;
+
+                // if (instance && instance->IsWipe())
+                // {
+                //     EnterEvadeMode();
+                //     return;
+                // }
+
+                events.Update(diff);
+
+                // Handle Seeping Sha (Normally handled as an Areatrigger check, but can be just as good checked here for periodic damage aura addition).
+                if (me->HasAura(SPELL_SEEPING_SHA))
+                {
+                    Map::PlayerList const &PlayerList = me->GetMap()->GetPlayers();
+                    if (!PlayerList.isEmpty())
+                    {
+                        for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                        {
+                            if (Player* player = i->getSource())
                             {
-                                me->CastSpell(attacker, SPELL_CORRUPTION_DOT);
+                                if (player->GetDistance(me->GetHomePosition()) <= 20.0f) // Check if the player is too close and doesn't have the aura.
+                                {
+                                    if (!player->HasAura(SPELL_SEEPING_SHA_DAMAGE))
+                                        DoCast(player, SPELL_SEEPING_SHA_DAMAGE);
+                                }
+                                else                                            // If the player is further and has the aura, remove it.
+                                {
+                                    if (player->HasAura(SPELL_SEEPING_SHA_DAMAGE))
+                                        player->RemoveAurasDueToSpell(SPELL_SEEPING_SHA_DAMAGE);
+                                }
                             }
                         }
                     }
                 }
-            }
-        }
-        void SummonedCreatureDespawn(Creature* summon)
-        {
-            summons.Despawn(summon);
-        }
-        void DespawnCreaturesInArea(uint32 entry, WorldObject* object)
-        {
-            std::list<Creature*> creatures;
-            GetCreatureListWithEntryInGrid(creatures, object, entry, 300.0f);
-            if (creatures.empty())
-                return;
 
-            for (std::list<Creature*>::iterator iter = creatures.begin(); iter != creatures.end(); ++iter)
-                (*iter)->DespawnOrUnsummon();
-        }
-        void JustDied(Unit* killer)
-        {
-            int32 val = me->GetPower(POWER_ENERGY);
-
-            if (!loot)
-            {
-                if (val <= 0 || currentenergy >= 99)
+                while (uint32 eventId = events.ExecuteEvent())
                 {
-                    // chest
-                    switch (me->GetMap()->GetDifficulty())
+                    switch (eventId)
                     {
-                    case MAN10_HEROIC_DIFFICULTY:
-                        me->SummonGameObject(thcimmersus, immersus_chest.GetPositionX(), immersus_chest.GetPositionY(), immersus_chest.GetPositionZ(), immersus_chest.GetOrientation(), 0, 0, 0, 0, 0, 0);
-                        break;
-                    case MAN25_HEROIC_DIFFICULTY:
-                        me->SummonGameObject(tfhcimmersus, immersus_chest.GetPositionX(), immersus_chest.GetPositionY(), immersus_chest.GetPositionZ(), immersus_chest.GetOrientation(), 0, 0, 0, 0, 0, 0);
-                        break;
-                    case MAN25_DIFFICULTY:
-                        me->SummonGameObject(tfregularimmersus, immersus_chest.GetPositionX(), immersus_chest.GetPositionY(), immersus_chest.GetPositionZ(), immersus_chest.GetOrientation(), 0, 0, 0, 0, 0, 0);
-                        break;
-                    case MAN10_DIFFICULTY:
-                        me->SummonGameObject(tregularimmersus, immersus_chest.GetPositionX(), immersus_chest.GetPositionY(), immersus_chest.GetPositionZ(), immersus_chest.GetOrientation(), 0, 0, 0, 0, 0, 0);
-                        break;
-                    }
+                        // Phase 1 - Tears of the Vale.
 
-                    instance->SendEncounterUnit(ENCOUNTER_FRAME_DISENGAGE, me);;
-                    instance->SetBossState(DATA_IMMERSUS, DONE);
-
-
-                    me->CombatStop(true);
-                    me->getHostileRefManager().clearReferences();
-                    me->CombatStop();
-                    me->RemoveAllAuras();
-                    me->Respawn();
-                    me->setFaction(35);
-                    me->SetMaxHealth(100000);
-                    me->SetHealth(100000);
-                    me->SetDisplayId(49807);
-
-                    me->SummonCreature(walkercho_bro_2, afterimmersius_cho_spawn_summon, TEMPSUMMON_MANUAL_DESPAWN);
-
-                    loot = true;
-
-                    std::list<Player*> pl_list;
-                    pl_list.clear();
-
-                    me->GetPlayerListInGrid(pl_list, 100.0f);
-
-                    if (pl_list.empty())
-                        return;
-
-                    CurrencyOnKillEntry const* Curr = sObjectMgr->GetCurrencyOnKillEntry(me->ToCreature()->GetEntry());
-                    if (!Curr)
-                        return;
-
-                    for (auto itr : pl_list)
-                    {
-                        if (Curr->currencyId1 && Curr->currencyCount1)
+                        case EVENT_SHA_BOLT:
                         {
-                            if (CurrencyTypesEntry const* entry = sCurrencyTypesStore.LookupEntry(Curr->currencyId1))
-                            {
-                                if (Curr->currencyId1 == CURRENCY_TYPE_JUSTICE_POINTS)
-                                {
-                                    if ((itr->GetCurrency(Curr->currencyId1, true) + Curr->currencyCount1) > itr->GetCurrencyTotalCap(entry))
-                                    {
-                                        uint32 max = itr->GetCurrencyTotalCap(entry);
-                                        uint32 lessPoint = max - itr->GetCurrency(Curr->currencyId1, true);
-                                        uint32 rest = Curr->currencyCount1 - lessPoint;
+                            if (phase == PHASE_IMMERSEUS_NORMAL)
+                                DoCast(me, SPELL_SHA_BOLT_DUMMY);
+                            events.ScheduleEvent(EVENT_SHA_BOLT, urand(11000, 15000)); // 6 - 20 seconds in logs.
+                            break;
+                        }
 
-                                        itr->ModifyCurrency(Curr->currencyId1, lessPoint);
-                                    }
-                                    else
-                                        itr->ModifyCurrency(Curr->currencyId1, Curr->currencyCount1);
+                        case EVENT_SWIRL:
+                        {
+                            if (phase == PHASE_IMMERSEUS_NORMAL)
+                            {
+                                Talk(ANN_SWIRL);
+
+                                // Summon Swirl NPC's.
+                                Map::PlayerList const &PlayerList = me->GetMap()->GetPlayers();
+                                if (!PlayerList.isEmpty())
+                                    for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                                        if (Player* player = i->getSource())
+                                            me->SummonCreature(NPC_SWIRL, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN, 13100);
+
+                                // Select one of the 4 cardinal points - 1.67f, 3.14f, 4.81f, 6.28f and set the boss orientation to it.
+                                float angle = RAND(0.5f, 1.0f, 1.5f, 2.0f) * M_PI;
+                                me->SetFacingTo(angle);
+
+                                // Now get a close point at 20 yards in front of the boss, summon the target NPC there and cast the spell on it.
+                                float x, y, z;
+                                me->GetClosePoint(x, y, z, me->GetObjectSize() / 3, 20.0f);
+
+                                if (Creature* swirlTarget = me->SummonCreature(NPC_SWIRL_TARGET, x, y, z, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 13100))
+                                    DoCast(swirlTarget, SPELL_SWIRL);
+                            }
+                            events.ScheduleEvent(EVENT_SWIRL, urand(46500, 50500)); // 48.5 seconds in logs.
+                            break;
+                        }
+
+                        case EVENT_CORROSIVE_BLAST:
+                        {
+                            if (phase == PHASE_IMMERSEUS_NORMAL)
+                                if (Unit* mainTarget = me->getVictim())
+                                    DoCast(mainTarget, SPELL_CORROSIVE_BLAST);
+                            events.ScheduleEvent(EVENT_CORROSIVE_BLAST, urand(33000, 37000)); // 35 seconds in logs.
+                            break;
+                        }
+
+                        case EVENT_SWELLING_CORRUPTION:
+                        {
+                            // Add the correct amount of stacks, considering Even / Odd Corruption power points remaining.
+                            if (phase == PHASE_IMMERSEUS_NORMAL)
+                            {
+                                uint8 stackAmount = (me->GetPower(POWER_ENERGY) % 2 == 0) ? (me->GetPower(POWER_ENERGY) / 2) : ((me->GetPower(POWER_ENERGY) - 1) / 2);
+
+                                if (!me->HasAura(SPELL_SWELLING_CORRUPTION))
+                                {
+                                    if (AuraPtr swellingCorruption = me->AddAura(SPELL_SWELLING_CORRUPTION, me))
+                                        swellingCorruption->SetStackAmount(stackAmount);
                                 }
                                 else
-                                    itr->ModifyCurrency(Curr->currencyId1, Curr->currencyCount1);
+                                {
+                                    if (AuraPtr swellingCorruption = me->GetAura(SPELL_SWELLING_CORRUPTION))
+                                        swellingCorruption->SetStackAmount(stackAmount);
+                                }
                             }
+                            events.ScheduleEvent(EVENT_SWELLING_CORRUPTION, 75000); // 75 seconds in logs.
+                            break;
                         }
+
+                        // Phase 2 - Split.
+
+                        case EVENT_SPLIT:
+                        {
+                            Talk(ANN_SPLIT);
+                            CalculateShaContaminatedPuddles();
+                            DoCast(me, SPELL_SPLIT);
+                            events.ScheduleEvent(EVENT_PUDDLES_MOVE_CENTER, 10000);
+                            break;
+                        }
+
+                        case EVENT_PUDDLES_MOVE_CENTER:
+                        {
+                            std::list<Creature*> shaContaminatedPuddleList;
+                            GetCreatureListWithEntryInGrid(shaContaminatedPuddleList, me, NPC_SHA_PUDDLE, 150.0f);
+                            GetCreatureListWithEntryInGrid(shaContaminatedPuddleList, me, NPC_CONTAMINATED_PUDDLE, 150.0f);
+                            if (!shaContaminatedPuddleList.empty())
+                                for (std::list<Creature*>::iterator shaContaminatedPuddle = shaContaminatedPuddleList.begin(); shaContaminatedPuddle != shaContaminatedPuddleList.end(); shaContaminatedPuddle++)
+                                    (*shaContaminatedPuddle)->AI()->DoAction(ACTION_PUDDLES_MOVE_CENTER);
+                            secondPhaseInProgress = true;
+                            break;
+                        }
+
+                        // Phase 1 + Phase 2 (General).
+
+                        case EVENT_SEEPING_SHA:
+                        {
+                            // This works like a check, basically the boss should always have this aura (in both phases).
+                            if (!me->HasAura(SPELL_SEEPING_SHA))
+                                DoCast(me, SPELL_SEEPING_SHA);
+                            events.ScheduleEvent(EVENT_SEEPING_SHA, 1000); // Just a check, no logs needed / indications.
+                            break;
+                        }
+
+                        case EVENT_CORROSIVE_BLAST_OUM:
+                            if (phase == PHASE_IMMERSEUS_NORMAL)
+                                if (me->getVictim()->GetDistance(me->GetHomePosition()) > 40.0f)
+                                    DoCast(me->getVictim(), SPELL_CORROSIVE_BLAST_OUM);
+                            events.ScheduleEvent(EVENT_CORROSIVE_BLAST_OUM, 2000);
+                            break;
+
+                        case EVENT_BERSERK:
+                            DoCast(me, SPELL_BERSERK);
+                            break;
+
+                        default: break;
                     }
                 }
+
+                if (phase == PHASE_IMMERSEUS_NORMAL)
+                    DoMeleeAttackIfReady();
             }
-        }
-        void Swirl()
+        };
+
+        CreatureAI* GetAI(Creature* creature) const
         {
-            // SWIRL
-            if (swirl)
+            return new boss_immerseusAI(creature);
+        }
+};
+
+// NPCs.
+
+/*** SHA BOLT - 71544. ***/
+class npc_sha_splash_bolt_immerseus : public CreatureScript
+{
+    public:
+        npc_sha_splash_bolt_immerseus() : CreatureScript("npc_sha_splash_bolt_immerseus") { }
+
+        struct npc_sha_splash_bolt_immerseusAI : public ScriptedAI
+        {
+            npc_sha_splash_bolt_immerseusAI(Creature* creature) : ScriptedAI(creature)
             {
-                if (me->HasAura(SPELL_SWIRL_DUMMY))
+                instance = creature->GetInstanceScript();
+            }
+
+            InstanceScript* instance;
+
+            void IsSummonedBy(Unit* /*summoner*/)
+            {
+                Reset();
+                DoCast(me, SPELL_SHA_SPLASH);
+                me->AddAura(SPELL_SHA_SPLASH_VISUAL, me);
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
+                me->SetReactState(REACT_PASSIVE);
+
+                events.ScheduleEvent(EVENT_SHA_BOLT_ROOM_CHECK, 200);
+            }
+
+            void Reset()
+            {
+                events.Reset();
+            }
+
+            void DoAction(int32 const action)
+            {
+                // Just preventing processing of any unwanted calls.
+                if (action != ACTION_STOP_SPLASH_CHECK)
+                    return;
+
+                switch (action)
                 {
-                    if (Creature* trigger = me->FindNearestCreature(254235, 100.0f, true))
+                    case ACTION_STOP_SPLASH_CHECK:
+                        events.CancelEvent(EVENT_SHA_BOLT_ROOM_CHECK);
+                        if (instance)
+                            instance->DoRemoveAurasDueToSpellOnPlayers(SPELL_SHA_SPLASH_DMG);
+                        me->SetSpeed(MOVE_WALK, 3.0f);
+                        me->SetSpeed(MOVE_RUN, 3.0f);
+                        if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 150.0f, true))
+                            me->GetMotionMaster()->MovePoint(1, Immerseus->GetHomePosition().GetPositionX(), Immerseus->GetHomePosition().GetPositionY(), Immerseus->GetHomePosition().GetPositionZ());
+                        me->DespawnOrUnsummon(3000);
+                        break;
+
+                    default: break;
+                }
+            }
+
+            void UpdateAI(uint32 const diff)
+            {
+                events.Update(diff);
+
+                while (uint32 eventId = events.ExecuteEvent())
+                {
+                    switch (eventId)
                     {
-                        me->SetFacingToObject(trigger);
-
-                        std::list<Player*> pl_list_cone;
-                        pl_list_cone.clear();
-
-                        me->GetPlayerListInGrid(pl_list_cone, 200.0f);
-
-                        if (pl_list_cone.empty())
-                            return;
-
-                        for (auto itr : pl_list_cone)
+                        case EVENT_SHA_BOLT_ROOM_CHECK:
                         {
-                            if (itr->IsWithinDistInMap(trigger, 20.0f))
+                            // Check for players.
+                            if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 300.0f, true))
+				            {
+                                Map::PlayerList const &PlayerList = me->GetMap()->GetPlayers();
+                                if (!PlayerList.isEmpty())
+                                {
+                                    for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                                    {
+                                        if (Player* player = i->getSource())
+                                        {
+                                            if (me->GetDistance(player) <= 3.0f) // Check if the player is too close and doesn't have the aura.
+                                            {
+                                                if (!player->HasAura(SPELL_SHA_SPLASH_DMG))
+                                                    me->AddAura(SPELL_SHA_SPLASH_DMG, player);
+                                            }
+                                            else
+                                            {
+                                                if (!player->FindNearestCreature(NPC_SHA_BOLT, 3.0f, true)) // Else if the player is further and has the aura, remove it.
+                                                    if (player->HasAura(SPELL_SHA_SPLASH_DMG))
+                                                        player->RemoveAurasDueToSpell(SPELL_SHA_SPLASH_DMG);
+                                            }
+                                        }
+                                    }
+                                }
+				            }
+                            events.ScheduleEvent(EVENT_SHA_BOLT_ROOM_CHECK, 200);
+                            break;
+                        }
+
+                        default: break;
+                    }
+                }
+
+                // No melee.
+            }
+        };
+
+        CreatureAI* GetAI(Creature* creature) const
+        {
+            return new npc_sha_splash_bolt_immerseusAI(creature);
+        }
+};
+
+/*** SWIRL - 71548. ***/
+class npc_swirl_immerseus : public CreatureScript
+{
+    public:
+        npc_swirl_immerseus() : CreatureScript("npc_swirl_immerseus") { }
+
+        struct npc_swirl_immerseusAI : public ScriptedAI
+        {
+            npc_swirl_immerseusAI(Creature* creature) : ScriptedAI(creature)
+            {
+                instance = creature->GetInstanceScript();
+            }
+
+            InstanceScript* instance;
+            EventMap events;
+
+            void IsSummonedBy(Unit* /*summoner*/)
+            {
+                Reset();
+                DoCast(me, SPELL_SWIRL_ROOM); // 3 sec cast, after kicks in periodic damage aura check.
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
+                me->SetReactState(REACT_PASSIVE);
+                me->GetMotionMaster()->MoveRandom(10.0f); // Move random in a 10y radius.
+                events.ScheduleEvent(EVENT_SWIRL_ROOM_CHECK, 3100);
+            }
+
+            void Reset()
+            {
+                events.Reset();
+            }
+
+            void UpdateAI(uint32 const diff)
+            {
+                // Ensure the npc always has the visual aura.
+                if (!me->HasUnitState(UNIT_STATE_CASTING))
+                    DoCast(me, SPELL_SWIRL_ROOM);
+
+                events.Update(diff);
+
+                while (uint32 eventId = events.ExecuteEvent())
+                {
+                    switch (eventId)
+                    {
+                        case EVENT_SWIRL_ROOM_CHECK:
+                        {
+                            if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 300.0f, true))
                             {
-                                itr->RemoveSpellCooldown(SPELL_SWIRL_DAMAGE, true);
-                                itr->CastSpell(itr, SPELL_SWIRL_DAMAGE, true);
-
-                                if (AuraPtr aura = itr->GetAura(SPELL_SWIRL_DAMAGE))
-                                    aura->SetDuration(1); // two hits per amplitude, that's bad, need to change it 400 millseconds.
+                                Map::PlayerList const &PlayerList = me->GetMap()->GetPlayers();
+                                if (!PlayerList.isEmpty())
+                                {
+                                    for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                                    {
+                                        if (Player* player = i->getSource())
+                                        {
+                                            if (me->GetDistance(player) <= 2.0f) // Check if the player is too close and doesn't have the aura.
+                                            {
+                                                if (!player->HasAura(SPELL_SWIRL_ROOM_DMG))
+                                                    player->CastSpell(player, SPELL_SWIRL_ROOM_DMG, true);
+                                            }
+                                            else
+                                            {
+                                                if (!player->FindNearestCreature(NPC_SWIRL, 2.0f, true)) // Else if the player is further and has the aura, remove it.
+                                                    if (player->HasAura(SPELL_SWIRL_ROOM_DMG))
+                                                        player->RemoveAurasDueToSpell(SPELL_SWIRL_ROOM_DMG);
+                                            }
+                                        }
+                                    }
+                                }
                             }
+                            events.ScheduleEvent(EVENT_SWIRL_ROOM_CHECK, 100);
+                            break;
                         }
+
+                        default: break;
                     }
                 }
+
+                // No melee.
             }
-        }
-        void SeepingSha()
+        };
+
+        CreatureAI* GetAI(Creature* creature) const
         {
-            std::list<Player*> pl_list_cone;
-            me->GetPlayerListInGrid(pl_list_cone, 0.6f);
+            return new npc_swirl_immerseusAI(creature);
+        }
+};
 
-            if (pl_list_cone.empty())
-                return;
+/*** SWIRL (Boss spell target) - 71550. ***/
+class npc_swirl_target_immerseus : public CreatureScript
+{
+    public:
+        npc_swirl_target_immerseus() : CreatureScript("npc_swirl_target_immerseus") { }
 
-            for (auto itr : pl_list_cone)
+        struct npc_swirl_target_immerseusAI : public ScriptedAI
+        {
+            npc_swirl_target_immerseusAI(Creature* creature) : ScriptedAI(creature)
             {
-                itr->CastSpell(itr, SPELL_SEEPING_SHA_DAMAGE);
-
-                if (AuraPtr aura = itr->GetAura(SPELL_SEEPING_SHA_DAMAGE))
-                    aura->SetDuration(1); // two hits per amplitude, that's bad, need to change it 400 millseconds.
+                instance = creature->GetInstanceScript();
             }
-        }
-        void DoAction(const int32 action)
-        {
-            switch (action)
+
+            InstanceScript* instance;
+            EventMap events;
+
+            // Function for creating a circle around the boss to move around.
+            void FillCirclePath(Position const& centerPos, float radius, float z, Movement::PointsArray& path)
             {
-            case ACTION_COUNT_SPLIT_PHASE:
-                if (!me->isInCombat())
-                    return;
-
-                count++;
-
-                if (count >= 24)
+                float step = -M_PI / 8.0f; // Clockwise.
+                float angle = centerPos.GetAngle(me->GetPositionX(), me->GetPositionY());
+            
+                for (uint8 i = 0; i < 16; angle += step, ++i)
                 {
-                    events.Reset();
-                    me->RemoveAura(143462);
-                    me->RemoveAllAuras();
+                    G3D::Vector3 point;
+                    point.x = centerPos.GetPositionX() + radius * cosf(angle);
+                    point.y = centerPos.GetPositionY() + radius * sinf(angle);
+                    point.z = z;
+                    path.push_back(point);
+                }
+            }
 
-                    DespawnCreaturesInArea(CREATURE_SHA_POOL_HC, me);
+            void IsSummonedBy(Unit* /*summoner*/)
+            {
+                Reset();
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
+                me->SetReactState(REACT_PASSIVE);
+                events.ScheduleEvent(EVENT_MOVE_CIRCLE, 3100);
+                events.ScheduleEvent(EVENT_SWIRL_TARGET_CHECK, 3200);
+            }
 
-                    me->CastSpell(me, SPELL_SEEPING_SHA_CIRCLE);
-                    me->CastSpell(me, SPELL_SEEPING_SHA_VISUAL);
+            void Reset()
+            {
+                events.Reset();
+            }
 
-                    events.ScheduleEvent(EVENT_SHA_BOLT, 8000, GROUP_TEARS_OF_THE_VALE);
-                    events.ScheduleEvent(EVENT_SWIRL, 20000, GROUP_TEARS_OF_THE_VALE);
-                    events.ScheduleEvent(EVENT_CORRSIVE_BLAST, urand(12000, 14000), GROUP_TEARS_OF_THE_VALE);
-                    events.ScheduleEvent(EVENT_SEEPING_SHA, 10000, GROUP_TEARS_OF_THE_VALE);
+            void UpdateAI(uint32 const diff)
+            {
+                // Handle Immerseus Swirl rotation according to NPC position.
+                if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 150.0f, true))
+                    if (Immerseus->HasAura(SPELL_SWIRL))
+						Immerseus->SetFacingToObject(me);
 
-                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
-               
+                events.Update(diff);
 
-                    int32 val = me->GetPower(POWER_ENERGY);
-                    val -= currentenergy;
-
-                    me->SetInt32Value(UNIT_FIELD_POWER1, val);
-
-                    uint32 health = me->GetMaxHealth() * 0.01;
-                    uint32 newhealth = me->GetMaxHealth() - health;
-
-                    me->SetMaxHealth(newhealth);
-                    me->SetHealth(newhealth);                 
-
-                    if (me->GetMap()->IsHeroic())
+                while (uint32 eventId = events.ExecuteEvent())
+                {
+                    switch (eventId)
                     {
-                        me->AddAura(143574, me);
-
-                        if (AuraPtr aura = me->GetAura(143574))
+                        case EVENT_MOVE_CIRCLE:
                         {
-                            aura->SetStackAmount(val);
-                        }
-                    }
-                    split = true;
-                    splitphase = false;
-
-                    if (!loot)
-                    {
-                        if (val <= 0 || currentenergy >= 99)
-                        {
-
-
-                            // chest
-                            switch (me->GetMap()->GetDifficulty())
+                            if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 150.0f, true))
                             {
-                            case MAN10_HEROIC_DIFFICULTY:
-                                me->SummonGameObject(thcimmersus, immersus_chest.GetPositionX(), immersus_chest.GetPositionY(), immersus_chest.GetPositionZ(), immersus_chest.GetOrientation(), 0, 0, 0, 0, 0, 0);
-                                break;
-                            case MAN25_HEROIC_DIFFICULTY:
-                                me->SummonGameObject(tfhcimmersus, immersus_chest.GetPositionX(), immersus_chest.GetPositionY(), immersus_chest.GetPositionZ(), immersus_chest.GetOrientation(), 0, 0, 0, 0, 0, 0);
-                                break;
-                            case MAN25_DIFFICULTY:
-                                me->SummonGameObject(tfregularimmersus, immersus_chest.GetPositionX(), immersus_chest.GetPositionY(), immersus_chest.GetPositionZ(), immersus_chest.GetOrientation(), 0, 0, 0, 0, 0, 0);
-                                break;
-                            case MAN10_DIFFICULTY:
-                                me->SummonGameObject(tregularimmersus, immersus_chest.GetPositionX(), immersus_chest.GetPositionY(), immersus_chest.GetPositionZ(), immersus_chest.GetOrientation(), 0, 0, 0, 0, 0, 0);
-                                break;
+                                Movement::MoveSplineInit init(*me);
+                                FillCirclePath(Immerseus->GetHomePosition(), me->GetDistance(Immerseus), me->GetPositionZ(), init.Path());
+                                init.SetWalk(true);
+                                init.SetCyclic();
+                                init.SetSmooth();
+                                init.Launch();
+                                me->SetWalk(false);
                             }
-
-                            instance->SendEncounterUnit(ENCOUNTER_FRAME_DISENGAGE, me);;
-                            instance->SetBossState(DATA_IMMERSUS, DONE);
-
-                            
-                            me->CombatStop(true);
-                            me->getHostileRefManager().clearReferences();
-                            me->CombatStop();
-                            me->RemoveAllAuras();
-                            me->Respawn();
-                            me->setFaction(35);
-                            me->SetMaxHealth(8000);
-                            me->SetHealth(8000);
-                            me->SetDisplayId(49807);
-
-                            loot = true;
+                            break;
                         }
+
+                        case EVENT_SWIRL_TARGET_CHECK:
+                        {
+                            if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 200.0f, true))
+                            {
+                                Map::PlayerList const &PlayerList = me->GetMap()->GetPlayers();
+                                if (!PlayerList.isEmpty())
+                                {
+                                    for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                                    {
+                                        if (Player* player = i->getSource())
+                                        {
+                                            if (me->GetDistance(player) <= 10.0f) // Check if the player is too close and doesn't have the aura.
+                                            {
+                                                if (!player->HasAura(SPELL_SWIRL_DMG_IMMERSEUS))
+                                                    player->CastSpell(player, SPELL_SWIRL_DMG_IMMERSEUS, true);
+                                            }
+                                            else
+                                            {
+                                                if (player->HasAura(SPELL_SWIRL_DMG_IMMERSEUS)) // Else if the player is further and has the aura, remove it.
+                                                    player->RemoveAurasDueToSpell(SPELL_SWIRL_DMG_IMMERSEUS);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            events.ScheduleEvent(EVENT_SWIRL_TARGET_CHECK, 200);
+                            break;
+                        }
+
+                        default: break;
                     }
                 }
-                break;
-            case ACTION_REMOVE_ENERGY:
-                if (!me->isInCombat())
-                    return;
 
-                currentenergy++;
-
-                int32 val = me->GetPower(POWER_ENERGY);
-                break;
+                // No melee.
             }
-        }
-        void UpdateAI(const uint32 diff)
+        };
+
+        CreatureAI* GetAI(Creature* creature) const
         {
-            if (!UpdateVictim())
-                return;
+            return new npc_swirl_target_immerseusAI(creature);
+        }
+};
 
-            if (berserk <= diff)
+/*** SHA PUDDLE - 71603. ***/
+class npc_sha_puddle_immerseus : public CreatureScript
+{
+    public:
+        npc_sha_puddle_immerseus() : CreatureScript("npc_sha_puddle_immerseus") { }
+
+        struct npc_sha_puddle_immerseusAI : public ScriptedAI
+        {
+            npc_sha_puddle_immerseusAI(Creature* creature) : ScriptedAI(creature)
             {
-                me->CastSpell(me, 64238);
-                berserk = 32432234;
+                instance = creature->GetInstanceScript();
+                reachedBoss = false;
             }
-            else
-                berserk -= diff;
 
-            if (swirlhit <= diff)
+            InstanceScript* instance;
+            EventMap events;
+            bool reachedBoss;
+
+            void IsSummonedBy(Unit* /*summoner*/)
             {
-                Swirl();
-                swirlhit = 3000;
+                Reset();
+				me->SetInCombatWithZone();
+                me->SetReactState(REACT_PASSIVE);
             }
-            else
-                swirlhit -= diff;
 
-            if (sheepingsha <= diff)
+            void Reset()
             {
-                SeepingSha();
-                sheepingsha = 4500;
+                events.Reset();
             }
-            else
-                sheepingsha -= diff;
 
-            events.Update(diff);
-
-            if (me->HasUnitState(UNIT_STATE_CASTING))
-                return;
-
-            switch (events.ExecuteEvent())
+            void DoAction(int32 const action)
             {
-            case EVENT_SHA_BOLT:
-            {
-                me->CastSpell(me, 143290);
-
-                std::list<Player*> pl_list;
-                pl_list.clear();
-
-                me->GetPlayerListInGrid(pl_list, 300.0f);
-
-                if (pl_list.empty())
+                // Just preventing processing of any unwanted calls.
+                if (action > ACTION_PUDDLES_MOVE_CENTER)
                     return;
 
-                for (auto itr : pl_list)
+                switch (action)
                 {
-                    me->CastSpell(itr, SPELL_SHA_BOLT_COSMETIC);
-                }
+                    case ACTION_PUDDLES_MOVE_CENTER:
+                        events.ScheduleEvent(EVENT_MOVE_CENTER, 500);
+                        break;
 
-                events.ScheduleEvent(EVENT_SHA_BOLT, 10000, GROUP_TEARS_OF_THE_VALE);
-                break;
+                    default: break;
+                }
             }
-            case EVENT_SWIRL_DE:
-                swirl = false;
-                break;
-            case EVENT_SWIRL:
+
+            void UpdateAI(uint32 const diff)
             {
-                for (int i = 0; i <= 50; i++)
+                if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 1.0f, true))
                 {
-                    Position pos;
-                    me->GetRandomNearPosition(pos, 100.0f);
-
-                    me->SummonCreature(TRIGGER_SHA_SWIRL, pos, TEMPSUMMON_TIMED_DESPAWN, 30000);
+                    if (me->GetDistance(Immerseus->GetHomePosition()) <= 5.0f && !reachedBoss)
+                    {
+                        reachedBoss = true;
+                        me->GetMotionMaster()->MovementExpired();
+                        me->DespawnOrUnsummon(200);
+                        DoCast(me, SPELL_ERRUPTING_SHA, true);
+                    }
                 }
-                target = NULL;
 
-                swirl = true;
+                events.Update(diff);
 
-                uint32 rando;
-
-                if(roll_chance_i(50))
+                while (uint32 eventId = events.ExecuteEvent())
                 {
-                    rando = 1;
+                    switch (eventId)
+                    {
+                        case EVENT_MOVE_CENTER:
+                            if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 150.0f, true))
+                                me->GetMotionMaster()->MovePoint(1, Immerseus->GetHomePosition().GetPositionX(), Immerseus->GetHomePosition().GetPositionY(), Immerseus->GetHomePosition().GetPositionZ());
+                            break;
+
+                        default: break;
+                    }
+                }
+
+                // No melee.
+            }
+
+            void JustDied(Unit* killer)
+            {
+                // Set boss corruption to remove to +1.
+                if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 200.0f, true))
+                    CAST_AI(boss_immerseus::boss_immerseusAI, Immerseus->AI())->corruptionToRemove += 1;
+
+                // Cast the buffs.
+                DoCast(me, SPELL_SHA_RESIDUE, true);
+            }
+        };
+
+        CreatureAI* GetAI(Creature* creature) const
+        {
+            return new npc_sha_puddle_immerseusAI(creature);
+        }
+};
+
+/*** CONTAMINATED PUDDLE - 71604. ***/
+class npc_contaminated_puddle_immerseus : public CreatureScript
+{
+    public:
+        npc_contaminated_puddle_immerseus() : CreatureScript("npc_contaminated_puddle_immerseus") { }
+
+        struct npc_contaminated_puddle_immerseusAI : public ScriptedAI
+        {
+            npc_contaminated_puddle_immerseusAI(Creature* creature) : ScriptedAI(creature)
+            {
+                instance = creature->GetInstanceScript();
+                reachedBoss = false;
+            }
+
+            InstanceScript* instance;
+            EventMap events;
+            bool reachedBoss;
+
+            void IsSummonedBy(Unit* /*summoner*/)
+            {
+                Reset();
+				me->SetInCombatWithZone();
+                me->SetHealth(me->CountPctFromMaxHealth(1));
+                me->AddAura(SPELL_CONGEALING_AURA, me);
+                me->SetReactState(REACT_PASSIVE);
+            }
+
+            void Reset()
+            {
+                events.Reset();
+            }
+
+            void DoAction(int32 const action)
+            {
+                // Just preventing processing of any unwanted calls.
+                if (action > ACTION_PUDDLES_MOVE_CENTER)
+                    return;
+
+                switch (action)
+                {
+                    case ACTION_PUDDLES_MOVE_CENTER:
+                        events.ScheduleEvent(EVENT_MOVE_CENTER, 500);
+                        break;
+
+                    default: break;
+                }
+            }
+
+            void UpdateAI(uint32 const diff)
+            {
+                if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 1.0f, true))
+                {
+                    if (me->GetDistance(Immerseus->GetHomePosition()) <= 5.0f && !reachedBoss)
+                    {
+                        reachedBoss = true;
+                        me->GetMotionMaster()->MovementExpired();
+                        me->DespawnOrUnsummon(200);
+                        if (!me->HasAura(SPELL_PURIFIED))
+                            DoCast(me, SPELL_ERRUPTING_SHA, true);
+                        else
+                            DoCast(me, SPELL_ERRUPTING_WATER, true);
+                    }
+                }
+
+                events.Update(diff);
+
+                while (uint32 eventId = events.ExecuteEvent())
+                {
+                    switch (eventId)
+                    {
+                        case EVENT_MOVE_CENTER:
+                            if (Creature* Immerseus = me->FindNearestCreature(BOSS_IMMERSEUS, 150.0f, true))
+                                me->GetMotionMaster()->MovePoint(1, Immerseus->GetHomePosition().GetPositionX(), Immerseus->GetHomePosition().GetPositionY(), Immerseus->GetHomePosition().GetPositionZ());
+                            break;
+
+                        default: break;
+                    }
+                }
+
+                // No melee.
+            }
+        };
+
+        CreatureAI* GetAI(Creature* creature) const
+        {
+            return new npc_contaminated_puddle_immerseusAI(creature);
+        }
+};
+
+// SPELLS.
+
+/*** SHA BOLT (Dummy) - 143290. ***/
+class spell_immerseus_sha_bolt : public SpellScriptLoader
+{
+    public:
+        spell_immerseus_sha_bolt() : SpellScriptLoader("spell_immerseus_sha_bolt") { }
+
+        class spell_immerseus_sha_bolt_SpellScript : public SpellScript
+        {
+            PrepareSpellScript(spell_immerseus_sha_bolt_SpellScript);
+
+            void HandleDummy(SpellEffIndex /*effIndex*/)
+            {
+                Unit* caster = GetCaster();
+
+                if (!caster)
+                    return;
+
+                if (!caster->ToCreature())
+                    return;
+
+                if (caster->ToCreature()->GetEntry() != BOSS_IMMERSEUS)
+                    return;
+
+                Map::PlayerList const &PlayerList = caster->GetMap()->GetPlayers();
+                if (!PlayerList.isEmpty())
+                    for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                        if (Player* player = i->getSource())
+                            if (caster->IsWithinDistInMap(player, 150.0f, true))
+                                caster->CastSpell(player, SPELL_SHA_BOLT, true);
+            }
+
+            void Register()
+            {
+                OnEffectHitTarget += SpellEffectFn(spell_immerseus_sha_bolt_SpellScript::HandleDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
+            }
+        };
+
+        SpellScript* GetSpellScript() const
+        {
+            return new spell_immerseus_sha_bolt_SpellScript();
+        }
+};
+
+/*** SPLIT - 143020. ***/
+class spell_immerseus_split : public SpellScriptLoader
+{
+    public:
+        spell_immerseus_split() : SpellScriptLoader("spell_immerseus_split") { }
+
+        class spell_immerseus_split_SpellScript : public SpellScript
+        {
+            PrepareSpellScript(spell_immerseus_split_SpellScript);
+
+            void PreventStun()
+            {
+                Unit* caster = GetCaster();
+                Unit* target = GetHitUnit();
+
+                if (!caster || !target)
+                    return;
+
+                // No need to stun the boss.
+                PreventHitDefaultEffect(EFFECT_0);
+            }
+
+            void HandleScript(SpellEffIndex /*effIndex*/)
+            {
+                Unit* caster = GetCaster();
+                Unit* target = GetHitUnit();
+
+                if (!caster || !target)
+                    return;
+
+                if (!caster->ToCreature())
+                    return;
+
+                if (caster->ToCreature()->GetEntry() != BOSS_IMMERSEUS)
+                    return;
+
+                // Trigger the mob summon missiles (85 yard radius).
+                uint8 shaPuddles = CAST_AI(boss_immerseus::boss_immerseusAI, caster->ToCreature()->AI())->shaPuddlesToSummon;
+                uint8 conPuddles = CAST_AI(boss_immerseus::boss_immerseusAI, caster->ToCreature()->AI())->contaminatedPuddlesToSummon;
+
+                for (uint8 i = 0; i < shaPuddles; i++)
+                    caster->CastSpell(caster, SPELL_SPLIT_SHA_MISSILE, true);
+
+                for (uint8 i = 0; i < conPuddles; i++)
+                    caster->CastSpell(caster, SPELL_SPLIT_CONTAM_MISSILE, true);
+
+                // Handle Submerging.
+                caster->CastSpell(caster, SPELL_SUBMERGE, false);
+            }
+
+            void Register()
+            {
+                BeforeHit += SpellHitFn(spell_immerseus_split_SpellScript::PreventStun);
+                OnEffectHitTarget += SpellEffectFn(spell_immerseus_split_SpellScript::HandleScript, EFFECT_1, SPELL_EFFECT_SCRIPT_EFFECT);
+            }
+        };
+
+        SpellScript* GetSpellScript() const
+        {
+            return new spell_immerseus_split_SpellScript();
+        }
+};
+
+/*** REFORM - 143469. ***/
+class spell_immerseus_reform : public SpellScriptLoader
+{
+    public:
+        spell_immerseus_reform() : SpellScriptLoader("spell_immerseus_reform") { }
+
+        class spell_immerseus_reform_SpellScript : public SpellScript
+        {
+            PrepareSpellScript(spell_immerseus_reform_SpellScript);
+
+            void HandleScript(SpellEffIndex /*effIndex*/)
+            {
+                Unit* caster = GetCaster();
+                Unit* target = GetHitUnit();
+
+                if (!caster || !target)
+                    return;
+
+                if (!caster->ToCreature())
+                    return;
+
+                if (caster->ToCreature()->GetEntry() != BOSS_IMMERSEUS)
+                    return;
+
+                CAST_AI(boss_immerseus::boss_immerseusAI, caster->ToCreature()->AI())->ChangePhase(PHASE_IMMERSEUS_NORMAL);
+            }
+
+            void Register()
+            {
+                OnEffectHitTarget += SpellEffectFn(spell_immerseus_reform_SpellScript::HandleScript, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
+            }
+        };
+
+        SpellScript* GetSpellScript() const
+        {
+            return new spell_immerseus_reform_SpellScript();
+        }
+};
+
+/*** CONGEALING (Aura) - 143538. ***/
+class spell_immerseus_congealing : public SpellScriptLoader
+{
+    public:
+        spell_immerseus_congealing() : SpellScriptLoader("spell_immerseus_congealing") { }
+
+        class spell_immerseus_congealing_AuraScript : public AuraScript
+        {
+            PrepareAuraScript(spell_immerseus_congealing_AuraScript);
+
+            void OnPeriodic(constAuraEffectPtr /*aurEff*/)
+            {
+                Unit* caster = GetCaster();
+                Unit* target = GetTarget();
+
+                if (!caster || !target)
+                    return;
+
+                // Calculate correct stacks count (+1 for every 10% health healed).
+                uint8 stackCount = floor(caster->GetHealthPct() / 10);
+
+                // Should not add anything if stacks should be 0. 
+                if (stackCount < 1)
+                    return;
+
+                // Add the aura and set the stack count.
+                if (stackCount >= 1 && !caster->GetAura(SPELL_CONGEALING))
+                {
+                    if (AuraPtr congealing = caster->AddAura(SPELL_CONGEALING, caster))
+                        congealing->SetStackAmount(stackCount);
                 }
                 else
                 {
-                    rando = 4;
+                    if (AuraPtr congealing = caster->GetAura(SPELL_CONGEALING))
+                        congealing->SetStackAmount(stackCount);
                 }
 
-                DespawnCreaturesInArea(TRIGGER_SHA_SWIRL_CIRCLE, me);
-
-                Creature* trigger = me->SummonCreature(TRIGGER_SHA_SWIRL_CIRCLE, circleposition[rando], TEMPSUMMON_MANUAL_DESPAWN);
-                target = trigger;
-
-                me->CastSpell(trigger, SPELL_SWIRL_DUMMY);
-                events.ScheduleEvent(EVENT_SWIRL_DE, 10000);
-                events.ScheduleEvent(EVENT_SWIRL, 40000, GROUP_TEARS_OF_THE_VALE);
-                break;
-            }
-            case EVENT_CORRSIVE_BLAST:
-                me->SetFacingToObject(me->getVictim());
-
-
-                me->CastSpell(me->getVictim(), SPELL_CORROSIVE_BLAST);
-                events.ScheduleEvent(EVENT_CORRSIVE_BLAST, 42000, GROUP_TEARS_OF_THE_VALE);
-                break;
-            case EVENT_SEEPING_SHA:
-                for (int i = 0; i <= 5; i++)
+                // Handle Purified aura addition and cast the buffs.
+                if (stackCount == 10 && caster->HealthAbovePct(99) && !caster->HasAura(SPELL_PURIFIED))
                 {
-                    Position pos;
-                    me->GetRandomNearPosition(pos, 35.0f); // estimated?
+                    caster->AddAura(SPELL_PURIFIED, caster);
 
-                    me->SummonCreature(TRIGGER_SEEPING_SHA, pos, TEMPSUMMON_TIMED_DESPAWN, 20000);
-                }
-                events.ScheduleEvent(EVENT_SEEPING_SHA, 20000, GROUP_TEARS_OF_THE_VALE);
-                break;
-                // 2ND PHASE
-            case EVENT_SPLIT_PHASE:
-                events.ScheduleEvent(EVENT_SPLIT_PHASE_2, 1000);
-                split = false;
-                splitphase = true;
+                    // Set boss corruption to remove to +1.
+                    if (Creature* Immerseus = caster->FindNearestCreature(BOSS_IMMERSEUS, 150.0f, true))
+                        CAST_AI(boss_immerseus::boss_immerseusAI, Immerseus->AI())->corruptionToRemove += 1;
 
-                me->SetHealth(me->GetMaxHealth());
-                DespawnCreaturesInArea(71544, me);
-
-                me->SummonCreature(CREATURE_SHA_POOL_HC, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN);
-
-                me->CastSpell(me, SPELL_SPLIT_DUMMY);   
-
-                if (AuraPtr aura = me->GetAura(SPELL_SPLIT_DUMMY))
-                {
-                    aura->SetDuration(500000);
-                }
-
-                events.CancelEvent(EVENT_SPLIT_PHASE);
-                break;
-            case EVENT_SPLIT_PHASE_2:
-                //me->SetDisplayId(11686);
-                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
-
-                for (int i = 0; i <= 12; i++)
-                {
-                    me->CastSpell(me, SPELL_SPLIT_SHA_PUDDLE_THROW, true);
-                    me->CastSpell(me, SPELL_SPLIT_CONTEMPLATED_THROW, true);
-                }
-
-                count = 0;
-
-                events.CancelEvent(EVENT_SPLIT_PHASE);
-                events.Reset();
-                break;
-            }
-            DoMeleeAttackIfReady();
-        }
-    };
-
-    CreatureAI* GetAI(Creature* creature) const
-    {
-        return new boss_immersusAI(creature);
-    }
-};
-class immersius_spell_sha_bolt_missile : public SpellScriptLoader
-{
-public:
-    immersius_spell_sha_bolt_missile() : SpellScriptLoader("immersius_spell_sha_bolt_missile") { }
-
-    class soo_spells : public SpellScript
-    {
-        PrepareSpellScript(soo_spells);
-
-        void HandleDummy(SpellEffIndex /*effIndex*/)
-        {
-            if (!GetCaster() && !GetHitUnit())
-                return;
-
-            int32 calc = 30000;
-            GetCaster()->CastCustomSpell(GetHitUnit(), 131376, &calc, NULL, NULL, true, NULL);
-
-            GetHitUnit()->CastSpell(GetHitUnit(), SPELL_SHA_BOLT_MISSILE);
-            GetHitUnit()->SummonCreature(TRIGGER_SHA_POOL, GetHitUnit()->GetPositionX(), GetHitUnit()->GetPositionY(), GetHitUnit()->GetPositionZ(), GetHitUnit()->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN, 25000);
-        }
-
-        void Register()
-        {
-            OnEffectHitTarget += SpellEffectFn(soo_spells::HandleDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
-        }
-    };
-
-    SpellScript* GetSpellScript() const
-    {
-        return new soo_spells();
-    }
-};
-class immersius_spell_split : public SpellScriptLoader
-{
-public:
-    immersius_spell_split() : SpellScriptLoader("immersius_spell_split") { }
-
-    class soo_spells : public SpellScript
-    {
-        PrepareSpellScript(soo_spells);
-
-        void HandleScript(SpellEffIndex effIndex)
-        {
-            PreventHitDefaultEffect(effIndex);
-
-            if (!GetCaster())
-                return;
-        }
-
-        void Register()
-        {
-            OnEffectHitTarget += SpellEffectFn(soo_spells::HandleScript, EFFECT_1, SPELL_EFFECT_SCRIPT_EFFECT);
-        }
-    };
-
-    SpellScript* GetSpellScript() const
-    {
-        return new soo_spells();
-    }
-};
-class immersus_trigger_sha_pool : public CreatureScript
-{
-public:
-    immersus_trigger_sha_pool() : CreatureScript("immersus_trigger_sha_pool") { }
-
-    struct soo_triggers : public Scripted_NoMovementAI
-    {
-        soo_triggers(Creature* creature) : Scripted_NoMovementAI(creature)
-        {
-            pInstance = creature->GetInstanceScript();
-        }
-
-        InstanceScript* pInstance;
-        EventMap events;
-
-        uint32 interval;
-
-        void Reset()
-        {
-            interval = 1200;
-            me->setFaction(16);
-            
-            me->CastSpell(me, SPELL_SHA_POOL_AURA);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
-            me->AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
-            me->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_DISABLE_TURN);
-        }
-        void DamageTaken(Unit* /*attacker*/, uint32& damage)
-        {
-            damage = 0;
-        }
-        void UpdateAI(const uint32 diff)
-        {
-            // damage
-            if (interval <= diff)
-            {
-                std::list<Player*> list_players;
-                me->GetPlayerListInGrid(list_players, 1.0f);
-
-                if (list_players.empty())
-                    return;
-
-                for (auto itr : list_players)
-                {
-                    itr->CastSpell(itr, 143460);
-                }
-
-                interval = 1200;
-            }
-            else
-                interval -= diff;
-        }
-    };
-
-    CreatureAI* GetAI(Creature* creature) const
-    {
-        return new soo_triggers(creature);
-    }
-};
-class immersus_trigger_sha_swirl_circular : public CreatureScript
-{
-public:
-    immersus_trigger_sha_swirl_circular() : CreatureScript("immersus_trigger_sha_swirl_circular") { }
-
-    struct soo_triggers : public ScriptedAI
-    {
-        soo_triggers(Creature* creature) : ScriptedAI(creature)
-        {
-            pInstance = creature->GetInstanceScript();
-        }
-
-        InstanceScript* pInstance;
-        EventMap events;
-
-        uint32 interval;
-
-        void Reset()
-        {
-            interval = 2000;
-            me->setFaction(16);
-
-            events.ScheduleEvent(TALK_1, 2000);
-
-            me->SetSpeed(MOVE_RUN, 3.0f);
-            me->SetReactState(REACT_PASSIVE);
-
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
-            me->GetMotionMaster()->MovePoint(0, circleposition[0].GetPositionX(), circleposition[0].GetPositionY(), circleposition[0].GetPositionZ());
-        }
-        void DamageTaken(Unit* /*attacker*/, uint32& damage)
-        {
-            damage = 0;
-        }
-        void UpdateAI(const uint32 diff)
-        {
-            events.Update(diff);
-
-            switch (events.ExecuteEvent())
-            {
-            case EVENT_TALK_1:
-            {
-                events.ScheduleEvent(TALK_2, 2000);
-                me->GetMotionMaster()->MovePoint(1, circleposition[1].GetPositionX(), circleposition[1].GetPositionY(), circleposition[1].GetPositionZ());         
-                break;
-            }
-            case EVENT_TALK_2:
-            {
-                events.ScheduleEvent(TALK_3, 2000);
-                me->GetMotionMaster()->MovePoint(1, circleposition[2].GetPositionX(), circleposition[2].GetPositionY(), circleposition[2].GetPositionZ());            
-                break;
-            }
-            case EVENT_TALK_3:
-            {
-                events.ScheduleEvent(TALK_4, 2000);
-                me->GetMotionMaster()->MovePoint(1, circleposition[3].GetPositionX(), circleposition[3].GetPositionY(), circleposition[3].GetPositionZ());               
-                break;
-            }
-            case EVENT_TALK_4:
-            {
-                events.ScheduleEvent(TALK_5, 2000);
-                me->GetMotionMaster()->MovePoint(1, circleposition[4].GetPositionX(), circleposition[4].GetPositionY(), circleposition[4].GetPositionZ());          
-                break;
-            }
-            case EVENT_TALK_5:
-            {
-                events.ScheduleEvent(TALK_6, 2000);
-                me->GetMotionMaster()->MovePoint(1, circleposition[5].GetPositionX(), circleposition[5].GetPositionY(), circleposition[5].GetPositionZ());        
-                break;
-            }
-            }
-        }
-    };
-
-    CreatureAI* GetAI(Creature* creature) const
-    {
-        return new soo_triggers(creature);
-    }
-};
-class immersus_trigger_swirl_circle : public CreatureScript
-{
-public:
-    immersus_trigger_swirl_circle() : CreatureScript("immersus_trigger_swirl_circle") { }
-
-    struct soo_triggers : public ScriptedAI
-    {
-        soo_triggers(Creature* creature) : ScriptedAI(creature)
-        {
-            pInstance = creature->GetInstanceScript();
-        }
-
-        InstanceScript* pInstance;
-        EventMap events;
-
-        uint32 interval;
-        uint32 move;
-
-        void Reset()
-        {
-            interval = 3000;
-            move = 1000;
-            me->setFaction(16);
-
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
-            me->CastSpell(me, SPELL_SWIRL_CIRCLE_DUMMY);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
-            me->AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
-            me->SetReactState(REACT_PASSIVE);
-        }
-        void DamageTaken(Unit* /*attacker*/, uint32& damage)
-        {
-            damage = 0;
-        }
-        void UpdateAI(const uint32 diff)
-        {
-            if (interval <= diff)
-            {
-                me->CastSpell(me, 147181);
-
-                interval = 8000;
-            }
-            else
-                interval -= diff;
-            /*
-            // damage
-            if (interval <= diff)
-            {
-                std::list<Player*> list_players;
-                list_players.clear();
-
-                me->GetPlayerListInGrid(list_players, 1.0f);
-
-                if (list_players.empty())
-                    return;
-
-                for (auto itr : list_players)
-                {
-                    itr->CastSpell(itr, SPELL_SWIRL_CIRCLE_DAMAGE);
-
-                    if (AuraPtr aura = itr->GetAura(SPELL_SWIRL_CIRCLE_DAMAGE))
-                        aura->SetDuration(1);
-                }
-
-                interval = 1000;
-            }
-            else
-                interval -= diff;
-
-            if (move <= diff)
-            {
-                me->GetMotionMaster()->MoveRandom(30.0f);
-                move = 3500;
-            }
-            else
-                move -= diff;
-                */
-        }
-    };
-
-    CreatureAI* GetAI(Creature* creature) const
-    {
-        return new soo_triggers(creature);
-    }
-};
-class immersus_creature_contaminated_puddle : public CreatureScript
-{
-public:
-    immersus_creature_contaminated_puddle() : CreatureScript("immersus_creature_contaminated_puddle") { }
-
-    struct soo_triggers : public ScriptedAI
-    {
-        soo_triggers(Creature* creature) : ScriptedAI(creature)
-        {
-            Instance = creature->GetInstanceScript();
-        }
-
-        InstanceScript* Instance;
-        EventMap events;
-
-        uint32 interval;
-        uint32 move;
-        bool reached;
-        bool health;
-
-        void Reset()
-        {
-            interval = 5000;
-            move = 1000;
-            me->setFaction(35);
-            me->SetSpeed(MOVE_RUN, 0.4f, true);
-          
-            me->SetReactState(REACT_PASSIVE);
-            me->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_REGENERATE_POWER);
-            reached = false;
-            health = false;
-
-            // health
-            switch (me->GetMap()->GetDifficulty())
-            {
-            case MAN10_HEROIC_DIFFICULTY:
-                me->SetMaxHealth(548000);
-                break;
-            case MAN25_HEROIC_DIFFICULTY:
-                me->SetMaxHealth(750000);
-                break;
-            case MAN25_DIFFICULTY:
-                me->SetMaxHealth(1000000);
-                break;
-            }
-
-            me->SetHealth(me->GetMaxHealth() * 0.10);
-        }
-        void JustDied(Unit* /*killer*/) override
-        {
-            if (Creature* immersius = Instance->instance->GetCreature(Instance->GetData64(DATA_IMMERSUS)))
-            {
-                immersius->AI()->DoAction(ACTION_COUNT_SPLIT_PHASE);
-            }
-        }
-        void UpdateAI(const uint32 diff)
-        {
-            if (Creature* immersius = Instance->instance->GetCreature(Instance->GetData64(DATA_IMMERSUS)))
-                if (!immersius->isInCombat())
-                    return;
-
-            if (Creature* immersius = Instance->instance->GetCreature(Instance->GetData64(DATA_IMMERSUS)))
-            {
-                if (immersius->IsWithinDistInMap(me, 5.0))
-                {
-                    if (!reached)
-                    {
-                        me->DespawnOrUnsummon(4000);
-
-                        immersius->AI()->DoAction(ACTION_COUNT_SPLIT_PHASE);
-
-                        if (me->GetHealth() == me->GetMaxHealth())
-                        {
-                            immersius->AI()->DoAction(ACTION_REMOVE_ENERGY);
-                        }
-
-                        reached = true;
-                    }
+                    caster->CastSpell(caster, SPELL_PURIFIED_RESIDUE, true);
+                    caster->ToCreature()->DespawnOrUnsummon(200);
                 }
             }
 
-            // Congealing effect.
-            if (AuraPtr aura = me->GetAura(143540))
+            void Register()
             {
-                int32 pct = float(me->GetHealthPct());
-
-                switch (pct)
-                {
-                case 10:
-                    aura->SetStackAmount(1);
-                    break;
-                case 20:
-                    aura->SetStackAmount(2);
-                    break;
-                case 30:
-                    aura->SetStackAmount(3);
-                    break;
-                case 40:
-                    aura->SetStackAmount(4);
-                    break;
-                case 50:
-                    aura->SetStackAmount(5);
-                    break;
-                case 60:
-                    aura->SetStackAmount(6);
-                    break;
-                case 70:
-                    aura->SetStackAmount(7);
-                    break;
-                case 80:
-                    aura->SetStackAmount(8);
-                    break;
-                case 90:
-                    aura->SetStackAmount(9);
-                    break;
-                }
+                OnEffectPeriodic += AuraEffectPeriodicFn(spell_immerseus_congealing_AuraScript::OnPeriodic, EFFECT_0, SPELL_AURA_PERIODIC_DUMMY);
             }
+        };
 
-            if (!health)
-            {
-                if (me->GetHealth() == me->GetMaxHealth())
-                {
-                    std::list<Player*> pl_list;
-                    me->GetPlayerListInGrid(pl_list, 200.0f);
-
-                    if (pl_list.empty())
-                        return;
-
-                    for (auto itr : pl_list)
-                    {
-                        itr->CastSpell(itr, SPELL_PURIFIED_RESIDUE);
-                    }
-
-                    health = true;
-                }
-            }
-
-            if (!me->isMoving())
-                if (Creature* immersius = Instance->instance->GetCreature(Instance->GetData64(DATA_IMMERSUS)))
-                    me->GetMotionMaster()->MovePoint(0, immersius->GetPositionX(), immersius->GetPositionY(), immersius->GetPositionZ());
-
-        }
-    };
-
-    CreatureAI* GetAI(Creature* creature) const
-    {
-        return new soo_triggers(creature);
-    }
-};
-class immersus_creature_sha_puddle : public CreatureScript
-{
-public:
-    immersus_creature_sha_puddle() : CreatureScript("immersus_creature_sha_puddle") { }
-
-    struct soo_triggers : public ScriptedAI
-    {
-        soo_triggers(Creature* creature) : ScriptedAI(creature)
+        AuraScript* GetAuraScript() const
         {
-            Instance = creature->GetInstanceScript();
+            return new spell_immerseus_congealing_AuraScript();
         }
-
-        InstanceScript* Instance;
-        EventMap events;
-
-        uint32 interval;
-        uint32 move;
-        bool reached;
-
-        void Reset()
-        {
-            interval = 5000;
-            move = 1000;
-            me->setFaction(16);    
-            me->SetSpeed(MOVE_RUN, 0.4f, true);
-            me->SetReactState(REACT_PASSIVE);
-            reached = false;
-
-            // health
-            switch (me->GetMap()->GetDifficulty())
-            {
-            case MAN10_HEROIC_DIFFICULTY:
-                me->SetMaxHealth(515000);
-                break;
-            case MAN25_HEROIC_DIFFICULTY:
-                me->SetMaxHealth(1000000);
-                break;
-            case MAN25_DIFFICULTY:
-                me->SetMaxHealth(632000);
-                break;
-            }
-        }
-        void JustDied(Unit* /*killer*/) override
-        {    
-            if (Creature* immersius = Instance->instance->GetCreature(Instance->GetData64(DATA_IMMERSUS)))
-            { 
-                if (!immersius->isInCombat())
-                    return;
-
-                immersius->AI()->DoAction(ACTION_COUNT_SPLIT_PHASE);
-                immersius->AI()->DoAction(ACTION_REMOVE_ENERGY);
-
-                std::list<Player*> players;
-                players.clear();
-
-                me->GetPlayerListInGrid(players, 300.0f);
-
-                if (players.empty())
-                    return;
-
-                for (auto itr : players)
-                {
-                    if (!itr->HasAura(SPELL_SHA_RESIUDE))
-                    {
-                        itr->AddAura(SPELL_SHA_RESIUDE, itr);
-                    }
-                    else
-                    {
-                        AuraPtr aura = itr->GetAura(SPELL_SHA_RESIUDE);
-
-                        if (aura)
-                        {
-                            aura->SetStackAmount(aura->GetStackAmount() + 1);
-                        }
-                    }
-                }
-            }
-        }
-        void DamageTaken(Unit* attacker, uint32& damage)
-        {
-            if (attacker && attacker->IsInWater())
-            {
-                if (attacker->HasAura(143459))
-                {
-                    if (AuraPtr aura = me->GetAura(143459))
-                    {
-                        if (aura->GetStackAmount() > 1)
-                        {
-                            damage = damage + (damage * (0.25 * aura->GetStackAmount()));
-                        }
-                        else
-                        {
-                            damage = damage + (damage * 0.25);
-                        }
-                    }
-                }
-            }
-        }
-        void UpdateAI(const uint32 diff)
-        {
-            if (Creature* immersius = Instance->instance->GetCreature(Instance->GetData64(DATA_IMMERSUS)))
-                if (immersius->IsWithinDistInMap(me, 5.0))
-                {
-                    if (!reached)
-                    {
-                        me->DespawnOrUnsummon(4000);                                            
-                        immersius->AI()->DoAction(ACTION_COUNT_SPLIT_PHASE);
-                        reached = true;
-
-                        if (immersius->isInCombat())
-                        immersius->CastSpell(immersius, SPELL_ERUPTING_SHA);
-                    }
-                }
-
-            if (!me->isMoving())
-                if (Creature* immersius = Instance->instance->GetCreature(Instance->GetData64(DATA_IMMERSUS)))
-                    me->GetMotionMaster()->MovePoint(0, immersius->GetPositionX(), immersius->GetPositionY(), immersius->GetPositionZ());
-        }
-    };
-
-    CreatureAI* GetAI(Creature* creature) const
-    {
-        return new soo_triggers(creature);
-    }
-};
-class immersus_creature_sha_pool_heroic : public CreatureScript
-{
-public:
-    immersus_creature_sha_pool_heroic() : CreatureScript("immersus_creature_sha_pool_heroic") { }
-
-    struct soo_triggers : public Scripted_NoMovementAI
-    {
-        soo_triggers(Creature* creature) : Scripted_NoMovementAI(creature)
-        {
-            Instance = creature->GetInstanceScript();
-        }
-
-        InstanceScript* Instance;
-        EventMap events;
-
-        uint32 size;
-        uint32 damage;
-        bool reached;
-
-        void Reset()
-        {
-            damage = 4000;
-            size = 2500;
-
-            me->CastSpell(me, SPELL_SHA_POOL_AURA);
-            me->setFaction(16);
-            me->SetReactState(REACT_PASSIVE);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
-
-            me->SetObjectScale(10.0f);
-        }
-        void UpdateAI(const uint32 diff)
-        {
-            float radius = 5;
-            float scale = me->GetObjectSize();
-
-            radius += scale;
-            
-            if (damage <= diff)
-            {
-                std::list<Player*> list_p;
-
-                list_p.clear();
-                me->GetPlayerListInGrid(list_p, radius);
-
-                if (list_p.empty())
-                    return;
-
-                for (auto itr : list_p)
-                {
-                    me->CastSpell(itr, SPELL_SHA_POOL_PERIODIC_DAMAGE);
-                }
-
-                damage = urand(3500, 6000);
-            }
-            else
-                damage -= diff;
-
-        }
-    };
-
-    CreatureAI* GetAI(Creature* creature) const
-    {
-        return new soo_triggers(creature);
-    }
-};
-class immersus_creature_swelling_creature : public CreatureScript
-{
-public:
-    immersus_creature_swelling_creature() : CreatureScript("immersus_creature_swelling_creature") { }
-
-    struct soo_triggers : public ScriptedAI
-    {
-        soo_triggers(Creature* creature) : ScriptedAI(creature)
-        {
-            Instance = creature->GetInstanceScript();
-        }
-
-        InstanceScript* Instance;
-        EventMap events;
-
-        uint32 size;
-        uint32 damage;
-        bool reached;
-
-        void Reset()
-        {
-            me->SetReactState(REACT_AGGRESSIVE);
-            me->setFaction(16);
-
-            if (Player* nearest = me->FindNearestPlayer(200, true))
-            {
-                me->GetMotionMaster()->MovePoint(0, nearest->GetPositionX(), nearest->GetPositionY(), nearest->GetPositionZ());
-            }
-        }
-        void UpdateAI(const uint32 diff)
-        {
-            if (!UpdateVictim())
-                return;
-
-            DoMeleeAttackIfReady();
-        }
-    };
-
-    CreatureAI* GetAI(Creature* creature) const
-    {
-        return new soo_triggers(creature);
-    }
-};
-class damage_bool_to_remove_boss
-{
-public:
-    explicit damage_bool_to_remove_boss(WorldObject* _caster) : caster(_caster) { }
-    bool operator() (WorldObject* unit)
-    {
-        if (unit->GetTypeId() == TYPEID_PLAYER)
-            return false;
-
-        return true;
-    }
-
-private:
-    WorldObject* caster;
-};
-class spell_sha_erupting_damage : public SpellScriptLoader
-{
-public:
-    spell_sha_erupting_damage() : SpellScriptLoader("spell_sha_erupting_damage") { }
-
-    class spell_sha_erupting_damage_spell_script : public SpellScript
-    {
-        PrepareSpellScript(spell_sha_erupting_damage_spell_script);
-
-        void CorrectTargets(std::list<WorldObject*>& targets)
-        {
-            if (targets.empty())
-                return;
-
-            if (!GetCaster())
-                return;
-
-            for (auto itr : targets)
-            {
-                if (itr->GetEntry() == BOSS_IMMERSUS)
-                    targets.remove(itr);
-            }
-        }
-
-        void Register()
-        {
-            OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_sha_erupting_damage_spell_script::CorrectTargets, EFFECT_0, TARGET_UNIT_SRC_AREA_ENTRY);
-            OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_sha_erupting_damage_spell_script::CorrectTargets, EFFECT_0, TARGET_SRC_CASTER);
-        }
-    };
-
-    SpellScript* GetSpellScript() const
-    {
-        return new spell_sha_erupting_damage_spell_script();
-    }
-};
-class spell_swirl_target : public SpellScriptLoader
-{
-public:
-    spell_swirl_target() : SpellScriptLoader("spell_swirl_target") { }
-
-    class spell_swirl_target_spell_script : public SpellScript
-    {
-        PrepareSpellScript(spell_swirl_target_spell_script);
-
-        void CorrectTargets(std::list<WorldObject*>& targets)
-        {
-            if (targets.empty())
-                return;
-                
-            targets.clear();
-
-            if (Creature* trigger = GetCaster()->FindNearestCreature(254235, 300.0F, true))
-                targets.push_back(trigger);
-        }
-
-        void Register()
-        {
-            OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_swirl_target_spell_script::CorrectTargets, EFFECT_0, TARGET_UNIT_NEARBY_ENTRY);
-        }
-    };
-
-    SpellScript* GetSpellScript() const
-    {
-        return new spell_swirl_target_spell_script();
-    }
 };
 
-void AddSC_immersus()
+void AddSC_immerseus()
 {
-    // boss
-    new boss_immersus();
+    new boss_immerseus();
 
-    // creatures
-    new immersus_creature_sha_puddle();
-    new immersus_creature_contaminated_puddle();
-    new immersus_creature_sha_pool_heroic();
-    new immersus_creature_swelling_creature();
+    new npc_sha_splash_bolt_immerseus();
+    new npc_swirl_immerseus();
+    new npc_swirl_target_immerseus();
+    new npc_sha_puddle_immerseus();
+    new npc_contaminated_puddle_immerseus();
 
-    new spell_swirl_target();
-    new spell_sha_erupting_damage();
-
-    // spells
-    new immersius_spell_split();
-    new immersius_spell_sha_bolt_missile();
-
-    // triggers
-    new immersus_trigger_swirl_circle();
-    new immersus_trigger_sha_pool();
-    new immersus_trigger_sha_swirl_circular();
+    new spell_immerseus_sha_bolt();
+    new spell_immerseus_split();
+    new spell_immerseus_reform();
+    new spell_immerseus_congealing();
 }

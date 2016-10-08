@@ -5,6 +5,7 @@
 | [![JadeCore_5.4.7](https://travis-ci.org/JadeEmu/JadeCore_547.svg?branch=master)](https://travis-ci.org/JadeEmu/JadeCore_547/builds)
 | [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/JadeEmu/JadeCore_547.svg)](http://isitmaintained.com/project/JadeEmu/JadeCore_547 "Average time to resolve an issue")
 | [![Percentage of issues still open](http://isitmaintained.com/badge/open/JadeEmu/JadeCore_547.svg)](http://isitmaintained.com/project/JadeEmu/JadeCore_547 "Percentage of issues still open")
+| [![Coverity Scan Build Status](https://scan.coverity.com/projects/10344/badge.svg)]("https://scan.coverity.com/projects/jadecore_547)
 
 #Project General Information
 

@@ -1,7 +1,6 @@
 /*
-* Copyright (C) 2008-20XX JadeCore <http://www.pandashan.com>
-* Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
-* Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+* Copyright (C) 2016-20XX JadeCore <https://jadecore.tk/>
+* Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
 *
 * This program is free software; you can redistribute it and/or modify it
 * under the terms of the GNU General Public License as published by the
@@ -28,7 +27,7 @@
 enum eData
 {
 	// Immerseus
-    DATA_IMMERSUS							= 1,
+    DATA_IMMERSEUS							= 1,
     DATA_IMMERSUS_DOORS						= 2,
     DATA_BACK_DOOR_IMMERSUS					= 3,
     DATA_FRONT_DOOR_IMMERSUS				= 4,
@@ -123,13 +122,9 @@ enum eActionsLocal
 enum eCreaturesLocal
 {
 	// Immerseus
-    BOSS_IMMERSUS						= 72436,
-    CREATURE_TORMENTED_INITATE			= 73349,
-    CREATURE_FALLEN_POOL_TENDER			= 73342,
-    CREATURE_AQUEOUS_DEFENDER			= 73191,
-    CREATURE_BUBBLE_TRIGGER				= 342652,
-    CREATURE_LESSER_SHA_PUDDLE			= 71604,
-    CREATURE_CONTAMINATED_PUDDLE		= 73226,
+	BOSS_IMMERSEUS = 71543,
+	NPC_SHA_PUDDLE = 71603,
+	NPC_CONTAMINATED_PUDDLE = 71604,
 
 	// Fallen Protectors
     BOSS_STONE							= 71475,
