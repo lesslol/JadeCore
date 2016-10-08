@@ -64,7 +64,6 @@
 #include "GameObjectAI.h"
 #include "AccountMgr.h"
 #include "InstanceScript.h"
-#include "PathGenerator.h"
 #include "Guild.h"
 #include "GuildMgr.h"
 #include "Group.h"
@@ -7899,16 +7898,16 @@ void Spell::EffectCharge(SpellEffIndex /*effIndex*/)
 
     if (effectHandleMode == SPELL_EFFECT_HANDLE_LAUNCH_TARGET)
     {
-        // Spell is not using explicit target - no generated path
-        if (m_preGeneratedPath.GetPathType() == PATHFIND_BLANK)
-        {
-            Position pos;
-            unitTarget->GetContactPoint(m_caster, pos.m_positionX, pos.m_positionY, pos.m_positionZ);
-            unitTarget->GetFirstCollisionPosition(pos, unitTarget->GetObjectSize(), unitTarget->GetRelativeAngle(m_caster));
-            m_caster->GetMotionMaster()->MoveCharge(pos.m_positionX, pos.m_positionY, pos.m_positionZ);
-        }
-        else
-            m_caster->GetMotionMaster()->MoveCharge(m_preGeneratedPath);
+        float angle = unitTarget->GetRelativeAngle(m_caster);
+        Position pos;
+
+        unitTarget->GetContactPoint(m_caster, pos.m_positionX, pos.m_positionY, pos.m_positionZ);
+        unitTarget->GetFirstCollisionPosition(pos, unitTarget->GetObjectSize(), angle);
+
+        m_caster->GetMotionMaster()->MoveCharge(pos.m_positionX, pos.m_positionY, pos.m_positionZ + unitTarget->GetObjectSize());
+
+        if (m_caster->GetTypeId() == TYPEID_PLAYER)
+            m_caster->ToPlayer()->SetFallInformation(0, m_caster->GetPositionZ());
     }
 
     if (effectHandleMode == SPELL_EFFECT_HANDLE_HIT_TARGET)

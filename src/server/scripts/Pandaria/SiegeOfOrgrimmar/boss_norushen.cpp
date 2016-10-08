@@ -1191,7 +1191,7 @@ public:
             me->SetDisableGravity(true);
             me->SetSpeed(UnitMoveType::MOVE_RUN, 2.0f, true);
 
-            Movement::MoveSplineInit init(me);
+            Movement::MoveSplineInit init(*me);
             FillCirclePath(g_AmagalamOfCorruptionSpawn, me->GetDistance2d(g_AmagalamOfCorruptionSpawn.GetPositionX(), g_AmagalamOfCorruptionSpawn.GetPositionY()), me->GetPositionZ(), init.Path(), m_Clockwise);
             init.SetWalk(true);
             init.SetCyclic();

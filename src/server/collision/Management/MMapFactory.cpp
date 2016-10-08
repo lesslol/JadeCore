@@ -19,14 +19,13 @@
 #include "MMapFactory.h"
 #include "World.h"
 #include "DisableMgr.h"
-#include "DisableMgr.h"
 
 namespace MMAP
 {
     // ######################## MMapFactory ########################
     // our global singleton copy
     MMapManager* g_MMapManager = NULL;
-    
+
     MMapManager* MMapFactory::createOrGetMMapManager()
     {
         if (g_MMapManager == NULL)

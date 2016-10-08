@@ -85,11 +85,8 @@ void WorldSession::HandleMoveWorldportAckOpcode()
         GetPlayer()->TeleportTo(GetPlayer()->m_homebindMapId, GetPlayer()->m_homebindX, GetPlayer()->m_homebindY, GetPlayer()->m_homebindZ, GetPlayer()->GetOrientation());
         return;
     }
-    float z = loc.GetPositionZ();
-    
-    if (GetPlayer()->HasUnitMovementFlag(MOVEMENTFLAG_HOVER))
-        z += GetPlayer()->GetFloatValue(UNIT_FIELD_HOVERHEIGHT);
-    GetPlayer()->Relocate(loc.GetPositionX(), loc.GetPositionY(), z, loc.GetOrientation());
+    else
+        GetPlayer()->Relocate(&loc);
 
     GetPlayer()->ResetMap();
     GetPlayer()->SetMap(newMap);
@@ -149,7 +146,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
         {
             // short preparations to continue flight
             FlightPathMovementGenerator* flight = (FlightPathMovementGenerator*)(GetPlayer()->GetMotionMaster()->top());
-            flight->Initialize(GetPlayer());
+            flight->Initialize(*GetPlayer());
             return;
         }
 

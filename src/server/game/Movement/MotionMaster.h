@@ -27,7 +27,6 @@
 
 class MovementGenerator;
 class Unit;
-class PathGenerator;
 
 // Creature Entry ID used for waypoints show, visible only for GMs
 #define VISUAL_WAYPOINT 1
@@ -154,19 +153,16 @@ class MotionMaster //: private std::stack<MovementGenerator *>
         void MoveChase(Unit* target, float dist = 0.0f, float angle = 0.0f);
         void MoveConfused();
         void MoveFleeing(Unit* enemy, uint32 time = 0);
-        void MovePoint(uint32 id, Position const& pos, bool generatePath = true)
-        {
-            MovePoint(id, pos.m_positionX, pos.m_positionY, pos.m_positionZ, generatePath);
-        }
-        void MovePoint(uint32 id, float x, float y, float z, bool generatePath = true);
+        void MovePoint(uint32 id, const Position &pos)
+            { MovePoint(id, pos.m_positionX, pos.m_positionY, pos.m_positionZ); }
+        void MovePoint(uint32 id, float x, float y, float z);
 
         // These two movement types should only be used with creatures having landing/takeoff animations
         void MoveLand(uint32 id, Position const& pos);
         void MoveTakeoff(uint32 id, Position const& pos);
         void MoveTakeoff(uint32 id, float x, float y, float z);
 
-        void MoveCharge(float x, float y, float z, float speed = SPEED_CHARGE, uint32 id = EVENT_CHARGE, bool generatePath = false);
-        void MoveCharge(PathGenerator const& path);
+        void MoveCharge(float x, float y, float z, float speed = SPEED_CHARGE, uint32 id = EVENT_CHARGE);
         void MoveKnockbackFrom(float srcX, float srcY, float speedXY, float speedZ);
         void MoveJumpTo(float angle, float speedXY, float speedZ);
         void MoveJump(float x, float y, float z, float speedXY, float speedZ, float o = 10.0f, uint32 id = 0);

@@ -27,67 +27,63 @@
 
 //----- Point Movement Generator
 template<class T>
-void PointMovementGenerator<T>::DoInitialize(T* unit)
+void PointMovementGenerator<T>::Initialize(T &unit)
 {
-    if (!unit->IsStopped())
-        unit->StopMoving();
+    if (!unit.IsStopped())
+        unit.StopMoving();
 
-    unit->AddUnitState(UNIT_STATE_ROAMING|UNIT_STATE_ROAMING_MOVE);
-    
-    if (id == EVENT_CHARGE_PREPATH)
-        return;
-    
+    unit.AddUnitState(UNIT_STATE_ROAMING|UNIT_STATE_ROAMING_MOVE);
+    i_recalculateSpeed = false;
     Movement::MoveSplineInit init(unit);
-    init.MoveTo(i_x, i_y, i_z, m_generatePath);
+    init.MoveTo(i_x, i_y, i_z);
     if (speed > 0.0f)
         init.SetVelocity(speed);
     init.Launch();
 }
 
 template<class T>
-bool PointMovementGenerator<T>::DoUpdate(T* unit, const uint32 /*diff*/)
+bool PointMovementGenerator<T>::Update(T &unit, const uint32 & /*diff*/)
 {
     if (!&unit)
         return false;
 
-    if (unit->HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED))
+    if (unit.HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED))
     {
-        unit->ClearUnitState(UNIT_STATE_ROAMING_MOVE);
+        unit.ClearUnitState(UNIT_STATE_ROAMING_MOVE);
         return true;
     }
 
-    unit->AddUnitState(UNIT_STATE_ROAMING_MOVE);
+    unit.AddUnitState(UNIT_STATE_ROAMING_MOVE);
 
-    if (id != EVENT_CHARGE_PREPATH && i_recalculateSpeed && !unit->movespline->Finalized())
+    if (i_recalculateSpeed && !unit.movespline->Finalized())
     {
         i_recalculateSpeed = false;
         Movement::MoveSplineInit init(unit);
-        init.MoveTo(i_x, i_y, i_z, m_generatePath);
+        init.MoveTo(i_x, i_y, i_z);
         if (speed > 0.0f) // Default value for point motion type is 0.0, if 0.0 spline will use GetSpeed on unit
             init.SetVelocity(speed);
         init.Launch();
     }
 
-    return !unit->movespline->Finalized();
+    return !unit.movespline->Finalized();
 }
 
 template<class T>
-void PointMovementGenerator<T>::DoFinalize(T* unit)
+void PointMovementGenerator<T>::Finalize(T &unit)
 {
-    if (unit->HasUnitState(UNIT_STATE_CHARGING))
-        unit->ClearUnitState(UNIT_STATE_ROAMING | UNIT_STATE_ROAMING_MOVE);
+    unit.ClearUnitState(UNIT_STATE_ROAMING|UNIT_STATE_ROAMING_MOVE);
 
-    if (unit->movespline->Finalized())
+    if (unit.movespline->Finalized())
         MovementInform(unit);
 }
 
 template<class T>
-void PointMovementGenerator<T>::DoReset(T* unit)
+void PointMovementGenerator<T>::Reset(T &unit)
 {
-    if (!unit->IsStopped())
-        unit->StopMoving();
+    if (!unit.IsStopped())
+        unit.StopMoving();
 
-    unit->AddUnitState(UNIT_STATE_ROAMING|UNIT_STATE_ROAMING_MOVE);
+    unit.AddUnitState(UNIT_STATE_ROAMING|UNIT_STATE_ROAMING_MOVE);
 }
 
 enum specialSpells
@@ -99,83 +95,74 @@ enum specialSpells
 };
 
 template<class T>
-void PointMovementGenerator<T>::MovementInform(T* /*unit*/)
+void PointMovementGenerator<T>::MovementInform(T & /*unit*/)
 {
 }
 
-template <> void PointMovementGenerator<Creature>::MovementInform(Creature* unit)
+template <> void PointMovementGenerator<Creature>::MovementInform(Creature &unit)
 {
-    if (unit->AI())
-        unit->AI()->MovementInform(POINT_MOTION_TYPE, id);
+    if (unit.AI())
+        unit.AI()->MovementInform(POINT_MOTION_TYPE, id);
 
     switch (id)
     {
         case BABY_ELEPHANT_TAKES_A_BATH:
-            unit->CastSpell(unit, BABY_ELEPHANT_TAKES_A_BATH_2, true);
+            unit.CastSpell(&unit, BABY_ELEPHANT_TAKES_A_BATH_2, true);
             break;
         default:
             break;
     }
 }
 
-template <> void PointMovementGenerator<Player>::MovementInform(Player* unit)
+template <> void PointMovementGenerator<Player>::MovementInform(Player& unit)
 {
     switch (id)
     {
         case MONK_CLASH:
-            unit->CastSpell(unit, MONK_CLASH_IMPACT, true);
+            unit.CastSpell(&unit, MONK_CLASH_IMPACT, true);
             break;
         default:
             break;
     }
 }
 
-template void PointMovementGenerator<Player>::DoInitialize(Player*);
-template void PointMovementGenerator<Creature>::DoInitialize(Creature*);
-template void PointMovementGenerator<Player>::DoFinalize(Player*);
-template void PointMovementGenerator<Creature>::DoFinalize(Creature*);
-template void PointMovementGenerator<Player>::DoReset(Player*);
-template void PointMovementGenerator<Creature>::DoReset(Creature*);
-template bool PointMovementGenerator<Player>::DoUpdate(Player*, uint32);
-template bool PointMovementGenerator<Creature>::DoUpdate(Creature*, uint32);
+template void PointMovementGenerator<Player>::Initialize(Player&);
+template void PointMovementGenerator<Creature>::Initialize(Creature&);
+template void PointMovementGenerator<Player>::Finalize(Player&);
+template void PointMovementGenerator<Creature>::Finalize(Creature&);
+template void PointMovementGenerator<Player>::Reset(Player&);
+template void PointMovementGenerator<Creature>::Reset(Creature&);
+template bool PointMovementGenerator<Player>::Update(Player &, const uint32 &);
+template bool PointMovementGenerator<Creature>::Update(Creature&, const uint32 &);
 
-void AssistanceMovementGenerator::Finalize(Unit* unit)
+void AssistanceMovementGenerator::Finalize(Unit &unit)
 {
-    unit->ToCreature()->SetNoCallAssistance(false);
-    unit->ToCreature()->CallAssistance();
-    if (unit->isAlive())
-        unit->GetMotionMaster()->MoveSeekAssistanceDistract(sWorld->getIntConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_DELAY));
+    unit.ToCreature()->SetNoCallAssistance(false);
+    unit.ToCreature()->CallAssistance();
+    if (unit.isAlive())
+        unit.GetMotionMaster()->MoveSeekAssistanceDistract(sWorld->getIntConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_DELAY));
 }
 
-bool EffectMovementGenerator::Update(Unit* unit, const uint32&)
+bool EffectMovementGenerator::Update(Unit &unit, const uint32&)
 {
-    return !unit->movespline->Finalized();
+    return !unit.movespline->Finalized();
 }
 
-void EffectMovementGenerator::Finalize(Unit* unit)
+void EffectMovementGenerator::Finalize(Unit &unit)
 {
     MovementInform(unit);
 }
 
-
-void EffectMovementGenerator::MovementInform(Unit* unit)
+void EffectMovementGenerator::MovementInform(Unit &unit)
 {
-    if (unit->GetTypeId() == TYPEID_UNIT)
+    if (unit.GetTypeId() == TYPEID_UNIT)
     {
-        Creature* creature = unit->ToCreature();
+        Creature* creature = unit.ToCreature();
 
         if (creature->AI())
             creature->AI()->MovementInform(EFFECT_MOTION_TYPE, m_Id);
     }
-    else if (unit->GetTypeId() == TYPEID_PLAYER)
+    else if (unit.GetTypeId() == TYPEID_PLAYER)
     {
-    }
-
-    if (unit->isAlive() && !unit->HasUnitState(UNIT_STATE_CONFUSED | UNIT_STATE_FLEEING))
-    {
-        if (Unit* victim = unit->getVictim())
-            unit->GetMotionMaster()->MoveChase(victim);
-        else
-            unit->GetMotionMaster()->Initialize();
     }
 }

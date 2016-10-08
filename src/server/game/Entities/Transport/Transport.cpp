@@ -880,7 +880,7 @@ void Transport::UpdatePlayerPositions()
 void Transport::CalculatePassengerPosition(float& x, float& y, float& z, float& o)
 {
     float inx = x, iny = y, inz = z, ino = o;
-    o = MapManager::NormalizeOrientation(GetOrientation() + ino);
+    o = GetOrientation() + ino;
     x = GetPositionX() + inx * std::cos(GetOrientation()) - iny * std::sin(GetOrientation());
     y = GetPositionY() + iny * std::cos(GetOrientation()) + inx * std::sin(GetOrientation());
     z = GetPositionZ() + inz;
@@ -888,7 +888,7 @@ void Transport::CalculatePassengerPosition(float& x, float& y, float& z, float& 
 
 void Transport::CalculatePassengerOffset(float& x, float& y, float& z, float& o)
 {
-    o = MapManager::NormalizeOrientation(o - GetOrientation());
+    o = o - GetOrientation();
     z -= GetPositionZ();
     y -= GetPositionY();    // y = searchedY * std::cos(o) + searchedX * std::sin(o)
     x -= GetPositionX();    // x = searchedX * std::cos(o) + searchedY * std::sin(o + pi)

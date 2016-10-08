@@ -447,6 +447,23 @@ void Unit::Update(uint32 p_time)
         ModifyAuraState(AURA_STATE_HEALTH_ABOVE_75_PERCENT, HealthAbovePct(75));
     }
 
+    if (m_SendTransportMoveTimer != 0)
+    {
+        if (m_SendTransportMoveTimer <= p_time)
+        {
+            Movement::MoveSplineInit init(*this);
+            init.DisableTransportPathTransformations();
+            init.MoveTo(m_movementInfo.t_pos.m_positionX, m_movementInfo.t_pos.m_positionY, m_movementInfo.t_pos.m_positionZ);
+            init.SetFacing(0.0f);
+            init.SetTransportEnter();
+            init.Launch();
+            
+            m_SendTransportMoveTimer = 0;
+        }
+        else
+            m_SendTransportMoveTimer -= p_time;
+    }
+
     UpdateSplineMovement(p_time);
     i_motionMaster.UpdateMotion(p_time);
 }
@@ -461,18 +478,13 @@ bool Unit::haveOffhandWeapon() const
 
 void Unit::MonsterMoveWithSpeed(float x, float y, float z, float speed, bool generatePath, bool forceDestination)
 {
-    Movement::MoveSplineInit init(this);
+    Movement::MoveSplineInit init(*this);
     init.MoveTo(x, y, z, generatePath, forceDestination);
     init.SetVelocity(speed);
     init.Launch();
 }
 
 uint32 const positionUpdateDelay = 400;
-
-enum MovementIntervals
-{
-    POSITION_UPDATE_DELAY = 400,
-};
 
 void Unit::UpdateSplineMovement(uint32 t_diff)
 {
@@ -492,7 +504,7 @@ void Unit::UpdateSplineMovement(uint32 t_diff)
 
 void Unit::UpdateSplinePosition()
 {
-    m_movesplineTimer.Reset(POSITION_UPDATE_DELAY);
+    m_movesplineTimer.Reset(positionUpdateDelay);
     Movement::Location loc = movespline->ComputePosition();
     if (GetTransGUID())
     {
@@ -500,17 +512,15 @@ void Unit::UpdateSplinePosition()
         pos.m_positionX = loc.x;
         pos.m_positionY = loc.y;
         pos.m_positionZ = loc.z;
-        pos.m_orientation = loc.orientation;
+        pos.SetOrientation(loc.orientation);
         if (Unit* vehicle = GetVehicleBase())
-        {
-            loc.x += vehicle->GetPositionX();
-            loc.y += vehicle->GetPositionY();
-            loc.z += vehicle->GetPositionZMinusOffset();
-            loc.orientation = vehicle->GetOrientation();
-        }
-        else if (Transport* trans = GetTransport())
-            trans->CalculatePassengerPosition(loc.x, loc.y, loc.z, loc.orientation);
+        if (TransportBase* transport = GetDirectTransport())
+            transport->CalculatePassengerPosition(loc.x, loc.y, loc.z, loc.orientation);
     }
+
+    if (HasUnitState(UNIT_STATE_CANNOT_TURN))
+        loc.orientation = GetOrientation();
+
     UpdatePosition(loc.x, loc.y, loc.z, loc.orientation);
 }
 
@@ -18902,7 +18912,7 @@ void Unit::StopMoving()
 
     // Update position using old spline
     UpdateSplinePosition();
-    Movement::MoveSplineInit(this).Stop();
+    Movement::MoveSplineInit(*this).Stop();
 }
 
 void Unit::SendMovementFlagUpdate(bool self /* = false */)
@@ -22480,8 +22490,8 @@ void Unit::_ExitVehicle(Position const* exitPosition)
         SendMessageToSet(&data, false);
     }
 
-    Movement::MoveSplineInit init(this);
-    init.MoveTo(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), false);
+    Movement::MoveSplineInit init(*this);
+    init.MoveTo(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ());
     init.SetFacing(GetOrientation());
     init.SetTransportExit();
     init.Launch();
@@ -22682,7 +22692,6 @@ bool Unit::UpdatePosition(float x, float y, float z, float orientation, bool tel
     if (!JadeCore::IsValidMapCoord(x, y, z, orientation))
         return false;
 
-    orientation = MapManager::NormalizeOrientation(orientation); 
     bool turn = (GetOrientation() != orientation);
     bool relocated = (teleport || GetPositionX() != x || GetPositionY() != y || GetPositionZ() != z);
 
@@ -23195,7 +23204,7 @@ void Unit::SetInFront(Unit const* target)
 
 void Unit::SetFacingTo(float ori)
 {
-    Movement::MoveSplineInit init(this);
+    Movement::MoveSplineInit init(*this);
     init.MoveTo(GetPositionX(), GetPositionY(), GetPositionZMinusOffset());
     init.SetFacing(ori);
     init.Launch();

@@ -263,7 +263,6 @@ void Creature::RemoveCorpse(bool setSpawnTime)
 
     float x, y, z, o;
     GetRespawnPosition(x, y, z, &o);
-    o = MapManager::NormalizeOrientation(o);
     SetHomePosition(x, y, z, o);
     GetMap()->CreatureRelocation(this, x, y, z, o);
 }
@@ -1804,8 +1803,7 @@ void Creature::setDeathState(DeathState s)
 
 void Creature::Respawn(bool force)
 {
-    Movement::MoveSplineInit init(this);
-    init.Stop(true);
+    Movement::MoveSplineInit(*this).Stop(true);
     DestroyForNearbyPlayers();
 
     if (force)
@@ -2769,7 +2767,6 @@ void Creature::SetPosition(float x, float y, float z, float o)
         return;
     }
 
-    o = MapManager::NormalizeOrientation(o);
     GetMap()->CreatureRelocation(ToCreature(), x, y, z, o);
     if (IsVehicle())
         GetVehicleKit();
